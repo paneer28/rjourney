@@ -1,0 +1,120 @@
+---
+// A black band with square photos turned into diamonds (points clipped flat),
+// clustered at the left edge and bleeding off the page, with text on the right.
+// Calm shows the photos as plain squares in a row above the text.
+//
+// Usage:
+//   <DiamondBand id="join" heading="…" images={[a, b, c]}>
+//     <p>…</p>
+//   </DiamondBand>
+import Placeholder from './Placeholder.astro';
+import type { ImageSlot } from '../data/images';
+
+interface Props {
+  id: string;
+  heading: string;
+  images: ImageSlot[]; // three
+}
+
+const { id, heading, images } = Astro.props;
+const headingId = `${id}-heading`;
+---
+
+<section id={id} class="diamond-band on-dark" aria-labelledby={headingId}>
+  <div class="container diamond-band__inner">
+    <div class="diamonds">
+      {
+        images.slice(0, 3).map((image, i) => (
+          <div class={`diamond diamond--${i + 1}`}>
+            <div class="diamond__photo">
+              <Placeholder image={image} ratio="1" />
+            </div>
+          </div>
+        ))
+      }
+    </div>
+    <div class="diamond-band__text flow">
+      <h2 id={headingId}>{heading}</h2>
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+  .diamond-band {
+    padding-block: var(--section-space);
+    background: var(--dark-band-bg);
+    color: var(--dark-band-fg);
+  }
+
+  .diamond-band__inner {
+    display: grid;
+    gap: var(--space-7);
+    align-items: center;
+  }
+
+  .diamond-band__text :global(.call-or-text) {
+    margin-top: var(--space-6);
+  }
+
+  /* ---------- The diamond cluster ---------- */
+  .diamonds {
+    position: relative;
+    aspect-ratio: 1 / 0.85;
+    /* Pull the cluster past the left edge of the container so it bleeds off the page. */
+    margin-left: calc(-1 * var(--gutter) - 12%);
+  }
+
+  .diamond {
+    position: absolute;
+    aspect-ratio: 1;
+    overflow: hidden;
+    clip-path: var(--diamond-clip);
+    transform: rotate(var(--diamond-rotate));
+  }
+
+  /* Counter-rotate and enlarge the photo so it stays upright and fills the diamond. */
+  .diamond__photo {
+    width: 100%;
+    height: 100%;
+    transform: rotate(calc(-1 * var(--diamond-rotate))) scale(1.42);
+  }
+
+  .diamond--1 { width: 46%; left: 4%;  top: 4%; }
+  .diamond--2 { width: 32%; left: 60%; top: 22%; }
+  .diamond--3 { width: 28%; left: 34%; top: 64%; }
+
+  /* Center the placeholder label so the diamond's clipped corners don't cut it off. */
+  .diamond :global(.placeholder) {
+    align-items: center;
+    justify-content: center;
+    padding: 18%;
+    text-align: center;
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .diamond-band__inner {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--space-8);
+    }
+  }
+
+  /* ---------- Calm: plain squares in a row, nothing overlapping ---------- */
+  :global(html[data-mode='calm']) .diamonds {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4);
+    max-width: 32rem;
+    aspect-ratio: auto;
+    margin-left: 0;
+  }
+
+  :global(html[data-mode='calm']) .diamond {
+    position: static;
+    width: auto;
+  }
+
+  :global(html[data-mode='calm']) .diamond__photo {
+    transform: none;
+  }
+</style>

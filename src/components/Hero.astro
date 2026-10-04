@@ -1,0 +1,142 @@
+---
+// Home page hero: a full-width photo with a pink panel that straddles its
+// bottom edge, half over the photo and half over the band below.
+//
+// On wide screens the hero is a three-row grid: the photo fills rows 1–2 and the
+// panel fills rows 2–3. Rows 2 and 3 split the panel's height equally, so exactly
+// half of it sits over the photo, and the hero ends where the panel ends: no
+// empty space below it. Row 3 beside the panel is painted in the next band's
+// color (`below`); give that band the `after-hero` class for its top spacing.
+// On narrow screens and in Calm the panel simply sits under the photo.
+//
+// Usage:
+//   <Hero image={...} heading="…" below="yellow">
+//     <p>…</p>
+//     <Fragment slot="actions">…buttons…</Fragment>
+//   </Hero>
+import Placeholder from './Placeholder.astro';
+import type { ImageSlot } from '../data/images';
+
+interface Props {
+  image: ImageSlot;
+  heading: string;
+  below?: 'paper' | 'white' | 'yellow' | 'orange'; // color of the band that follows
+}
+
+const { image, heading, below = 'paper' } = Astro.props;
+---
+
+<section class="hero" aria-labelledby="hero-heading" style={`--below: var(--${below})`}>
+  <Placeholder image={image} ratio="16 / 7" eager class="hero__photo" />
+  <div class="container hero__container">
+    <div class="hero__panel flow">
+      <h1 id="hero-heading">{heading}</h1>
+      <slot />
+      <div class="hero__actions">
+        <slot name="actions" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    background: var(--below);
+  }
+
+  /* Wide screens, Standard and Vivid: the panel straddles the photo's bottom edge. */
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .hero {
+      display: grid;
+      grid-template-rows: 1fr auto auto;
+    }
+
+    :global(html:not([data-mode='calm'])) .hero :global(.hero__photo) {
+      grid-row: 1 / 3;
+      grid-column: 1;
+    }
+
+    :global(html:not([data-mode='calm'])) .hero__container {
+      grid-row: 2 / 4;
+      grid-column: 1;
+    }
+  }
+
+  .hero :global(.hero__photo) {
+    min-height: 26rem;
+  }
+
+  .hero__panel {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 38rem);
+    margin-inline: auto;
+    padding: var(--space-7) var(--space-6);
+    background: var(--pink);
+    color: var(--ink);
+  }
+
+  .hero__panel h1 {
+    color: var(--on-pink-heading);
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+    padding-top: var(--space-3);
+  }
+
+  /* Space between the hero panel and the next band's content:
+     48px on phones, 64px on tablets, a full section space on desktop. */
+  :global(.after-hero) {
+    --band-space-top: var(--space-7);
+  }
+
+  @media (min-width: 40rem) {
+    :global(.after-hero) {
+      --band-space-top: var(--space-8);
+    }
+  }
+
+  @media (min-width: 56rem) {
+    :global(.after-hero) {
+      --band-space-top: var(--section-space);
+    }
+  }
+
+  @media (max-width: 55.99rem) {
+    /* Narrow screens: no overlaps. The panel sits below the photo (and the header above it). */
+    .hero {
+      background: var(--page-bg);
+    }
+
+    .hero :global(.hero__photo) {
+      aspect-ratio: 4 / 3;
+      min-height: 0;
+    }
+
+    .hero__panel {
+      padding: var(--space-6) var(--space-5);
+    }
+  }
+
+  /* ---------- Calm ---------- */
+  :global(html[data-mode='calm']) .hero {
+    background: var(--page-bg);
+  }
+
+  /* A square photo lined up with the content, and a full-width panel under it. */
+  :global(html[data-mode='calm']) .hero :global(.hero__photo) {
+    aspect-ratio: 1;
+    width: min(100% - 2 * var(--gutter), 32rem);
+    min-height: 0;
+    margin-top: var(--space-6);
+    margin-left: max(var(--gutter), (100% - var(--container)) / 2);
+  }
+
+  :global(html[data-mode='calm']) .hero__panel {
+    width: 100%;
+  }
+</style>

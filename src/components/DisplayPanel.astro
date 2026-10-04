@@ -1,0 +1,188 @@
+---
+// The Display panel: lets each visitor choose Calm, Standard, or Vivid.
+// Included once per page by BaseLayout. Opened by any <DisplayButton />.
+// Uses the HTML popover attribute, which gives Escape-to-close and focus return for free.
+
+const options = [
+  { value: 'calm', name: 'Calm', description: 'Muted colors. Nothing moves.' },
+  { value: 'standard', name: 'Standard', description: 'Full color. Gentle motion.' },
+  { value: 'vivid', name: 'Vivid', description: 'Brighter color. More motion.' },
+];
+---
+
+<div id="display-panel" class="display-panel needs-js" popover role="dialog" aria-labelledby="display-panel-title">
+  <fieldset>
+    <legend id="display-panel-title">Display</legend>
+    <p class="display-panel__intro">Choose how this site looks and moves. We'll remember it on this device.</p>
+
+    <div class="display-panel__options">
+      {
+        options.map((option) => (
+          <label class="display-option">
+            <input type="radio" name="display-mode" value={option.value} />
+            <span class="display-option__name">{option.name}</span>
+            <span class="display-option__description">{option.description}</span>
+          </label>
+        ))
+      }
+    </div>
+  </fieldset>
+
+  <button type="button" class="display-panel__done" popovertarget="display-panel" popovertargetaction="hide">
+    Done
+  </button>
+</div>
+
+<script>
+  import { MODE_KEY } from '../scripts/display-mode';
+
+  const root = document.documentElement;
+  const panel = document.getElementById('display-panel');
+  const radios = panel?.querySelectorAll<HTMLInputElement>('input[name="display-mode"]') ?? [];
+
+  // Tick the radio that matches the current mode.
+  function syncRadios() {
+    radios.forEach((radio) => {
+      radio.checked = radio.value === root.dataset.mode;
+    });
+  }
+
+  // Apply a mode immediately and save it on this device.
+  function setMode(mode: string) {
+    root.dataset.mode = mode;
+    delete root.dataset.hint; // the first-visit hint is no longer needed
+    try {
+      localStorage.setItem(MODE_KEY, mode);
+    } catch {
+      // Storage blocked (private browsing, etc.): the mode still applies to this page.
+    }
+  }
+
+  syncRadios();
+
+  radios.forEach((radio) => {
+    radio.addEventListener('change', () => setMode(radio.value));
+  });
+
+  // When the panel opens, put keyboard focus on the current choice,
+  // so the arrow keys move between the three modes straight away.
+  panel?.addEventListener('toggle', (event) => {
+    if ((event as ToggleEvent).newState === 'open') {
+      syncRadios();
+      panel.querySelector<HTMLInputElement>('input:checked')?.focus();
+    }
+  });
+</script>
+
+<style>
+  .display-panel {
+    /* Reset the browser's centered popover position and pin it near the header's Display block. */
+    /* Sits just below the header so the Display button stays visible. */
+    position: fixed;
+    inset: var(--space-8) var(--gutter) auto auto;
+    margin: 0;
+    width: min(26rem, calc(100vw - 2 * var(--gutter)));
+    max-height: calc(100vh - var(--space-8) - var(--space-4));
+    overflow-y: auto;
+    padding: var(--space-5);
+    background: var(--white);
+    color: var(--ink);
+    border: 3px solid var(--ink);
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--orange);
+    --focus-color: var(--ink);
+  }
+
+  .display-panel::backdrop {
+    background: transparent;
+  }
+
+  fieldset {
+    border: 0;
+    padding: 0;
+    min-width: 0;
+  }
+
+  legend {
+    padding: 0;
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
+    text-transform: var(--heading-transform);
+    line-height: var(--heading-leading);
+    font-size: var(--fs-card);
+  }
+
+  .display-panel__intro {
+    margin-top: var(--space-2);
+    font-size: var(--fs-small);
+  }
+
+  .display-panel__options {
+    display: grid;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+  }
+
+  /* Each option is a large block. The real radio stays in place for keyboard
+     and screen readers, but is visually replaced by the block's own styling. */
+  .display-option {
+    position: relative;
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-4) var(--space-5);
+    padding-left: calc(var(--space-5) + 1.75rem);
+    background: var(--paper);
+    border: 3px solid transparent;
+    cursor: pointer;
+    transition:
+      background-color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease);
+  }
+
+  .display-option input {
+    position: absolute;
+    left: var(--space-5);
+    top: 1.35rem;
+    width: 1.1rem;
+    height: 1.1rem;
+    margin: 0;
+    accent-color: var(--ink);
+  }
+
+  .display-option:hover {
+    border-color: var(--ink);
+  }
+
+  .display-option:has(input:checked) {
+    background: var(--yellow);
+    border-color: var(--ink);
+  }
+
+  .display-option:has(input:focus-visible) {
+    outline: var(--focus-width) solid var(--focus-color);
+    outline-offset: var(--focus-offset);
+  }
+
+  .display-option input:focus-visible {
+    outline: none; /* the whole block shows focus instead */
+  }
+
+  .display-option__name {
+    font-weight: 700;
+    font-size: 1.25em;
+    line-height: 1.2;
+  }
+
+  .display-option__description {
+    font-size: var(--fs-small);
+  }
+
+  .display-panel__done {
+    margin-top: var(--space-5);
+    padding: var(--space-3) var(--space-5);
+    background: var(--black);
+    color: var(--on-black);
+    border: 0;
+    font-weight: 700;
+    cursor: pointer;
+  }
+</style>

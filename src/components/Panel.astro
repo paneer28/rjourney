@@ -1,0 +1,60 @@
+---
+// A solid color block with a heading and content, e.g. the belief panels on
+// About and the sign-up and give panels on Contact.
+//
+// Usage:
+//   <Panel heading="Make a donation" color="pink" id="give">
+//     <p>…</p>
+//   </Panel>
+
+interface Props {
+  heading: string;
+  color?: 'yellow' | 'orange' | 'pink' | 'white';
+  id?: string;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { heading, color = 'yellow', id, headingLevel: Heading = 'h2' } = Astro.props;
+const headingId = id ? `${id}-heading` : undefined;
+---
+
+<section id={id} aria-labelledby={headingId} class:list={['panel', `panel--${color}`]}>
+  <Heading id={headingId} class="panel__heading">{heading}</Heading>
+  <div class="panel__body flow">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    padding: var(--space-7) var(--space-6);
+    color: var(--ink);
+    --focus-color: var(--ink);
+  }
+
+  .panel--yellow { background: var(--yellow); }
+  .panel--orange { background: var(--orange); }
+  .panel--pink { background: var(--pink); }
+  .panel--white { background: var(--white); }
+
+  .panel__heading {
+    font-size: var(--fs-panel);
+  }
+
+  /* Smaller panels in a row of three use h3 at card size. */
+  h3.panel__heading {
+    font-size: var(--fs-card);
+  }
+
+  .panel--pink .panel__heading {
+    color: var(--on-pink-heading);
+  }
+
+  .panel__body :global(.button),
+  .panel__body :global(.call-or-text) {
+    margin-top: var(--space-6);
+  }
+</style>

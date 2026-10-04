@@ -1,0 +1,254 @@
+---
+// Site header on every page: logo on a white block at the left; a row of
+// joined blocks at the right: nav links (white), Donate (pink), Display (orange).
+// Not sticky. With `overlay`, it sits on top of the page's hero photo.
+// On narrow screens the nav links collapse behind a "Menu" button
+// (with JavaScript off they simply wrap onto their own row).
+import DonateButton from './DonateButton.astro';
+import DisplayButton from './DisplayButton.astro';
+import DisplayHint from './DisplayHint.astro';
+import { site } from '../data/site';
+
+interface Props {
+  overlay?: boolean;
+}
+
+const { overlay = false } = Astro.props;
+
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About' },
+  { href: '/activities', label: 'Activities' },
+  { href: '/contact', label: 'Contact' },
+];
+
+// Compare without a trailing slash so /about and /about/ both match.
+const current = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<header class:list={['site-header', { 'site-header--overlay': overlay }]}>
+  <div class="site-header__bar">
+    <a href="/" class="site-header__logo">
+      {site.logo ? <img src={site.logo} alt={site.name} height="48" /> : <span class="site-header__wordmark">{site.name}</span>}
+    </a>
+
+    <div class="site-header__blocks">
+      <button
+        type="button"
+        class="site-header__block site-header__menu needs-js"
+        aria-expanded="false"
+        aria-controls="site-nav"
+      >
+        Menu
+      </button>
+
+      <nav id="site-nav" class="site-header__nav" aria-label="Main">
+        <ul role="list">
+          {
+            links.map((link) => (
+              <li>
+                <a href={link.href} class="site-header__link" aria-current={current === link.href ? 'page' : undefined}>
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <DonateButton bare class="site-header__block site-header__donate" />
+      <DisplayButton class="site-header__block site-header__display" />
+    </div>
+  </div>
+
+  <DisplayHint />
+</header>
+
+<script>
+  // Mobile menu: the "Menu" button shows and hides the nav links.
+  const menuButton = document.querySelector<HTMLButtonElement>('.site-header__menu');
+  const nav = document.getElementById('site-nav');
+
+  function setOpen(open: boolean) {
+    menuButton?.setAttribute('aria-expanded', String(open));
+    nav?.toggleAttribute('data-open', open);
+  }
+
+  menuButton?.addEventListener('click', () => {
+    setOpen(menuButton.getAttribute('aria-expanded') !== 'true');
+  });
+
+  // Escape closes the menu and returns focus to the button.
+  nav?.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      setOpen(false);
+      menuButton?.focus();
+    }
+  });
+</script>
+
+<style>
+  .site-header {
+    position: relative;
+    z-index: 10;
+  }
+
+  /* Over the hero photo on wide screens in Standard and Vivid only.
+     On narrow screens and in Calm the header sits above the photo instead. */
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .site-header--overlay {
+      position: absolute;
+      inset: 0 0 auto 0;
+    }
+  }
+
+  .site-header__bar {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  /* ---------- Logo on a white block ---------- */
+  .site-header__logo {
+    display: flex;
+    align-items: center;
+    padding: var(--space-3) var(--space-5);
+    background: var(--white);
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .site-header__logo img {
+    width: auto;
+    height: 3rem;
+  }
+
+  .site-header__wordmark {
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
+    text-transform: var(--heading-transform);
+    font-size: 1.75rem;
+    line-height: 1;
+  }
+
+  /* ---------- The joined blocks ---------- */
+  .site-header__blocks {
+    display: flex;
+    align-items: stretch;
+  }
+
+  .site-header__blocks > :global(.site-header__block),
+  .site-header__link {
+    display: flex;
+    align-items: center;
+    padding: var(--space-4) var(--space-5);
+    border: 0;
+    color: var(--ink);
+    font-weight: 700;
+    line-height: 1.2;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.25em;
+    cursor: pointer;
+    transition: text-decoration-color var(--dur) var(--ease);
+  }
+
+  .site-header__blocks > :global(.site-header__block:hover),
+  .site-header__blocks > :global(.site-header__block:focus-visible),
+  .site-header__link:hover,
+  .site-header__link:focus-visible,
+  .site-header__link[aria-current='page'] {
+    text-decoration-color: currentColor;
+  }
+
+  .site-header__blocks > :global(.site-header__block:focus-visible),
+  .site-header__link:focus-visible {
+    outline-offset: calc(-1 * var(--focus-width) - 2px);
+  }
+
+  .site-header__menu,
+  .site-header__nav {
+    background: var(--white);
+  }
+
+  .site-header__blocks > :global(.site-header__donate) {
+    background: var(--pink);
+  }
+
+  .site-header__blocks > :global(.site-header__display) {
+    background: var(--orange);
+  }
+
+  .site-header__nav ul {
+    display: flex;
+    height: 100%;
+    padding: 0;
+    list-style: none;
+  }
+
+  .site-header__link {
+    height: 100%;
+  }
+
+  /* ---------- Narrow screens: links behind the Menu button ---------- */
+  @media (max-width: 55.99rem) {
+    .site-header__blocks > :global(.site-header__block),
+    .site-header__link {
+      padding: var(--space-3) var(--space-4);
+    }
+
+    .site-header__logo {
+      padding-inline: var(--space-4);
+    }
+
+    .site-header__wordmark {
+      font-size: 1.5rem;
+    }
+
+    /* With JavaScript, the nav is a dropdown under the bar. */
+    :global(html:not(.no-js)) .site-header__nav {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      width: min(100%, 20rem);
+      border: 3px solid var(--ink);
+    }
+
+    :global(html:not(.no-js)) .site-header__nav[data-open] {
+      display: block;
+    }
+
+    :global(html:not(.no-js)) .site-header__nav ul {
+      flex-direction: column;
+    }
+
+    :global(html:not(.no-js)) .site-header__link {
+      padding: var(--space-4) var(--space-5);
+    }
+
+    /* Without JavaScript, the links wrap onto their own row. */
+    :global(html.no-js) .site-header__blocks {
+      flex-wrap: wrap;
+    }
+
+    :global(html.no-js) .site-header__nav {
+      flex-basis: 100%;
+      order: 2;
+    }
+
+    :global(html.no-js) .site-header__nav ul {
+      flex-wrap: wrap;
+    }
+  }
+
+  @media (min-width: 56rem) {
+    .site-header__blocks > .site-header__menu {
+      display: none;
+    }
+  }
+</style>

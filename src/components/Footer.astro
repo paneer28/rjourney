@@ -1,0 +1,133 @@
+---
+// Site footer on every page: a mosaic of solid blocks on black,
+// separated by thin gaps, with an orange strip of contact details at the bottom.
+// Calm stacks the blocks in one column.
+import Button from './Button.astro';
+import CallOrText from './CallOrText.astro';
+import DonateButton from './DonateButton.astro';
+import DisplayButton from './DisplayButton.astro';
+import { site } from '../data/site';
+---
+
+<footer class="site-footer on-dark">
+  <div class="container mosaic">
+    <section class="tile tile--yellow" aria-labelledby="footer-more">
+      <h2 id="footer-more">More about R Journey</h2>
+      <div class="stack">
+        <Button href="/about">About</Button>
+        <Button href="/activities">Activities</Button>
+        <Button href="/contact">Contact</Button>
+      </div>
+    </section>
+
+    <section class="tile tile--white" aria-labelledby="footer-join">
+      <h2 id="footer-join">Join an activity</h2>
+      <CallOrText />
+    </section>
+
+    <section class="tile tile--pink" aria-labelledby="footer-give">
+      <h2 id="footer-give">Help us grow</h2>
+      <DonateButton variant="yellow" />
+    </section>
+
+    <div class="tile tile--orange strip">
+      <ul class="strip__details" role="list">
+        <li><a href={site.phone.tel}>{site.phone.display}</a></li>
+        <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+        <li><a href={site.instagram.url}>Instagram: @{site.instagram.handle}</a></li>
+        {site.mailingAddress && <li>{site.mailingAddress}</li>}
+        <li class="needs-js"><DisplayButton label="Display settings" class="strip__display" /></li>
+      </ul>
+      <p class="strip__legal">© 2026 R Journey. {site.statusLine}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding-block: var(--space-3);
+  }
+
+  .mosaic {
+    display: grid;
+    gap: var(--space-2); /* the thin gaps show the black background */
+    grid-template-columns: 1fr;
+  }
+
+  .tile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+    padding: var(--space-6);
+    color: var(--ink);
+    --focus-color: var(--ink);
+  }
+
+  .tile h2 {
+    font-size: var(--fs-card);
+  }
+
+  .tile--yellow { background: var(--yellow); }
+  .tile--white { background: var(--white); }
+  .tile--pink { background: var(--pink); }
+  .tile--orange { background: var(--orange); }
+
+  .tile--pink h2 {
+    color: var(--on-pink-heading);
+  }
+
+  .stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+
+  /* ---------- The orange strip ---------- */
+  .strip {
+    gap: var(--space-4);
+    padding-block: var(--space-5);
+  }
+
+  .strip__details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+    padding: 0;
+    list-style: none;
+    font-weight: 700;
+  }
+
+  .strip__details :global(.strip__display) {
+    padding: 0;
+    background: none;
+    border: 0;
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+
+  .strip__legal {
+    max-width: none;
+    font-size: var(--fs-small);
+  }
+
+  /* ---------- Mosaic layout on wide screens (not in Calm) ---------- */
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .mosaic {
+      /* The middle column is widest so "Call or text (858) 610-9661" fits on one line. */
+      grid-template-columns: 4fr 5fr 3fr;
+      grid-template-areas:
+        'more join give'
+        'strip strip strip';
+    }
+
+    :global(html:not([data-mode='calm'])) .tile--yellow { grid-area: more; }
+    :global(html:not([data-mode='calm'])) .tile--white { grid-area: join; }
+    :global(html:not([data-mode='calm'])) .tile--pink { grid-area: give; }
+    :global(html:not([data-mode='calm'])) .strip { grid-area: strip; }
+  }
+</style>

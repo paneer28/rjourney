@@ -1,0 +1,53 @@
+---
+// A person on the About page. `size="large"` (leadership) shows photo, name,
+// title, and description; `size="small"` (board) shows photo and name only.
+import Placeholder from './Placeholder.astro';
+import type { Person } from '../data/team';
+
+interface Props {
+  person: Person;
+  size?: 'large' | 'small';
+}
+
+const { person, size = 'large' } = Astro.props;
+// A real photo's alt text falls back to the person's name.
+const photo = { ...person.photo, alt: person.photo.alt || (person.photo.src ? person.name : '') };
+---
+
+<article class:list={['person', `person--${size}`]}>
+  <Placeholder image={photo} ratio="1" />
+  <div class="person__text">
+    <h3 class="person__name">{person.name}</h3>
+    {size === 'large' && person.title && <p class="person__title">{person.title}</p>}
+    {size === 'large' && person.description && <p class="person__description">{person.description}</p>}
+  </div>
+</article>
+
+<style>
+  .person {
+    background: var(--white);
+    color: var(--ink);
+  }
+
+  .person__text {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-5);
+  }
+
+  .person--small .person__text {
+    padding: var(--space-4);
+  }
+
+  .person__name {
+    font-size: var(--fs-card);
+  }
+
+  .person--small .person__name {
+    font-size: calc(var(--fs-card) * 0.75);
+  }
+
+  .person__title {
+    font-weight: 700;
+  }
+</style>

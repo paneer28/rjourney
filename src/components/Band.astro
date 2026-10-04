@@ -1,0 +1,57 @@
+---
+// A full-width section in one solid color, with content in the centered container.
+// Sets the right text color for its background (see the text color rules in tokens.css).
+
+interface Props {
+  color?: 'paper' | 'white' | 'yellow' | 'orange' | 'pink' | 'black';
+  id?: string;
+  labelledby?: string; // id of the section's heading, for screen readers
+  tight?: boolean; // less vertical padding
+  class?: string;
+}
+
+const { color = 'paper', id, labelledby, tight = false, class: className } = Astro.props;
+---
+
+<section
+  id={id}
+  aria-labelledby={labelledby}
+  class:list={['band', `band--${color}`, { 'band--tight': tight, 'on-dark': color === 'black' }, className]}
+>
+  <div class="container">
+    <slot />
+  </div>
+</section>
+
+<style>
+  /* Vertical padding comes from two variables, so a page can change one side
+     by setting --band-space-top or --band-space-bottom on the band's class
+     (a plain padding-top override would lose to this rule). */
+  .band {
+    --band-space: var(--section-space);
+    padding-top: var(--band-space-top, var(--band-space));
+    padding-bottom: var(--band-space-bottom, var(--band-space));
+    color: var(--ink);
+  }
+
+  .band--tight {
+    --band-space: calc(var(--section-space) / 2);
+  }
+
+  .band--paper { background: var(--paper); }
+  .band--white { background: var(--white); }
+  .band--yellow { background: var(--yellow); }
+  .band--orange { background: var(--orange); }
+  .band--pink { background: var(--pink); }
+
+  /* Black bands: white text (Calm turns them into paper with ink text). */
+  .band--black {
+    background: var(--dark-band-bg);
+    color: var(--dark-band-fg);
+  }
+
+  /* On pink, large headlines may be white; body text stays black. */
+  .band--pink :global(:is(h1, h2)) {
+    color: var(--on-pink-heading);
+  }
+</style>

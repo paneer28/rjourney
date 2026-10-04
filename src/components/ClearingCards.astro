@@ -1,0 +1,259 @@
+---
+// The home page activity cards. At rest each card is slightly washed out under a
+// faint layer of overlapping words (common assumptions about autism). Hover,
+// keyboard focus, or a tap clears the layer: the card settles into full color,
+// comes forward, and its neighbors dim. Calm has no clutter layer at all.
+//
+// Touch: the first tap clears a card; a second tap on its button follows the link.
+// Screen readers hear only the title, sentence, and link (the layer is aria-hidden).
+import Button from './Button.astro';
+import { activities, clutterFragments } from '../data/activities';
+
+interface Props {
+  headingId: string;
+  heading: string;
+}
+
+const { headingId, heading } = Astro.props;
+
+// Where each fragment sits on a card: position (% of the card), rotation, size.
+// The last three only show in Vivid, for a slightly denser layer.
+const placements = [
+  { x: 6, y: 6, rotate: -12, size: 1.3 },
+  { x: 50, y: 3, rotate: 9, size: 1 },
+  { x: 18, y: 28, rotate: 4, size: 1.6 },
+  { x: 54, y: 40, rotate: -18, size: 1.15 },
+  { x: 3, y: 56, rotate: 14, size: 1.05 },
+  { x: 38, y: 70, rotate: -6, size: 1.4 },
+  { x: 62, y: 18, rotate: 22, size: 0.95, extra: true },
+  { x: 10, y: 84, rotate: -20, size: 1.1, extra: true },
+  { x: 30, y: 48, rotate: 11, size: 1.25, extra: true },
+];
+
+// Each card starts at a different point in the list, so the cards don't look identical.
+const fragmentsFor = (cardIndex: number) =>
+  placements.map((placement, i) => ({
+    ...placement,
+    text: clutterFragments[(i + cardIndex * 2) % clutterFragments.length],
+  }));
+---
+
+<div class="ccards-section">
+  <h2 id={headingId} class="ccards__heading">{heading}</h2>
+  <p class="ccards__caption ccards__caption--standard">Hover over a card, or tap it, to clear away the assumptions.</p>
+  <p class="ccards__caption ccards__caption--calm">Three activities, each built around something children enjoy.</p>
+
+  <ul class="ccards" role="list">
+    {
+      activities.map((activity, index) => (
+        <li class="ccard" style={`--card-color: var(--${activity.cardColor})`}>
+          <div class="ccard__clutter" aria-hidden="true">
+            {fragmentsFor(index).map((f) => (
+              <span
+                class:list={['ccard__fragment', { 'ccard__fragment--extra': f.extra }]}
+                style={`left: ${f.x}%; top: ${f.y}%; --rotate: ${f.rotate}deg; font-size: ${f.size}em`}
+              >
+                {f.text}
+              </span>
+            ))}
+          </div>
+          <div class="ccard__content">
+            <h3 class="ccard__title">{activity.name}</h3>
+            <p class="ccard__summary">{activity.cardSummary}</p>
+            <Button href={`/activities#${activity.id}`} class="ccard__button">
+              Find out more<span class="visually-hidden"> about {activity.name}</span>
+            </Button>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<script>
+  // Touch: first tap on a card clears it; a second tap on its button follows the link.
+  // Mouse and keyboard need no script (hover and :focus-within handle them).
+  const cards = document.querySelectorAll<HTMLElement>('.ccard');
+  let lastPointer = 'mouse';
+
+  document.addEventListener(
+    'pointerdown',
+    (event) => {
+      lastPointer = event.pointerType;
+    },
+    { capture: true },
+  );
+
+  cards.forEach((card) => {
+    card.addEventListener('click', (event) => {
+      if (lastPointer !== 'touch' || card.hasAttribute('data-active')) return;
+      event.preventDefault();
+      cards.forEach((other) => other.toggleAttribute('data-active', other === card));
+    });
+  });
+
+  // Tapping anywhere else returns the cards to rest.
+  document.addEventListener('click', (event) => {
+    if (!(event.target as Element).closest('.ccard')) {
+      cards.forEach((card) => card.removeAttribute('data-active'));
+    }
+  });
+</script>
+
+<style>
+  .ccards__heading,
+  .ccards__caption {
+    text-align: center;
+    margin-inline: auto;
+  }
+
+  .ccards__caption {
+    margin-top: var(--space-4);
+  }
+
+  /* Show the caption that matches the mode. */
+  .ccards__caption--calm {
+    display: none;
+  }
+
+  :global(html[data-mode='calm']) .ccards__caption--standard {
+    display: none;
+  }
+
+  :global(html[data-mode='calm']) .ccards__caption--calm {
+    display: block;
+  }
+
+  /* ---------- The row ---------- */
+  .ccards {
+    display: grid;
+    gap: var(--space-5);
+    margin-top: var(--space-8);
+    padding: 0;
+    list-style: none;
+  }
+
+  /* ---------- A card at rest ---------- */
+  .ccard {
+    --y: 0px;
+    --scale: 1;
+    --mix: var(--card-rest-mix);
+    position: relative;
+    overflow: hidden;
+    background: var(--card-color); /* fallback where color-mix isn't supported */
+    background: color-mix(in srgb, var(--card-color) var(--mix), var(--paper));
+    color: var(--ink);
+    transform: translateY(var(--y)) scale(var(--scale));
+    transition:
+      background-color var(--dur-slow) var(--ease),
+      transform var(--dur-slow) var(--ease);
+  }
+
+  .ccard__clutter {
+    display: var(--clutter);
+    position: absolute;
+    inset: 0;
+    opacity: 1;
+    pointer-events: none;
+    user-select: none;
+    transition: opacity var(--dur-slow) var(--ease);
+  }
+
+  .ccard__fragment {
+    position: absolute;
+    white-space: nowrap;
+    font-family: var(--font-body);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--ink);
+    opacity: var(--clutter-opacity);
+    transform: rotate(var(--rotate));
+  }
+
+  .ccard__fragment--extra {
+    display: var(--clutter-extra);
+  }
+
+  .ccard__content {
+    position: relative; /* above the clutter */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+    height: 100%;
+    padding: var(--space-6);
+  }
+
+  .ccard__title {
+    font-size: var(--fs-card);
+    color: var(--ink); /* always full contrast */
+  }
+
+  .ccard__summary {
+    color: var(--ink-subdued);
+    transition: color var(--dur-slow) var(--ease);
+  }
+
+  /* The button sits flat (no offset shadow) until the card is active. */
+  .ccard :global(.ccard__button) {
+    margin-top: auto;
+    box-shadow: 0 0 0 var(--button-shadow);
+  }
+
+  /* ---------- The active card: hover, keyboard focus, or tap ---------- */
+  .ccard:is(:hover, :focus-within, [data-active]) {
+    --mix: 100%;
+    --scale: var(--hover-scale);
+    z-index: 2;
+  }
+
+  .ccard:is(:hover, :focus-within, [data-active]) .ccard__clutter {
+    opacity: 0;
+  }
+
+  .ccard:is(:hover, :focus-within, [data-active]) .ccard__summary {
+    color: var(--ink);
+  }
+
+  .ccard:is(:hover, :focus-within, [data-active]) :global(.ccard__button) {
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--button-shadow);
+  }
+
+  /* Neighbors dim slightly while another card is active. Titles stay full contrast. */
+  .ccards:has(.ccard:is(:hover, :focus-within, [data-active])) .ccard:not(:hover, :focus-within, [data-active]) {
+    --mix: var(--card-dim-mix);
+  }
+
+  /* ---------- Staggered row on wide screens (Standard and Vivid) ---------- */
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .ccards {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0;
+      padding-block: calc(var(--stagger) / 2);
+    }
+
+    :global(html:not([data-mode='calm'])) .ccard {
+      aspect-ratio: 1;
+      margin-inline: calc(var(--overlap) / -4); /* edges overlap slightly */
+    }
+
+    :global(html:not([data-mode='calm'])) .ccard:nth-child(odd) {
+      --y: calc(var(--stagger) / -2);
+    }
+
+    :global(html:not([data-mode='calm'])) .ccard:nth-child(even) {
+      --y: calc(var(--stagger) / 2);
+    }
+  }
+
+  /* ---------- Calm: clear from the start, one column, instant outline ---------- */
+  :global(html[data-mode='calm']) .ccards {
+    max-width: 40rem;
+    margin-inline: auto;
+  }
+
+  :global(html[data-mode='calm']) .ccard:is(:hover, :focus-within, [data-active]) {
+    outline: var(--focus-width) solid var(--ink);
+    outline-offset: 0;
+  }
+</style>

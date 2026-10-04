@@ -1,0 +1,50 @@
+---
+// A two-column band: a large heading on the left; short paragraphs and a
+// button on the right. Stacks into one column in Calm and on narrow screens.
+//
+// Usage:
+//   <IntroBand id="intro" heading="…" color="yellow">
+//     <p>…</p>
+//     <Button …>…</Button>
+//   </IntroBand>
+import Band from './Band.astro';
+
+interface Props {
+  id: string; // used to label the section by its heading
+  heading: string;
+  color?: 'paper' | 'white' | 'yellow' | 'orange' | 'pink' | 'black';
+  class?: string;
+}
+
+const { id, heading, color = 'paper', class: className } = Astro.props;
+const headingId = `${id}-heading`;
+---
+
+<Band id={id} color={color} labelledby={headingId} class={className}>
+  <div class="intro">
+    <h2 id={headingId}>{heading}</h2>
+    <div class="intro__body flow">
+      <slot />
+    </div>
+  </div>
+</Band>
+
+<style>
+  .intro {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .intro__body :global(.button),
+  .intro__body :global(.call-or-text) {
+    margin-top: var(--space-6);
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .intro {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      gap: var(--space-8);
+      align-items: start;
+    }
+  }
+</style>

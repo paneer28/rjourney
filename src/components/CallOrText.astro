@@ -1,0 +1,44 @@
+---
+// The sign-up action used everywhere: a "Call or text" button (tel:)
+// with a smaller "Send a text" link (sms:) beside it. There is no form.
+import Button from './Button.astro';
+import { site } from '../data/site';
+
+interface Props {
+  variant?: 'black' | 'yellow';
+  class?: string;
+}
+
+const { variant = 'black', class: className } = Astro.props;
+---
+
+<div class:list={['call-or-text', className]}>
+  <Button href={site.phone.tel} variant={variant}>
+    Call or text <span class="call-or-text__number">{site.phone.display}</span>
+  </Button>
+  <a class="call-or-text__sms" href={site.phone.sms}>Send a text</a>
+</div>
+
+<style>
+  .call-or-text {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4) var(--space-6);
+  }
+
+  /* The number never splits across lines. If the button is too narrow for the
+     whole label, it breaks before the number instead. */
+  .call-or-text__number {
+    white-space: nowrap;
+  }
+
+  .call-or-text__sms {
+    font-size: var(--fs-small);
+    font-weight: 700;
+  }
+
+  .call-or-text__sms:hover {
+    text-decoration-thickness: 3px;
+  }
+</style>

@@ -1,0 +1,85 @@
+---
+// A rectangular link button: label on the left, a long thin arrow on the right,
+// and a hard offset shadow.
+//   variant="black":  black with white text, pink shadow. Use on yellow, orange, white, paper.
+//   variant="yellow": yellow with black text, orange shadow. Use on pink, black, photos.
+
+interface Props {
+  href: string;
+  variant?: 'black' | 'yellow';
+  newTab?: boolean;
+  class?: string;
+}
+
+const { href, variant = 'black', newTab = false, class: className } = Astro.props;
+---
+
+<a
+  href={href}
+  class:list={['button', `button--${variant}`, className]}
+  target={newTab ? '_blank' : undefined}
+  rel={newTab ? 'noopener' : undefined}
+>
+  <span class="button__label"><slot /></span>
+  {newTab && <span class="visually-hidden"> (opens in a new tab)</span>}
+  <svg class="button__arrow" viewBox="0 0 40 12" width="40" height="12" aria-hidden="true" focusable="false">
+    <path d="M0 6h38M33 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"></path>
+  </svg>
+</a>
+
+<style>
+  .button {
+    --button-shadow: var(--pink);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-5);
+    padding: var(--space-4) var(--space-5);
+    border: 2px solid var(--button-border);
+    font-family: var(--font-body);
+    font-weight: 700;
+    line-height: 1.25;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--button-shadow);
+    transition:
+      text-decoration-color var(--dur) var(--ease),
+      transform var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease);
+  }
+
+  .button--black {
+    --button-shadow: var(--pink);
+    background: var(--black);
+    color: var(--on-black);
+  }
+
+  .button--yellow {
+    --button-shadow: var(--orange);
+    background: var(--yellow);
+    color: var(--ink);
+  }
+
+  .button__arrow {
+    flex: none;
+    width: 2.5rem;
+    height: auto;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  /* Standard: the underline fades in. Vivid: the button also lifts and the arrow slides.
+     Calm: the underline appears instantly (all durations are 0). */
+  .button:hover,
+  .button:focus-visible {
+    text-decoration-color: currentColor;
+    transform: translate(var(--button-lift), calc(-1 * var(--button-lift)));
+    box-shadow: calc(-1 * (var(--shadow-offset) + var(--button-lift))) calc(var(--shadow-offset) + var(--button-lift)) 0
+      var(--button-shadow);
+  }
+
+  .button:hover .button__arrow,
+  .button:focus-visible .button__arrow {
+    transform: translateX(var(--arrow-shift));
+  }
+</style>

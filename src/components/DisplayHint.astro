@@ -1,0 +1,42 @@
+---
+// One quiet line under the header, shown on a visitor's first page view only.
+// The <head> script sets data-hint="show" on <html> when it should appear;
+// choosing a mode removes it. Not a pop-up, nothing to close.
+import DisplayButton from './DisplayButton.astro';
+---
+
+<p class="display-hint container">
+  <DisplayButton label="You can make this site calmer or more vivid." class="display-hint__link" />
+</p>
+
+<style>
+  /* A quiet strip in the page color, so it stays readable even over the hero photo. */
+  .display-hint {
+    display: none;
+    max-width: none;
+    padding-block: var(--space-2);
+    background: var(--page-bg);
+    color: var(--ink);
+    font-size: var(--fs-small);
+  }
+
+  :global(html[data-hint='show']) .display-hint {
+    display: block;
+  }
+
+  /* Looks like a text link. */
+  .display-hint :global(.display-hint__link) {
+    padding: 0;
+    background: none;
+    border: 0;
+    text-align: left;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+
+  .display-hint :global(.display-hint__link:hover) {
+    text-decoration-thickness: 2px;
+  }
+</style>

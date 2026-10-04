@@ -1,0 +1,35 @@
+---
+// Every Donate button on the site. Reads the donate URL from site.ts:
+// while it is empty, links to the giving section of the Contact page;
+// once it is set, opens that URL in a new tab.
+//
+// `bare` renders a plain link (no button styling) for places with their own
+// look, such as the pink Donate block in the header.
+import Button from './Button.astro';
+import { site } from '../data/site';
+
+interface Props {
+  variant?: 'black' | 'yellow';
+  bare?: boolean;
+  class?: string;
+  label?: string;
+}
+
+const { variant = 'black', bare = false, class: className, label = 'Donate' } = Astro.props;
+
+const hasUrl = site.donateUrl !== '';
+const href = hasUrl ? site.donateUrl : '/contact#give';
+---
+
+{
+  bare ? (
+    <a href={href} class={className} target={hasUrl ? '_blank' : undefined} rel={hasUrl ? 'noopener' : undefined}>
+      {label}
+      {hasUrl && <span class="visually-hidden"> (opens in a new tab)</span>}
+    </a>
+  ) : (
+    <Button href={href} variant={variant} newTab={hasUrl} class={className}>
+      {label}
+    </Button>
+  )
+}

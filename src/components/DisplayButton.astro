@@ -1,0 +1,16 @@
+---
+// A button that opens the Display panel. Used in the header ("Display"),
+// the footer ("Display settings"), and the first-visit hint.
+// Hidden when JavaScript is off, because the panel needs it to work.
+
+interface Props {
+  label?: string;
+  class?: string;
+}
+
+const { label = 'Display', class: className } = Astro.props;
+---
+
+<button type="button" class:list={['display-button', 'needs-js', className]} popovertarget="display-panel">
+  {label}
+</button>

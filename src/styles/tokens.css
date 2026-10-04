@@ -1,0 +1,190 @@
+/*
+  Design tokens for all three display modes.
+
+  The mode lives on <html data-mode="calm | standard | vivid">.
+  Standard is the default (it is also what visitors see with JavaScript off).
+  Calm and Vivid override only the tokens that differ.
+
+  Components read these tokens. They never hard-code a color, duration, or size.
+*/
+
+:root,
+:root[data-mode='standard'] {
+  /* ---------- Palette ---------- */
+  --yellow: #f9dd4a;
+  --pink: #dc418a;
+  --orange: #f08c35;
+  --black: #000000;
+  --paper: #f4f4f4;
+  --white: #ffffff;
+  --pale-gray: #e2e2e2; /* decoration behind story blocks */
+
+  /* ---------- Roles ---------- */
+  --ink: var(--black); /* text on light and colored backgrounds */
+  --ink-subdued: #3b3b3b; /* resting clearing-card text; still AA on the washed card colors */
+  --on-black: var(--white); /* text on anything filled with --black (buttons, swatches) */
+  --page-bg: var(--paper);
+  --placeholder-bg: #d4d4d4; /* image placeholders; ink label on top */
+  --dark-band-bg: var(--black);
+  --dark-band-fg: var(--white);
+  --on-pink-heading: var(--white); /* large headlines only; body text on pink is black */
+  --focus-color: var(--black); /* dark bands switch this to white */
+  --focus-width: 3px;
+  --focus-offset: 3px;
+
+  /* ---------- Type ---------- */
+  --font-display: 'Anton', 'League Gothic', Impact, sans-serif;
+  --font-body: 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  --heading-font: var(--font-display);
+  --heading-weight: 400; /* Anton has one weight */
+  --heading-transform: uppercase;
+  --heading-leading: 1.03;
+  --heading-tracking: 0.005em;
+
+  --fs-body: 1.1875rem;
+  --fs-small: 0.9375rem;
+  --fs-hero: clamp(2.5rem, 6vw, 4.5rem);
+  --fs-section: clamp(2.25rem, 5vw, 4rem);
+  --fs-panel: clamp(2rem, 3.5vw, 3rem); /* headings inside story panels */
+  --fs-card: 2rem;
+  --body-leading: 1.6;
+  --measure: 60ch;
+
+  /* ---------- Space ---------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --section-space: var(--space-9); /* vertical padding of a full-width band */
+  --container: 1200px;
+  --gutter: clamp(1rem, 4vw, 2rem);
+
+  /* ---------- Shape and decoration ---------- */
+  --radius: 0; /* square corners in every mode */
+  --shadow-offset: 6px; /* hard offset shadow on buttons: -6px 6px 0 */
+  --button-border: transparent; /* Calm outlines buttons so they read on muted bands */
+  --button-lift: 0px; /* how far a button lifts toward the top-right on hover; Vivid raises it */
+  --overlap: 60px; /* how far blocks overlap each other */
+  --stagger: 60px; /* raise/lower distance in the staggered card row */
+  --story-shift: 4rem; /* sideways shift between story blocks */
+  --diamond-clip: polygon(12% 0, 88% 0, 100% 12%, 100% 88%, 88% 100%, 12% 100%, 0 88%, 0 12%);
+  --diamond-rotate: 45deg;
+  --decoration: block; /* set to none to hide background decoration */
+  --clutter: block; /* the clearing cards' clutter layer */
+  --clutter-extra: none; /* extra fragments; Vivid shows them for a denser layer */
+  --clutter-opacity: 0.08; /* faint: the words must never read as our own statements (max ~12%) */
+  --card-rest-mix: 55%; /* how much of its full color a clearing card shows at rest */
+  --card-dim-mix: 40%; /* ...and while a neighboring card is active */
+
+  /* ---------- Motion ---------- */
+  --dur-fast: 200ms;
+  --dur: 250ms;
+  --dur-slow: 300ms;
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --hover-scale: 1; /* card scale-up on hover; Vivid raises it */
+  --arrow-shift: 0px; /* how far a button's arrow slides on hover */
+}
+
+/* ===================================================================
+   Calm: muted and matte, nothing moves, one column, larger text.
+   =================================================================== */
+:root[data-mode='calm'] {
+  --yellow: #e8dda8; /* straw */
+  --pink: #d9b8c4; /* dusty rose */
+  --orange: #ddbf9f; /* sand */
+  --black: #1f1f1f; /* ink */
+  --paper: #f5f2ec;
+  --white: #fbf9f5;
+  --pale-gray: transparent;
+
+  --ink: #1f1f1f;
+  --ink-subdued: var(--ink);
+  --on-black: #ffffff;
+  --page-bg: var(--paper);
+  --placeholder-bg: #e3ddd2;
+  --dark-band-bg: var(--paper); /* black bands become paper with ink text */
+  --dark-band-fg: var(--ink);
+  --on-pink-heading: var(--ink);
+  --focus-color: var(--ink);
+
+  --heading-font: var(--font-body);
+  --heading-weight: 700;
+  --heading-transform: none;
+  --heading-leading: 1.2;
+  --heading-tracking: 0;
+
+  --fs-body: 1.33rem; /* about 12% larger than Standard */
+  --fs-small: 1.05rem;
+  --fs-hero: clamp(2.25rem, 5vw, 3.5rem);
+  --fs-section: clamp(2rem, 4.5vw, 3rem);
+  --fs-panel: clamp(1.75rem, 3vw, 2.25rem);
+  --fs-card: 1.75rem;
+  --body-leading: 1.65;
+
+  --section-space: 8rem;
+
+  --shadow-offset: 0px;
+  --button-border: var(--ink);
+  --button-lift: 0px;
+  --overlap: 0px;
+  --stagger: 0px;
+  --story-shift: 0px;
+  --diamond-clip: none;
+  --diamond-rotate: 0deg;
+  --decoration: none;
+  --clutter: none;
+  --clutter-extra: none;
+  --clutter-opacity: 0;
+  --card-rest-mix: 100%; /* clear from the start */
+  --card-dim-mix: 100%;
+
+  --dur-fast: 0ms;
+  --dur: 0ms;
+  --dur-slow: 0ms;
+  --hover-scale: 1;
+  --arrow-shift: 0px;
+}
+
+/* ===================================================================
+   Vivid: the same hues, more saturated, with fuller motion.
+   =================================================================== */
+:root[data-mode='vivid'] {
+  --yellow: #ffe033;
+  --pink: #e6308a;
+  --orange: #ff8a1f;
+
+  --clutter-extra: block;
+  --clutter-opacity: 0.1;
+  --card-rest-mix: 60%;
+  --card-dim-mix: 45%;
+
+  --dur-fast: 250ms;
+  --dur: 320ms;
+  --dur-slow: 400ms;
+  --ease: cubic-bezier(0.34, 1.3, 0.64, 1); /* slight overshoot */
+  --hover-scale: 1.05;
+  --arrow-shift: 6px;
+  --button-lift: 3px;
+}
+
+/*
+  With JavaScript off, the page stays in Standard. If the device asks for
+  reduced motion, remove all transitions. (With JavaScript on, such visitors
+  start in Calm instead, and can still choose another mode themselves.)
+*/
+@media (prefers-reduced-motion: reduce) {
+  :root.no-js {
+    --dur-fast: 0ms;
+    --dur: 0ms;
+    --dur-slow: 0ms;
+    --hover-scale: 1;
+    --arrow-shift: 0px;
+    --button-lift: 0px;
+  }
+}

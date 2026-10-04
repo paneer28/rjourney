@@ -1,0 +1,179 @@
+/*
+  Base styles shared by every page. Colors, sizes, and timings come from tokens.css.
+*/
+
+/* ---------- Reset ---------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--page-bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--body-leading);
+  -webkit-font-smoothing: antialiased;
+}
+
+img,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---------- Type ---------- */
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--heading-font);
+  font-weight: var(--heading-weight);
+  text-transform: var(--heading-transform);
+  line-height: var(--heading-leading);
+  letter-spacing: var(--heading-tracking);
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--fs-hero);
+}
+
+h2 {
+  font-size: var(--fs-section);
+}
+
+h3 {
+  font-size: var(--fs-card);
+}
+
+p {
+  max-width: var(--measure);
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}
+
+small,
+.small {
+  font-size: var(--fs-small);
+}
+
+/* ---------- Focus: a 3px outline, visible on every background ---------- */
+:focus-visible {
+  outline: var(--focus-width) solid var(--focus-color);
+  outline-offset: var(--focus-offset);
+}
+
+/* ---------- Layout helpers ---------- */
+.container {
+  width: 100%;
+  max-width: calc(var(--container) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* Even vertical rhythm between stacked children, e.g. heading, paragraphs, button. */
+.flow > * + * {
+  margin-top: var(--space-5);
+}
+
+/* Section headings above a row of cards are centered; everything else is left-aligned. */
+.heading-center {
+  text-align: center;
+  margin-inline: auto;
+}
+
+/* A row of equal cards or panels. Three across on wide screens (not in Calm), one column otherwise. */
+.card-row {
+  display: grid;
+  gap: var(--space-5);
+  margin-top: var(--space-7);
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 56rem) {
+  html:not([data-mode='calm']) .card-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* A section on a dark band switches text and focus colors. */
+.on-dark {
+  background: var(--dark-band-bg);
+  color: var(--dark-band-fg);
+  --focus-color: var(--dark-band-fg);
+}
+
+/* ---------- Skip link ---------- */
+.skip-link {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 100;
+  padding: var(--space-3) var(--space-4);
+  background: var(--yellow);
+  color: var(--ink);
+  font-weight: 700;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: none;
+}
+
+/* <main> receives focus from the skip link; it doesn't need an outline. */
+main:focus {
+  outline: none;
+}
+
+/* Decoration that bleeds off the edge (story block rectangles, diamond photos)
+   must never cause sideways scrolling. */
+main {
+  overflow-x: clip;
+}
+
+/* ---------- Utilities ---------- */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Things that need JavaScript to work are hidden when it is off. */
+.no-js .needs-js {
+  display: none !important;
+}

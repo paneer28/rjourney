@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import IntroBand from '../components/IntroBand.astro';
+import Band from '../components/Band.astro';
+import ClearingCards from '../components/ClearingCards.astro';
+import DiamondBand from '../components/DiamondBand.astro';
+import CtaStrip from '../components/CtaStrip.astro';
+import Button from '../components/Button.astro';
+import DonateButton from '../components/DonateButton.astro';
+import CallOrText from '../components/CallOrText.astro';
+import { images } from '../data/images';
+import { site } from '../data/site';
+---
+
+<BaseLayout
+  title={site.name}
+  description="R Journey runs hands-on activities for children and teens with Autism Spectrum Disorder (ASD) in Apex, North Carolina, and across the Triangle. Call or text to join an activity, or make a donation."
+  headerOverlay
+>
+  <Hero image={images.homeHero} heading="A place to learn, play, and belong" below="yellow">
+    <p>Hands-on activities for children and teens with Autism Spectrum Disorder (ASD) in the Triangle.</p>
+    <Fragment slot="actions">
+      <Button href="/activities" variant="yellow">See our activities</Button>
+      <DonateButton variant="yellow" />
+    </Fragment>
+  </Hero>
+
+  <IntroBand id="intro" heading="New, local, and here for your family" color="yellow" class="after-hero">
+    <p>
+      R Journey is a nonprofit in Apex, North Carolina, started in 2025. We run activities where children and teens with
+      ASD can write their first lines of code, arrange a bouquet, or learn to play badminton.
+    </p>
+    <p>
+      Each one gives neurodivergent young people a chance to build a skill, meet people, and have a good time doing it.
+      We're a young organization, and we're growing one activity at a time.
+    </p>
+    <Button href="/about">About R Journey</Button>
+  </IntroBand>
+
+  <Band labelledby="what-we-do-heading">
+    <ClearingCards headingId="what-we-do-heading" heading="What we do" />
+  </Band>
+
+  <DiamondBand id="join" heading="Want to join in?" images={images.joinDiamonds}>
+    <p>
+      Parents, call or text us. We'll tell you what's running now and help you choose an activity for your child with
+      ASD.
+    </p>
+    <p>Teens, you're welcome to reach out yourself, or ask a parent to. If calling is hard, a text works just as well.</p>
+    <CallOrText variant="yellow" />
+  </DiamondBand>
+
+  <Band color="black" tight>
+    <CtaStrip id="donate" heading="Help us keep the activities running">
+      <p>
+        Every gift goes toward activities for children and teens with ASD. You don't need a personal connection to
+        autism to be part of this. You only need to think neurodivergent young people deserve the same chances as
+        everyone else.
+      </p>
+      <p class="small">{site.statusLine}</p>
+      <DonateButton slot="action" variant="yellow" />
+    </CtaStrip>
+  </Band>
+</BaseLayout>

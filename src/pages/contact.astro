@@ -1,0 +1,175 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeading from '../components/PageHeading.astro';
+import Band from '../components/Band.astro';
+import Panel from '../components/Panel.astro';
+import CallOrText from '../components/CallOrText.astro';
+import DonateButton from '../components/DonateButton.astro';
+import { site } from '../data/site';
+
+// The contact blocks. `href` makes the block a link; the mail block appears only
+// when a mailing address is set in site.ts.
+const details = [
+  { label: 'Call or text', value: site.phone.display, href: site.phone.tel, color: 'yellow' },
+  { label: 'Email', value: site.email, href: `mailto:${site.email}`, color: 'white' },
+  { label: 'Instagram', value: `@${site.instagram.handle}`, href: site.instagram.url, color: 'orange' },
+  ...(site.mailingAddress ? [{ label: 'Mail', value: site.mailingAddress, color: 'white' }] : []),
+  {
+    label: 'Where we are',
+    value: 'Apex, North Carolina. Serving families across the Triangle.',
+    color: 'pink',
+  },
+] as { label: string; value: string; href?: string; color: string }[];
+---
+
+<BaseLayout
+  title="Contact"
+  description="Call or text R Journey at (858) 610-9661 to sign up for an activity, ask a question, or make a donation. Based in Apex, North Carolina, serving families across the Triangle."
+>
+  <PageHeading heading="Talk to us" />
+
+  <Band labelledby="reach-heading">
+    <h2 id="reach-heading" class="visually-hidden">How to reach us</h2>
+    <div class="flow">
+      <p class="lead">
+        The quickest way to reach us is a call or a text. Tell us a little about your child, or about yourself, and what
+        you're interested in. We'll take it from there.
+      </p>
+      <p>If calling is hard for you, text or email instead. Any of them is fine.</p>
+    </div>
+
+    <ul class="details" role="list">
+      {
+        details.map((detail) => (
+          <li class={`detail detail--${detail.color}`}>
+            {detail.href ? (
+              <a class="detail__inner" href={detail.href}>
+                <span class="detail__label">{detail.label}</span>
+                <span class="detail__value">{detail.value}</span>
+              </a>
+            ) : (
+              <div class="detail__inner">
+                <span class="detail__label">{detail.label}</span>
+                <span class="detail__value">{detail.value}</span>
+              </div>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </Band>
+
+  <Band tight class="panels-band">
+    <div class="panels">
+      <Panel heading="Sign up for an activity" color="orange" id="sign-up">
+        <p>
+          Call or text and tell us which activity you're interested in. We'll let you know when the next session is and
+          what to bring.
+        </p>
+        <CallOrText />
+      </Panel>
+
+      <Panel heading="Make a donation" color="pink" id="give">
+        <p>Every gift goes toward activities for children and teens with Autism Spectrum Disorder (ASD).</p>
+        <p class="small">{site.statusLine}</p>
+        {
+          /* While there is no donate URL, a Donate button here would link to this same page. */
+          site.donateUrl ? <DonateButton variant="yellow" /> : <CallOrText variant="yellow" />
+        }
+      </Panel>
+    </div>
+  </Band>
+</BaseLayout>
+
+<style>
+  .lead {
+    font-size: 1.2em;
+  }
+
+  /* ---------- Contact detail blocks ---------- */
+  .details {
+    display: grid;
+    gap: var(--space-3);
+    margin-top: var(--space-7);
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 40rem) {
+    :global(html:not([data-mode='calm'])) .details {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .detail {
+    color: var(--ink);
+    --focus-color: var(--ink);
+  }
+
+  .detail--yellow { background: var(--yellow); }
+  .detail--white { background: var(--white); }
+  .detail--orange { background: var(--orange); }
+  .detail--pink { background: var(--pink); }
+
+  .detail__inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    height: 100%;
+    padding: var(--space-6);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .detail__label {
+    font-weight: 700;
+    font-size: var(--fs-small);
+  }
+
+  .detail__value {
+    font-size: 1.35em;
+    font-weight: 700;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+
+  /* Linked blocks: the value underlines on hover and focus (instantly in Calm). */
+  a.detail__inner .detail__value {
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+    transition: text-decoration-color var(--dur) var(--ease);
+  }
+
+  a.detail__inner:hover .detail__value,
+  a.detail__inner:focus-visible .detail__value {
+    text-decoration-color: currentColor;
+  }
+
+  a.detail__inner:focus-visible {
+    outline-offset: calc(-1 * var(--focus-width) - 2px);
+  }
+
+  /* ---------- Sign up and give, side by side on wide screens ---------- */
+  :global(.panels-band) {
+    padding-top: 0;
+    padding-bottom: var(--section-space);
+  }
+
+  .panels {
+    display: grid;
+    gap: var(--space-5);
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .panels {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  :global(html[data-mode='calm']) .details,
+  :global(html[data-mode='calm']) .panels {
+    max-width: 40rem;
+  }
+</style>

@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeading from '../components/PageHeading.astro';
+import Band from '../components/Band.astro';
+import StoryBlock from '../components/StoryBlock.astro';
+import CtaStrip from '../components/CtaStrip.astro';
+import CallOrText from '../components/CallOrText.astro';
+import { activities } from '../data/activities';
+---
+
+<BaseLayout
+  title="Activities"
+  description="STEM Builders Camp, Flower Sale, and Badminton Camp: the activities R Journey runs for children and teens with Autism Spectrum Disorder (ASD) in the Triangle. Call or text to join."
+>
+  <PageHeading heading="Activities">
+    <p>
+      These are the activities R Journey runs for children and teens with Autism Spectrum Disorder (ASD). To join one,
+      or to ask when the next session is, call or text us.
+    </p>
+  </PageHeading>
+
+  <Band>
+    <div class="stories">
+      {
+        activities.map((activity, index) => (
+          <StoryBlock
+            id={activity.id}
+            heading={activity.name}
+            image={activity.image}
+            color={activity.panelColor}
+            reverse={index % 2 === 1}
+          >
+            {activity.paragraphs.map((text) => <p>{text}</p>)}
+            <CallOrText />
+          </StoryBlock>
+        ))
+      }
+    </div>
+  </Band>
+
+  <Band tight class="cta-band">
+    <CtaStrip id="not-sure" heading="Not sure which one fits?">
+      <CallOrText slot="action" variant="yellow" />
+    </CtaStrip>
+  </Band>
+</BaseLayout>
+
+<style>
+  .stories {
+    display: grid;
+    gap: var(--space-9);
+  }
+
+  /* Anchor links from the home page cards land with a little room above the block. */
+  .stories :global(.story) {
+    scroll-margin-top: var(--space-6);
+  }
+
+  :global(.cta-band) {
+    padding-top: 0;
+    padding-bottom: var(--section-space);
+  }
+</style>

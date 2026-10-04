@@ -1,0 +1,29 @@
+---
+// The yellow band at the top of every page except Home, holding the page's <h1>
+// and, optionally, a line of text beneath it.
+//
+// Usage:
+//   <PageHeading heading="Activities">
+//     <p>…</p>
+//   </PageHeading>
+import Band from './Band.astro';
+
+interface Props {
+  heading: string;
+}
+
+const { heading } = Astro.props;
+---
+
+<Band color="yellow" labelledby="page-heading" class="page-heading">
+  <div class="flow">
+    <h1 id="page-heading">{heading}</h1>
+    <slot />
+  </div>
+</Band>
+
+<style>
+  .page-heading :global(p) {
+    font-size: 1.15em;
+  }
+</style>

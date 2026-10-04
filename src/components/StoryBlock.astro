@@ -1,0 +1,133 @@
+---
+// A photo and a solid color panel side by side, equal height, touching.
+// Successive blocks alternate the photo side (`reverse`) and shift sideways,
+// with a pale gray rectangle behind. Calm and narrow screens stack them in one column.
+//
+// Usage:
+//   <StoryBlock id="flower-sale" heading="Flower Sale" image={...} color="orange" reverse>
+//     <p>…</p>
+//     <CallOrText />
+//   </StoryBlock>
+import Placeholder from './Placeholder.astro';
+import type { ImageSlot } from '../data/images';
+
+interface Props {
+  heading: string;
+  image: ImageSlot;
+  color?: 'yellow' | 'orange' | 'pink' | 'white';
+  reverse?: boolean; // photo on the right
+  id?: string;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { heading, image, color = 'yellow', reverse = false, id, headingLevel: Heading = 'h2' } = Astro.props;
+const headingId = id ? `${id}-heading` : undefined;
+---
+
+<article id={id} aria-labelledby={headingId} class:list={['story', `story--${color}`, { 'story--reverse': reverse }]}>
+  <div class="story__photo">
+    <Placeholder image={image} ratio="4 / 3" />
+  </div>
+  <div class="story__panel">
+    <Heading id={headingId} class="story__heading">{heading}</Heading>
+    <slot />
+  </div>
+</article>
+
+<style>
+  .story {
+    position: relative;
+    isolation: isolate;
+    display: grid;
+    color: var(--ink);
+  }
+
+  .story__panel {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+    padding: var(--space-7) var(--space-6);
+  }
+
+  .story__heading {
+    font-size: var(--fs-panel);
+  }
+
+  .story--pink .story__heading {
+    color: var(--on-pink-heading);
+  }
+
+  .story--yellow .story__panel { background: var(--yellow); }
+  .story--orange .story__panel { background: var(--orange); }
+  .story--pink .story__panel { background: var(--pink); }
+  .story--white .story__panel { background: var(--white); }
+
+  .story__panel :global(.call-or-text),
+  .story__panel :global(.button) {
+    margin-top: var(--space-3);
+  }
+
+  /* Side by side on wide screens, in Standard and Vivid. */
+  @media (min-width: 56rem) {
+    .story {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      margin-inline-end: var(--story-shift);
+    }
+
+    /* Side by side, the photo stretches to the panel's height. */
+    .story__photo :global(.slot) {
+      aspect-ratio: auto;
+      height: 100%;
+      min-height: 22rem;
+    }
+
+    .story--reverse {
+      margin-inline: var(--story-shift) 0;
+    }
+
+    .story--reverse .story__photo {
+      order: 2;
+    }
+
+    /* The pale gray rectangle peeking out behind the block. */
+    .story::before {
+      content: '';
+      display: var(--decoration);
+      position: absolute;
+      z-index: -1;
+      top: var(--space-7);
+      bottom: calc(-1 * var(--space-7));
+      left: calc(-1 * var(--space-7));
+      width: 55%;
+      background: var(--pale-gray);
+    }
+
+    .story--reverse::before {
+      left: auto;
+      right: calc(-1 * var(--space-7));
+    }
+
+    .story__panel {
+      padding: var(--space-8) var(--space-7);
+    }
+  }
+
+  /* Calm: one column, square photo, no shift or decoration (tokens handle the last two). */
+  :global(html[data-mode='calm']) .story {
+    grid-template-columns: 1fr;
+    margin-inline: 0;
+  }
+
+  :global(html[data-mode='calm']) .story__photo,
+  :global(html[data-mode='calm']) .story--reverse .story__photo {
+    order: 0;
+    width: min(100%, 32rem);
+  }
+
+  :global(html[data-mode='calm']) .story__photo :global(.slot) {
+    aspect-ratio: 1;
+    height: auto;
+    min-height: 0;
+  }
+</style>

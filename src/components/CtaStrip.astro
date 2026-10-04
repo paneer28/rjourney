@@ -1,0 +1,55 @@
+---
+// A pink call-to-action bar, narrower than the container: heading (and any
+// short text) on the left, a yellow button on the right, in a single row.
+// Stacks on narrow screens and in Calm.
+//
+// Usage:
+//   <CtaStrip id="cta" heading="Not sure which one fits?">
+//     <CallOrText slot="action" variant="yellow" />
+//   </CtaStrip>
+
+interface Props {
+  id: string;
+  heading: string;
+}
+
+const { id, heading } = Astro.props;
+const headingId = `${id}-heading`;
+---
+
+<section id={id} class="cta-strip" aria-labelledby={headingId}>
+  <div class="cta-strip__text flow">
+    <h2 id={headingId}>{heading}</h2>
+    <slot />
+  </div>
+  <div class="cta-strip__action">
+    <slot name="action" />
+  </div>
+</section>
+
+<style>
+  .cta-strip {
+    display: grid;
+    gap: var(--space-6);
+    width: min(100%, 60rem);
+    margin-inline: auto;
+    padding: var(--space-7) var(--space-6);
+    background: var(--pink);
+    color: var(--ink);
+    --focus-color: var(--ink);
+  }
+
+  .cta-strip h2 {
+    font-size: var(--fs-panel); /* keeps the headline to two lines beside the button */
+    color: var(--on-pink-heading);
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .cta-strip {
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: var(--space-8);
+      padding: var(--space-7) var(--space-8);
+    }
+  }
+</style>

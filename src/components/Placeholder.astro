@@ -1,0 +1,62 @@
+---
+// An image slot. Shows the real photo once `image.src` is set in a data file;
+// until then, a flat token-colored block at the same aspect ratio with a short
+// visible label describing the photo that belongs there.
+// Either way the space is reserved, so nothing shifts when a photo loads.
+import type { ImageSlot } from '../data/images';
+
+interface Props {
+  image: ImageSlot;
+  ratio?: string; // CSS aspect-ratio, e.g. '4 / 3', '1', '16 / 9'
+  eager?: boolean; // load right away (hero); otherwise lazy
+  class?: string;
+}
+
+const { image, ratio = '4 / 3', eager = false, class: className } = Astro.props;
+---
+
+<div class:list={['slot', className]} style={`--ratio: ${ratio}`}>
+  {
+    image.src ? (
+      <img src={image.src} alt={image.alt} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+    ) : (
+      <div class="placeholder" role={image.alt ? 'img' : undefined} aria-label={image.alt || undefined} aria-hidden={image.alt ? undefined : 'true'}>
+        <span class="placeholder__label" aria-hidden="true">{image.label}</span>
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .slot {
+    position: relative;
+    aspect-ratio: var(--ratio);
+    overflow: hidden;
+    background: var(--placeholder-bg);
+  }
+
+  img,
+  .placeholder {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  img {
+    object-fit: cover;
+  }
+
+  .placeholder {
+    display: flex;
+    align-items: flex-end;
+    padding: var(--space-4);
+    background: var(--placeholder-bg);
+    color: var(--ink);
+  }
+
+  .placeholder__label {
+    font-size: var(--fs-small);
+    font-weight: 700;
+  }
+</style>
