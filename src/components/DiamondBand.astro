@@ -26,7 +26,7 @@ const headingId = `${id}-heading`;
       {
         images.slice(0, 3).map((image, i) => (
           <div class={`diamond diamond--${i + 1}`}>
-            <div class="diamond__photo">
+            <div class="diamond__photo" style={image.focus ? `--focus: ${image.focus}` : undefined}>
               <Placeholder image={image} ratio="1" />
             </div>
           </div>
@@ -73,11 +73,19 @@ const headingId = `${id}-heading`;
     transform: rotate(var(--diamond-rotate));
   }
 
-  /* Counter-rotate and enlarge the photo so it stays upright and fills the diamond. */
+  /* Counter-rotate and enlarge the photo so it stays upright and fills the diamond.
+     An image's `focus` (images.ts) moves the point it zooms toward. */
   .diamond__photo {
     width: 100%;
     height: 100%;
-    transform: rotate(calc(-1 * var(--diamond-rotate))) scale(1.42);
+    transform: rotate(calc(-1 * var(--diamond-rotate)));
+  }
+
+  /* The zoom is on the photo itself, so it can center on `focus` while the
+     rotation above stays centered. */
+  .diamond__photo :global(.slot) {
+    transform: scale(1.42);
+    transform-origin: var(--focus, 50% 50%);
   }
 
   .diamond--1 { width: 46%; left: 4%;  top: 4%; }
@@ -114,7 +122,8 @@ const headingId = `${id}-heading`;
     width: auto;
   }
 
-  :global(html[data-mode='calm']) .diamond__photo {
+  :global(html[data-mode='calm']) .diamond__photo,
+  :global(html[data-mode='calm']) .diamond__photo :global(.slot) {
     transform: none;
   }
 </style>

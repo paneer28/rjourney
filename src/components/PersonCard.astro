@@ -1,6 +1,6 @@
 ---
 // A person on the About page. `size="large"` (leadership) shows photo, name,
-// title, and description; `size="small"` (board) shows photo and name only.
+// and description; `size="small"` (board) shows photo and name only.
 import Placeholder from './Placeholder.astro';
 import type { Person } from '../data/team';
 
@@ -18,7 +18,6 @@ const photo = { ...person.photo, alt: person.photo.alt || (person.photo.src ? pe
   <Placeholder image={photo} ratio="1" />
   <div class="person__text">
     <h3 class="person__name">{person.name}</h3>
-    {size === 'large' && person.title && <p class="person__title">{person.title}</p>}
     {size === 'large' && person.description && <p class="person__description">{person.description}</p>}
   </div>
 </article>
@@ -45,9 +44,5 @@ const photo = { ...person.photo, alt: person.photo.alt || (person.photo.src ? pe
 
   .person--small .person__name {
     font-size: calc(var(--fs-card) * 0.75);
-  }
-
-  .person__title {
-    font-weight: 700;
   }
 </style>

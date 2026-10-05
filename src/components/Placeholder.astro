@@ -18,7 +18,13 @@ const { image, ratio = '4 / 3', eager = false, class: className } = Astro.props;
 <div class:list={['slot', className]} style={`--ratio: ${ratio}`}>
   {
     image.src ? (
-      <img src={image.src} alt={image.alt} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+      <img
+        src={image.src}
+        alt={image.alt}
+        loading={eager ? 'eager' : 'lazy'}
+        decoding="async"
+        style={image.position ? `object-position: ${image.position}` : undefined}
+      />
     ) : (
       <div class="placeholder" role={image.alt ? 'img' : undefined} aria-label={image.alt || undefined} aria-hidden={image.alt ? undefined : 'true'}>
         <span class="placeholder__label" aria-hidden="true">{image.label}</span>

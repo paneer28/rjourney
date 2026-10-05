@@ -80,7 +80,7 @@ const beliefs = [
 
   <Band color="white" labelledby="leadership-heading">
     <h2 id="leadership-heading" class="heading-center">Leadership team</h2>
-    <ul class="card-row" role="list">
+    <ul class="card-row leadership" role="list">
       {
         leadership.map((person) => (
           <li>
@@ -118,6 +118,15 @@ const beliefs = [
   /* Leadership and board share the white band; no double padding between them. */
   :global(.board-band) {
     padding-top: 0;
+  }
+
+  /* Two leaders: two columns the same width as a three-across row, centered. */
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .leadership {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      max-width: calc((100% - 2 * var(--space-5)) * 2 / 3 + var(--space-5));
+      margin-inline: auto;
+    }
   }
 
   /* Board cards are smaller: a narrower row. */

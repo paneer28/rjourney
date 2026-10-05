@@ -25,7 +25,7 @@ Text lives in data files, so you can change it without touching layout.
 |---|---|
 | `src/data/site.ts` | Name, tagline, phone, email, Instagram, mailing address, donate URL, logo, and the legal status line |
 | `src/data/activities.ts` | The three activities: names, home page card sentences, Activities page paragraphs, photos. Also the list of "assumption" words on the home page cards |
-| `src/data/team.ts` | Leadership team and board of directors (currently placeholders) |
+| `src/data/team.ts` | Leadership team (name, short description, photo) and board of directors (name, photo) |
 | `src/data/images.ts` | Photo slots that aren't tied to an activity or person (home page hero and the three diamond photos) |
 | `src/pages/*.astro` | Page-specific copy (headings and paragraphs for each page) |
 

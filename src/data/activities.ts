@@ -31,15 +31,15 @@ export const activities: Activity[] = [
     ],
   },
   {
-    id: 'flower-sale',
-    name: 'Flower Sale',
+    id: 'nurture-with-love',
+    name: 'Nurture with Love',
     cardColor: 'orange',
     cardSummary: 'Children and teens with ASD arrange bouquets by hand, then help sell them.',
     panelColor: 'orange',
     image: {
       src: '',
-      alt: 'Bouquets from the Flower Sale',
-      label: 'Photo: bouquets from the Flower Sale',
+      alt: 'Bouquets from Nurture with Love',
+      label: 'Photo: bouquets from Nurture with Love',
     },
     paragraphs: [
       'Children and teens with ASD who are curious about floristry arrange fresh bouquets by hand. Then the bouquets go on sale, and the young florists help sell them.',
