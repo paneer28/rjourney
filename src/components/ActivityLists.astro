@@ -171,8 +171,9 @@ const lists = kinds.map(({ kind, label, view }) => {
   (Also recorded in the README, under "How the display modes work".)
 
   How it works: a trigger line sits at --reveal-line (80%) of the viewport height.
-  Each connector is drawn as far as the line has passed through it; each label or
-  block is revealed when the line reaches its top. Reveals are one-way and use
+  Each connector is drawn as far as the line has passed through it (easing to
+  catch up, so it stays smooth on phones); each label or block is revealed when
+  the line above it finishes drawing. Reveals are one-way and use
   only opacity and transform, so the page never changes height. Hidden elements
   are transparent, not removed, so screen readers read them in order.
 
@@ -214,8 +215,21 @@ const lists = kinds.map(({ kind, label, view }) => {
     });
 
     // ----- 2. Scroll reveal -----
+    // Kept smooth on phones in three ways:
+    // - The trigger line is measured against a stable screen height
+    //   (html.clientHeight), not innerHeight, which changes while a phone's
+    //   address bar slides away and would make the lines jump.
+    // - Each frame measures everything first and writes afterwards, so the
+    //   browser lays the page out once per frame, not once per connector.
+    // - A line eases toward the length the scroll calls for (EASE_MS) instead of
+    //   snapping to it, which hides uneven scroll updates on phones.
+    var EASE_MS = 70; // how quickly a line catches up with the scroll
+
+    lists.forEach(function (list) {
+      list._steps = Array.prototype.slice.call(list.querySelectorAll(':scope > .journey__step'));
+    });
     function steps(list) {
-      return Array.prototype.slice.call(list.querySelectorAll(':scope > .journey__step'));
+      return list._steps;
     }
     function isConnector(step) {
       return step.classList.contains('connector');
@@ -223,17 +237,34 @@ const lists = kinds.map(({ kind, label, view }) => {
     function isDone(step) {
       return isConnector(step) ? step.dataset.state === 'drawn' : !!step.dataset.revealed;
     }
+
+    var lineFraction = 0.8;
+    function readLineFraction() {
+      lineFraction = parseFloat(getComputedStyle(html).getPropertyValue('--reveal-line')) || 0.8;
+    }
     function triggerLine() {
-      var fraction = parseFloat(getComputedStyle(html).getPropertyValue('--reveal-line')) || 0.8;
-      return innerHeight * fraction;
+      return html.clientHeight * lineFraction;
+    }
+
+    // Show a connector's line at `value` (0 to 1) of its full length.
+    function setDraw(connector, value) {
+      var line = connector.firstElementChild;
+      connector._shown = value;
+      line.style.transform = value >= 1 ? 'none' : 'scaleY(' + value + ')';
+      if (value >= 1) {
+        connector.dataset.state = 'drawn';
+        line.style.willChange = '';
+      } else if (value > 0) {
+        connector.dataset.state = 'drawing';
+      }
     }
 
     // Reveal one step. how = 'fade' (animates in) or 'now' (appears at once).
     function reveal(step, how) {
       if (isDone(step)) return;
       if (isConnector(step)) {
-        step.style.setProperty('--draw', '1');
-        step.dataset.state = 'drawn';
+        step._target = 1;
+        setDraw(step, 1);
       } else {
         step.dataset.revealed = how;
       }
@@ -265,28 +296,79 @@ const lists = kinds.map(({ kind, label, view }) => {
     }
 
     // Bring the visible list up to date with the trigger line.
-    // instant: reveal without animating (page load, switching lists).
+    // instant: no easing or fading (page load, switching lists).
     function update(instant) {
-      var line = triggerLine();
+      var lineY = triggerLine();
+
+      // Measure first...
+      var work = [];
       lists.forEach(function (list) {
         if (list.hidden) return;
-        steps(list).forEach(function (step) {
-          if (isDone(step)) return;
-          var box = step.getBoundingClientRect();
-          if (isConnector(step)) {
-            var drawn = Math.min(1, Math.max(0, (line - box.top) / box.height));
-            var before = parseFloat(step.style.getPropertyValue('--draw')) || 0;
-            if (drawn > before) {
-              step.style.setProperty('--draw', String(drawn));
-              step.dataset.state = drawn >= 1 ? 'drawn' : 'drawing';
-            }
-          } else if (box.top <= line) {
-            // Anything already above the top of the screen appears without animating.
-            reveal(step, instant || box.bottom < 0 ? 'now' : 'fade');
-          }
+        var all = steps(list);
+        all.forEach(function (step, i) {
+          if (!isDone(step)) work.push({ step: step, before: all[i - 1], box: step.getBoundingClientRect() });
         });
       });
+
+      // ...then write.
+      work.forEach(function (item) {
+        var step = item.step;
+        var box = item.box;
+        var scrolledPast = box.bottom < 0; // above the top of the screen: no animation
+        if (isConnector(step)) {
+          var wanted = Math.min(1, Math.max(0, (lineY - box.top) / box.height));
+          if (wanted > (step._target || 0)) step._target = wanted; // one-way
+          if (instant || scrolledPast) setDraw(step, step._target);
+          // A line only starts once the element above it has appeared; until
+          // then it keeps its target and catches up as soon as it may draw.
+          else if (item.before && !isDone(item.before)) return;
+          else if ((step._shown || 0) < step._target) startEasing(step);
+        } else if (box.top <= lineY) {
+          // An element appears once the line above it has finished drawing.
+          if (instant || scrolledPast) reveal(step, 'now');
+          else if (!item.before || isDone(item.before)) reveal(step, 'fade');
+        }
+      });
+
       if (everythingDone()) stopTracking();
+    }
+
+    // Lines easing toward their target length, one frame at a time.
+    var easing = [];
+    var easeFrame = 0;
+    var lastTime = 0;
+    function startEasing(connector) {
+      if (easing.indexOf(connector) === -1) {
+        easing.push(connector);
+        connector.firstElementChild.style.willChange = 'transform';
+      }
+      if (!easeFrame) {
+        lastTime = performance.now();
+        easeFrame = requestAnimationFrame(ease);
+      }
+    }
+    function ease(now) {
+      var step = 1 - Math.exp(-Math.min(64, now - lastTime) / EASE_MS);
+      lastTime = now;
+      easing = easing.filter(function (connector) {
+        var shown = connector._shown || 0;
+        var target = connector._target || 0;
+        var next = shown + (target - shown) * step;
+        if (target - next < 0.004) next = target;
+        setDraw(connector, next);
+        if (next >= 1) {
+          // Fully drawn: the next element fades in, and the line after it may start.
+          var after = connector.nextElementSibling;
+          if (after && !isDone(after)) {
+            reveal(after, 'fade');
+            onScroll();
+          }
+          return false;
+        }
+        return next < target;
+      });
+      easeFrame = easing.length ? requestAnimationFrame(ease) : 0;
+      if (!easeFrame && everythingDone()) stopTracking();
     }
 
     // One passive scroll listener, throttled to one update per frame.
@@ -307,6 +389,7 @@ const lists = kinds.map(({ kind, label, view }) => {
     }
 
     try {
+      readLineFraction();
       if (html.dataset.mode === 'calm') revealEverything();
       if (target) revealUpTo(target);
       update(true);
@@ -332,8 +415,14 @@ const lists = kinds.map(({ kind, label, view }) => {
 
       // Switching to Calm reveals everything at once (and it stays revealed).
       new MutationObserver(function () {
-        if (html.dataset.mode === 'calm') revealEverything();
-        else update(false);
+        readLineFraction();
+        if (html.dataset.mode === 'calm') {
+          revealEverything();
+          // Finish any fade already in progress at once: in Calm nothing moves.
+          root.querySelectorAll('[data-revealed="fade"]').forEach(function (step) {
+            step.dataset.revealed = 'now';
+          });
+        } else update(false);
       }).observe(html, { attributes: true, attributeFilter: ['data-mode'] });
 
       // Used by the list switch (module script below).
@@ -728,9 +817,14 @@ const lists = kinds.map(({ kind, label, view }) => {
       transform var(--reveal-dur) var(--switch-ease);
   }
 
-  /* Connectors are drawn as far as the trigger line has passed (--draw, 0 to 1). */
+  /* Appearing at once cancels any fade in progress (e.g. on switching to Calm). */
+  .reveal-on .journey__step[data-revealed='now'] {
+    transition: none;
+  }
+
+  /* Lines start undrawn; the script sets each one's scaleY as the trigger line passes. */
   .reveal-on .connector__line {
-    transform: scaleY(var(--draw, 0));
+    transform: scaleY(0);
   }
 
   .reveal-on .connector:not([data-state])::before,
@@ -758,7 +852,7 @@ const lists = kinds.map(({ kind, label, view }) => {
     }
 
     .reveal-on .connector__line {
-      transform: none;
+      transform: none !important; /* beats the script's inline scaleY */
     }
 
     .reveal-on .connector::before,
