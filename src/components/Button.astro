@@ -82,4 +82,17 @@ const { href, variant = 'black', newTab = false, class: className } = Astro.prop
   .button:focus-visible .button__arrow {
     transform: translateX(var(--arrow-shift));
   }
+
+  /* Very narrow screens: a tighter button, so a label that mustn't wrap
+     (like the phone number) still fits inside padded panels at 320px. */
+  @media (max-width: 23.99rem) {
+    .button {
+      gap: var(--space-3);
+      padding-inline: var(--space-3);
+    }
+
+    .button__arrow {
+      width: var(--space-5);
+    }
+  }
 </style>

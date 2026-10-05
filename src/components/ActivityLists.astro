@@ -1,0 +1,769 @@
+---
+// The Activities page lists: a two-way switch ("Our activities" / "With partners")
+// and, under it, the chosen list grouped Past → Now → Coming soon, with short
+// connector lines so each list reads as a journey.
+//
+// Everything is derived from `kind` and `status` in src/data/activities.ts.
+//
+// Without JavaScript both lists show, one after the other, each under its own
+// heading, and the switch is hidden. With JavaScript, the inline script below
+// picks the starting list before the page paints (from ?view=partners or a
+// #activity-id in the URL), and the module script handles switching.
+import Band from './Band.astro';
+import StoryBlock from './StoryBlock.astro';
+import CallOrText from './CallOrText.astro';
+import { activities, kinds, statuses, type Activity, type ActivityStatus } from '../data/activities';
+
+// Button label for each status. A visitor is never invited to join something that isn't running.
+const buttonLabel: Record<ActivityStatus, string | undefined> = {
+  past: 'Ask about the next one',
+  now: undefined, // the default "Call or text (858) 610-9661"
+  planned: "Tell us you're interested",
+};
+
+type Step =
+  | { type: 'label'; status: ActivityStatus; label: string; id: string }
+  | { type: 'activity'; status: ActivityStatus; activity: Activity; storyIndex: number }
+  | { type: 'connector'; dashed: boolean };
+
+// Build each list as a flat sequence: label, connector, activity, connector, ...
+// Empty time groups are skipped entirely.
+const lists = kinds.map(({ kind, label, view }) => {
+  const steps: Step[] = [];
+  let storyIndex = 0;
+  for (const { status, label: statusLabel } of statuses) {
+    const items = activities.filter((a) => a.kind === kind && a.status === status);
+    if (items.length === 0) continue;
+    const next: Step[] = [
+      { type: 'label', status, label: statusLabel, id: `${kind}-${status}` },
+      ...items.map((activity): Step => ({
+        type: 'activity',
+        status,
+        activity,
+        storyIndex: status === 'planned' ? -1 : storyIndex++,
+      })),
+    ];
+    for (const step of next) {
+      // The connector into the Coming soon group, and those within it, are dashed.
+      if (steps.length > 0) steps.push({ type: 'connector', dashed: status === 'planned' });
+      steps.push(step);
+    }
+  }
+  const hasNow = activities.some((a) => a.kind === kind && a.status === 'now');
+  return { kind, label, view, steps, hasNow };
+});
+---
+
+<div id="activity-lists" class="activity-lists" data-view="own">
+  <!-- The switch, centered across the bottom edge of the yellow heading band. -->
+  <div class="switch-wrap needs-js">
+    <div class="container">
+      <div class="switch" role="tablist" aria-label="Activities">
+        <span class="switch__marker" aria-hidden="true"></span>
+        {
+          lists.map((list, i) => (
+            <button
+              type="button"
+              role="tab"
+              id={`tab-${list.kind}`}
+              class="switch__tab"
+              data-kind={list.kind}
+              data-view={list.view}
+              aria-controls={`list-${list.kind}`}
+              aria-selected={i === 0 ? 'true' : 'false'}
+              tabindex={i === 0 ? 0 : -1}
+            >
+              {list.hasNow && <span class="switch__now" aria-hidden="true" />}
+              {list.label}
+              {list.hasNow && <span class="visually-hidden">, has an activity running now</span>}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <Band class="lists-band">
+    {
+      lists.map((list) => (
+        <section
+          id={`list-${list.kind}`}
+          class="journey"
+          role="tabpanel"
+          aria-labelledby={`tab-${list.kind}`}
+          data-kind={list.kind}
+        >
+          {/* Shown only without JavaScript, when both lists appear at once. */}
+          <h2 class="journey__title">{list.label}</h2>
+
+          {list.steps.map((step, i) => {
+            if (step.type === 'connector') {
+              return (
+                <div
+                  class:list={['journey__step', 'connector', { 'connector--dashed': step.dashed }]}
+                  style={`--i: ${i}`}
+                  aria-hidden="true"
+                >
+                  <span class="connector__line" />
+                </div>
+              );
+            }
+            if (step.type === 'label') {
+              return (
+                <h2 id={step.id} class="journey__step journey__label" style={`--i: ${i}`}>
+                  {step.label}
+                </h2>
+              );
+            }
+            const { activity, status } = step;
+            if (status === 'planned') {
+              return (
+                <div class="journey__step" style={`--i: ${i}`}>
+                  <article id={activity.id} class="soon" aria-labelledby={`${activity.id}-heading`}>
+                    <h3 id={`${activity.id}-heading`} class="soon__heading">
+                      {activity.name}
+                    </h3>
+                    {activity.paragraphs.map((text) => (
+                      <p>{text}</p>
+                    ))}
+                    <CallOrText label={buttonLabel[status]} />
+                  </article>
+                </div>
+              );
+            }
+            return (
+              <div class="journey__step" style={`--i: ${i}`}>
+                <StoryBlock
+                  id={activity.id}
+                  heading={activity.name}
+                  image={activity.image!}
+                  color={activity.panelColor}
+                  reverse={step.storyIndex % 2 === 1}
+                  headingLevel="h3"
+                >
+                  {activity.paragraphs.map((text) => (
+                    <p>{text}</p>
+                  ))}
+                  <CallOrText label={buttonLabel[status]} />
+                </StoryBlock>
+              </div>
+            );
+          })}
+        </section>
+      ))
+    }
+  </Band>
+</div>
+
+<!--
+  Runs as soon as the lists are parsed, before the page paints:
+  1. Choose the starting list and hide the other one. A #activity-id in the
+     URL wins over ?view=partners; otherwise "Our activities" shows.
+  2. Start the scroll reveal (below).
+
+  SCROLL REVEAL: AN APPROVED EXCEPTION TO THE SITE'S MOTION RULE.
+  The site's rule is that nothing moves unless the visitor hovers, focuses, taps,
+  or clicks, and scroll-triggered animation is banned. The owner has approved this
+  one exception: as the visitor scrolls down an activity list, each connector draws
+  downward and the next element fades in when the line reaches it.
+  It applies ONLY to the two activity lists on this page, and ONLY in Standard and
+  Vivid. Calm shows everything from the start. Do not copy it elsewhere on the site.
+  (Also recorded in the README, under "How the display modes work".)
+
+  How it works: a trigger line sits at --reveal-line (80%) of the viewport height.
+  Each connector is drawn as far as the line has passed through it; each label or
+  block is revealed when the line reaches its top. Reveals are one-way and use
+  only opacity and transform, so the page never changes height. Hidden elements
+  are transparent, not removed, so screen readers read them in order.
+
+  Content is never left hidden:
+  - The hidden state needs the `reveal-on` class, added only once this script
+    has set everything up. If anything fails, the class is never added.
+  - Calm (at load or chosen later) reveals everything.
+  - Keyboard focus inside a hidden element reveals it and everything before it.
+  - Deep links (#activity-id) reveal that activity and everything before it.
+  - Jumps (End key, scrollbar, find-in-page) reveal everything above the line.
+  - Print shows everything (see the print styles).
+-->
+<script is:inline>
+  (function () {
+    var root = document.getElementById('activity-lists');
+    if (!root) return;
+    var html = document.documentElement;
+    var lists = Array.prototype.slice.call(root.querySelectorAll('[role="tabpanel"]'));
+
+    // ----- 1. Starting list -----
+    var view = new URLSearchParams(location.search).get('view') === 'partners' ? 'partner' : 'own';
+    var id = location.hash.slice(1);
+    try {
+      id = decodeURIComponent(id);
+    } catch (e) {}
+    var target = id ? document.getElementById(id) : null;
+    var targetList = target ? target.closest('[role="tabpanel"]') : null;
+    if (targetList && root.contains(targetList)) view = targetList.dataset.kind;
+    else target = null;
+
+    root.dataset.view = view;
+    lists.forEach(function (list) {
+      list.hidden = list.dataset.kind !== view;
+    });
+    root.querySelectorAll('[role="tab"]').forEach(function (tab) {
+      var on = tab.dataset.kind === view;
+      tab.setAttribute('aria-selected', on ? 'true' : 'false');
+      tab.tabIndex = on ? 0 : -1;
+    });
+
+    // ----- 2. Scroll reveal -----
+    function steps(list) {
+      return Array.prototype.slice.call(list.querySelectorAll(':scope > .journey__step'));
+    }
+    function isConnector(step) {
+      return step.classList.contains('connector');
+    }
+    function isDone(step) {
+      return isConnector(step) ? step.dataset.state === 'drawn' : !!step.dataset.revealed;
+    }
+    function triggerLine() {
+      var fraction = parseFloat(getComputedStyle(html).getPropertyValue('--reveal-line')) || 0.8;
+      return innerHeight * fraction;
+    }
+
+    // Reveal one step. how = 'fade' (animates in) or 'now' (appears at once).
+    function reveal(step, how) {
+      if (isDone(step)) return;
+      if (isConnector(step)) {
+        step.style.setProperty('--draw', '1');
+        step.dataset.state = 'drawn';
+      } else {
+        step.dataset.revealed = how;
+      }
+    }
+
+    // Reveal the step containing `el` and every step before it in its list.
+    function revealUpTo(el) {
+      var list = el.closest('[role="tabpanel"]');
+      if (!list || !root.contains(list)) return;
+      var all = steps(list);
+      for (var i = 0; i < all.length; i++) {
+        reveal(all[i], 'now');
+        if (all[i].contains(el)) break;
+      }
+    }
+
+    function revealEverything() {
+      lists.forEach(function (list) {
+        steps(list).forEach(function (step) {
+          reveal(step, 'now');
+        });
+      });
+    }
+
+    function everythingDone() {
+      return lists.every(function (list) {
+        return steps(list).every(isDone);
+      });
+    }
+
+    // Bring the visible list up to date with the trigger line.
+    // instant: reveal without animating (page load, switching lists).
+    function update(instant) {
+      var line = triggerLine();
+      lists.forEach(function (list) {
+        if (list.hidden) return;
+        steps(list).forEach(function (step) {
+          if (isDone(step)) return;
+          var box = step.getBoundingClientRect();
+          if (isConnector(step)) {
+            var drawn = Math.min(1, Math.max(0, (line - box.top) / box.height));
+            var before = parseFloat(step.style.getPropertyValue('--draw')) || 0;
+            if (drawn > before) {
+              step.style.setProperty('--draw', String(drawn));
+              step.dataset.state = drawn >= 1 ? 'drawn' : 'drawing';
+            }
+          } else if (box.top <= line) {
+            // Anything already above the top of the screen appears without animating.
+            reveal(step, instant || box.bottom < 0 ? 'now' : 'fade');
+          }
+        });
+      });
+      if (everythingDone()) stopTracking();
+    }
+
+    // One passive scroll listener, throttled to one update per frame.
+    var frame = 0;
+    function onScroll() {
+      if (frame) return;
+      frame = requestAnimationFrame(function () {
+        frame = 0;
+        update(false);
+      });
+    }
+    function onResize() {
+      update(false);
+    }
+    function stopTracking() {
+      removeEventListener('scroll', onScroll);
+      removeEventListener('resize', onResize);
+    }
+
+    try {
+      if (html.dataset.mode === 'calm') revealEverything();
+      if (target) revealUpTo(target);
+      update(true);
+
+      addEventListener('scroll', onScroll, { passive: true });
+      addEventListener('resize', onResize);
+
+      // Fonts loading can move things; settle positions again without animating.
+      addEventListener('load', function () {
+        update(true);
+      });
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(function () {
+          update(true);
+        });
+      }
+
+      // Keyboard focus inside a hidden element reveals it and everything before it.
+      root.addEventListener('focusin', function (event) {
+        var step = event.target.closest && event.target.closest('.journey__step');
+        if (step && !isDone(step)) revealUpTo(event.target);
+      });
+
+      // Switching to Calm reveals everything at once (and it stays revealed).
+      new MutationObserver(function () {
+        if (html.dataset.mode === 'calm') revealEverything();
+        else update(false);
+      }).observe(html, { attributes: true, attributeFilter: ['data-mode'] });
+
+      // Used by the list switch (module script below).
+      root.journeyReveal = {
+        // A list was just shown: reveal what's above the line at once, so the
+        // switch's staggered fade plays on it; the rest waits for scrolling.
+        shown: function () {
+          update(true);
+        },
+        revealUpTo: revealUpTo,
+      };
+
+      // Only now apply the hidden starting state.
+      root.classList.add('reveal-on');
+    } catch (error) {
+      root.classList.remove('reveal-on');
+      stopTracking();
+    }
+  })();
+</script>
+
+<script>
+  // Switching between the two lists: click, tap, or the arrow keys.
+  // The scroll reveal (inline script above) exposes `journeyReveal` on the root.
+  type Reveal = { shown: () => void; revealUpTo: (el: Element) => void };
+  const root = document.getElementById('activity-lists') as (HTMLElement & { journeyReveal?: Reveal }) | null;
+
+  if (root) {
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const panels = [...root.querySelectorAll<HTMLElement>('[role="tabpanel"]')];
+    let timers: number[] = [];
+
+    // Read a duration token from tokens.css, in milliseconds. The build's CSS
+    // minifier may rewrite "120ms" as ".12s", so handle both units.
+    const ms = (token: string) => {
+      const value = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
+      const number = parseFloat(value) || 0;
+      return value.endsWith('ms') ? number : value.endsWith('s') ? number * 1000 : number;
+    };
+
+    // Stop any switch in progress, leaving the page in a clean state.
+    function cancel() {
+      timers.forEach(clearTimeout);
+      timers = [];
+      panels.forEach((p) => p.classList.remove('is-leaving', 'is-entering'));
+    }
+
+    // Keep ?view=partners in the address bar so the list can be shared.
+    function updateUrl(kind: string) {
+      const url = new URL(location.href);
+      const view = tabs.find((t) => t.dataset.kind === kind)?.dataset.view;
+      if (view && view !== 'own') url.searchParams.set('view', view);
+      else url.searchParams.delete('view');
+      history.replaceState(history.state, '', url);
+    }
+
+    function show(kind: string, animate: boolean) {
+      const incoming = panels.find((p) => p.dataset.kind === kind);
+      if (!incoming) return;
+      cancel();
+
+      root!.dataset.view = kind; // slides the black marker
+      tabs.forEach((tab) => {
+        const on = tab.dataset.kind === kind;
+        tab.setAttribute('aria-selected', String(on));
+        tab.tabIndex = on ? 0 : -1;
+      });
+      updateUrl(kind);
+
+      const outgoing = panels.find((p) => p !== incoming && !p.hidden);
+      if (!outgoing) {
+        incoming.hidden = false;
+        root.journeyReveal?.shown();
+        return;
+      }
+
+      const fadeOut = animate ? ms('--journey-out') : 0;
+      const fadeIn = animate ? ms('--journey-in') : 0;
+
+      const swap = () => {
+        outgoing.classList.remove('is-leaving');
+        outgoing.hidden = true;
+        incoming.hidden = false;
+        root.journeyReveal?.shown(); // reveals what's above the trigger line; the rest waits for scrolling
+        if (fadeIn > 0) {
+          incoming.classList.add('is-entering');
+          const total = ms('--journey-stagger-cap') + fadeIn;
+          timers.push(window.setTimeout(() => incoming.classList.remove('is-entering'), total + 50));
+        }
+      };
+
+      if (fadeOut > 0) {
+        outgoing.classList.add('is-leaving');
+        timers.push(window.setTimeout(swap, fadeOut));
+      } else {
+        swap();
+      }
+    }
+
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => {
+        if (tab.getAttribute('aria-selected') !== 'true') show(tab.dataset.kind!, true);
+      });
+
+      // Left/Right move between segments (wrapping); Home/End jump to the ends.
+      tab.addEventListener('keydown', (event) => {
+        const last = tabs.length - 1;
+        const targets: Record<string, number> = {
+          ArrowLeft: index === 0 ? last : index - 1,
+          ArrowRight: index === last ? 0 : index + 1,
+          Home: 0,
+          End: last,
+        };
+        const next = targets[event.key];
+        if (next === undefined) return;
+        event.preventDefault();
+        tabs[next].focus();
+        if (next !== index) show(tabs[next].dataset.kind!, true);
+      });
+    });
+
+    // A link to #activity-id shows that activity and everything above it at once.
+    // If it's in the hidden list, switch to that list (no animation) and scroll there.
+    window.addEventListener('hashchange', () => {
+      let id = location.hash.slice(1);
+      try {
+        id = decodeURIComponent(id);
+      } catch {}
+      const target = id ? document.getElementById(id) : null;
+      const panel = target?.closest<HTMLElement>('[role="tabpanel"]');
+      if (!target || !panel || !root.contains(panel)) return;
+      root.journeyReveal?.revealUpTo(target);
+      if (panel.hidden) {
+        show(panel.dataset.kind!, false);
+        target.scrollIntoView();
+      }
+    });
+  }
+</script>
+
+<style>
+  /* ---------- The switch ---------- */
+
+  /* Half yellow, half page color: the switch sits centered across the bottom
+     edge of the heading band, the same overlap the home page hero panel uses. */
+  .switch-wrap {
+    background: linear-gradient(to bottom, var(--yellow) 50%, var(--page-bg) 50%);
+  }
+
+  .switch {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: min(100%, 36rem);
+    margin-inline: auto;
+    background: var(--white);
+    border: 3px solid var(--ink);
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--pink);
+  }
+
+  /* The black block behind the active label. It slides to the other segment. */
+  .switch__marker {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 50%;
+    background: var(--black);
+    transition: transform var(--switch-dur) var(--switch-ease);
+  }
+
+  .activity-lists[data-view='partner'] .switch__marker {
+    transform: translateX(100%);
+  }
+
+  .switch__tab {
+    position: relative; /* above the marker */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    background: none;
+    border: 0;
+    color: var(--ink);
+    font-weight: 700;
+    line-height: 1.2;
+    text-align: center;
+    cursor: pointer;
+    transition: color var(--switch-dur) var(--switch-ease);
+  }
+
+  .switch__tab[aria-selected='true'] {
+    color: var(--on-black);
+    --focus-color: var(--on-black); /* the outline stays visible on the black marker */
+  }
+
+  .switch__tab:focus-visible {
+    outline-offset: calc(-1 * var(--focus-width) - 3px);
+  }
+
+  .switch__tab[aria-selected='false']:hover {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.25em;
+  }
+
+  /* "Running now" marker: a small yellow square before the label. */
+  .switch__now {
+    flex: none;
+    width: 0.75em;
+    height: 0.75em;
+    background: var(--yellow);
+    border: 2px solid var(--ink);
+  }
+
+  /* Calm: no overlap. The switch sits below the heading band. */
+  :global(html[data-mode='calm']) .switch-wrap {
+    background: var(--page-bg);
+    padding-top: var(--space-7);
+  }
+
+  @media (max-width: 55.99rem) {
+    .switch {
+      width: 100%;
+    }
+
+    /* Room for "With partners" and its marker on one line at phone widths. */
+    .switch__tab {
+      gap: var(--space-2);
+      padding-inline: var(--space-3);
+    }
+  }
+
+  /* ---------- The lists ---------- */
+
+  .journey {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    transition: opacity var(--journey-out) linear;
+  }
+
+  /* `display: flex` above would otherwise override the hidden attribute. */
+  .journey[hidden] {
+    display: none;
+  }
+
+  .journey.is-leaving {
+    opacity: 0;
+  }
+
+  /* Without JavaScript both lists show; this heading names each one. */
+  .journey__title {
+    margin-bottom: var(--space-7);
+  }
+
+  :global(html.no-js) .journey + .journey {
+    margin-top: var(--section-space);
+  }
+
+  :global(html:not(.no-js)) .journey__title {
+    display: none;
+  }
+
+  /* Time labels: small black blocks with white display-font text. */
+  .journey__label {
+    align-self: flex-start;
+    min-width: 10rem; /* wide enough that the connector always lands inside it */
+    padding: var(--space-2) var(--space-4);
+    background: var(--black);
+    color: var(--on-black);
+    font-size: calc(var(--fs-card) * 0.75);
+  }
+
+  /* Deep links land with a little room above the activity. */
+  .journey :global(:is(.story, .soon)) {
+    scroll-margin-top: var(--space-6);
+  }
+
+  /* Coming soon: no photo, a narrower white panel with a black border. */
+  .soon {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-5);
+    width: min(100%, 40rem);
+    padding: var(--space-7) var(--space-6);
+    background: var(--white);
+    border: 3px solid var(--ink);
+    color: var(--ink);
+  }
+
+  .soon__heading {
+    font-size: var(--fs-panel);
+  }
+
+  .soon :global(.call-or-text) {
+    margin-top: var(--space-3);
+  }
+
+  /* ---------- Connectors ---------- */
+
+  /* A 3px line spanning the gap, with a 12px square at each end. It sits at
+     --connector-inset from the left, which falls inside every label and block. */
+  .connector {
+    position: relative;
+    height: var(--journey-gap);
+    visibility: var(--connectors);
+    transform-origin: top;
+  }
+
+  .connector__line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(var(--connector-inset) - 1.5px);
+    border-left: 3px solid var(--ink);
+    transform-origin: top;
+  }
+
+  .connector--dashed .connector__line {
+    border-left-style: dashed;
+  }
+
+  /* The squares: ::before at the top end, ::after at the bottom end. */
+  .connector::before,
+  .connector::after {
+    content: '';
+    position: absolute;
+    left: calc(var(--connector-inset) - 6px);
+    width: 12px;
+    height: 12px;
+    background: var(--ink);
+    transition: opacity var(--reveal-end-dur) linear;
+  }
+
+  .connector::before {
+    top: 0;
+  }
+
+  .connector::after {
+    bottom: 0;
+  }
+
+  /* Narrow screens: blocks stack full width, connectors sit at a fixed inset. */
+  @media (max-width: 55.99rem) {
+    .journey {
+      --connector-inset: var(--space-6);
+    }
+  }
+
+  /* ---------- Switching animation ---------- */
+
+  /* Incoming elements fade in one after another, rising a little as they settle.
+     Each step carries its position as --i; the delay is capped so long lists don't drag. */
+  /* Only revealed elements take part; the rest wait for the scroll reveal. */
+  .journey.is-entering .journey__step:is([data-revealed], [data-state='drawn']) {
+    animation: journey-enter var(--journey-in) var(--switch-ease) both;
+    animation-delay: min(calc(var(--i) * var(--journey-stagger)), var(--journey-stagger-cap));
+  }
+
+  /* Vivid: connectors draw downward instead (see --connector-enter). */
+  .journey.is-entering .connector[data-state='drawn'] {
+    animation-name: var(--connector-enter);
+  }
+
+  @keyframes journey-enter {
+    from {
+      opacity: 0;
+      transform: translateY(var(--journey-settle));
+    }
+  }
+
+  @keyframes journey-draw {
+    from {
+      transform: scaleY(0);
+    }
+  }
+  /* ---------- Scroll reveal (Standard and Vivid only) ----------
+     An approved exception to the site's no-scroll-motion rule; see the comment
+     above the inline script. These rules only apply once the script has added
+     `reveal-on`, so with JavaScript off or failed, everything shows. */
+
+  /* Labels and blocks wait, transparent and slightly lowered, at full size. */
+  .reveal-on .journey__step:not(.connector):not([data-revealed]) {
+    opacity: 0;
+    transform: translateY(var(--reveal-settle));
+  }
+
+  .reveal-on .journey__step[data-revealed='fade'] {
+    transition:
+      opacity var(--reveal-dur) var(--switch-ease),
+      transform var(--reveal-dur) var(--switch-ease);
+  }
+
+  /* Connectors are drawn as far as the trigger line has passed (--draw, 0 to 1). */
+  .reveal-on .connector__line {
+    transform: scaleY(var(--draw, 0));
+  }
+
+  .reveal-on .connector:not([data-state])::before,
+  .reveal-on .connector:not([data-state='drawn'])::after {
+    opacity: 0;
+  }
+
+  /* Print: every list and everything in it. */
+  @media print {
+    .journey[hidden] {
+      display: flex;
+    }
+
+    :global(html:not(.no-js)) .journey__title {
+      display: block;
+    }
+
+    .journey + .journey {
+      margin-top: var(--section-space);
+    }
+
+    .reveal-on .journey__step {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .reveal-on .connector__line {
+      transform: none;
+    }
+
+    .reveal-on .connector::before,
+    .reveal-on .connector::after {
+      opacity: 1;
+    }
+  }
+</style>

@@ -24,7 +24,7 @@ Text lives in data files, so you can change it without touching layout.
 | File | What's in it |
 |---|---|
 | `src/data/site.ts` | Name, tagline, phone, email, Instagram, mailing address, donate URL, logo, and the legal status line |
-| `src/data/activities.ts` | The three activities: names, home page card sentences, Activities page paragraphs, photos. Also the list of "assumption" words on the home page cards |
+| `src/data/activities.ts` | The activities: names, Activities page paragraphs, photos, and which list and time group each one is in (see below). Also the three home page cards and the "assumption" words on them |
 | `src/data/team.ts` | Leadership team (name, short description, photo) and board of directors (name, photo) |
 | `src/data/images.ts` | Photo slots that aren't tied to an activity or person (home page hero and the three diamond photos) |
 | `src/pages/*.astro` | Page-specific copy (headings and paragraphs for each page) |
@@ -32,6 +32,23 @@ Text lives in data files, so you can change it without touching layout.
 **The legal status line** is in `site.ts` as `statusLine`. Every page reads it from there. Do not describe donations as tax-deductible until the IRS approves the 501(c)(3) application.
 
 **The email address** in `site.ts` is a placeholder (marked `TODO`). Confirm it before launch.
+
+## Editing activities
+
+Each activity in `src/data/activities.ts` has two fields that decide where it appears on the Activities page:
+
+| Field | Values | Effect |
+|---|---|---|
+| `kind` | `'own'` or `'partner'` | Which list it's in: **Our activities** or **With partners** |
+| `status` | `'past'`, `'now'`, or `'planned'` | Which group it's in: **Past**, **Now**, or **Coming soon** |
+
+- **Moving an activity along:** change its `status`. When a planned activity starts, set it to `'now'`; when it ends, `'past'`. Its button changes with it: "Ask about the next one" (past), "Call or text (858) 610-9661" (now), "Tell us you're interested" (coming soon).
+- **Order:** within a group, activities appear in the order they're listed in the file.
+- **Empty groups** don't appear at all.
+- **Photos:** past and now activities show a photo beside a color panel, so give them an `image` and a `panelColor`. Coming soon activities show no photo.
+- **The "running now" marker** (a small yellow square on the switch) appears automatically on any list with a `'now'` activity.
+- **Links:** each activity's `id` is its link, for example `/activities#badminton-camp`. A link to an activity in the other list switches to that list. `/activities?view=partners` opens the partners list.
+- **Home page cards:** `homeCards` near the bottom of the file lists the three activities shown on the home page, in order. Each one needs a `cardColor` and a `cardSummary`.
 
 ## Adding a photo
 
@@ -90,6 +107,14 @@ How it fits together:
 
 **Rules for anything new:** nothing moves unless the visitor hovers, focuses, taps, or clicks. No scroll animations, nothing that flashes, loops, auto-advances, or plays sound. Every hover effect also needs a keyboard-focus version and a tap version. Use the motion tokens (`--dur`, `--dur-slow`, and so on) for every transition, so Calm can turn it off.
 
+**One approved exception: the scroll reveal on the Activities page.** The owner approved this deliberately. As a visitor scrolls down an activity list, each connecting line draws downward and the next label or activity fades in when the line reaches it. The exception is narrow, so don't remove it or extend it by mistake:
+
+- It applies **only** to the two activity lists on the Activities page, and **only** in Standard and Vivid. Calm shows everything from the start, and nothing moves.
+- It must never leave content hidden. Everything shows with JavaScript off, in Calm (including switching to Calm mid-page), in print, when keyboard focus reaches a hidden activity, when arriving at an activity's link, and after jumping down the page.
+- Do not add scroll effects anywhere else on the site.
+
+It lives in `src/components/ActivityLists.astro` (see the comment above its inline script), with its timings in `tokens.css` (`--reveal-line`, `--reveal-dur`, `--reveal-settle`, `--reveal-end-dur`).
+
 ### Some useful tokens
 
 | Token | What it controls |
@@ -108,7 +133,7 @@ All in `src/components/`:
 - **Layout:** `Header`, `Footer`, `DisplayPanel`, `DisplayButton`, `DisplayHint`
 - **Buttons:** `Button`, `DonateButton`, `CallOrText` (the "Call or text" button plus a "Send a text" link; there's no sign-up form)
 - **Sections:** `Band` (full-width color section), `PageHeading`, `Hero`, `IntroBand` (two columns), `StoryBlock`, `Panel`, `CtaStrip`, `DiamondBand`
-- **Other:** `ClearingCards` (home page activity cards), `PersonCard`, `Placeholder` (image slot)
+- **Other:** `ClearingCards` (home page activity cards), `ActivityLists` (the Activities page switch and lists), `PersonCard`, `Placeholder` (image slot)
 
 ## Accessibility
 

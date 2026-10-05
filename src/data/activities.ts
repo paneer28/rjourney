@@ -1,38 +1,39 @@
-// The three activities R Journey runs. Do not add others here
-// unless the organization actually runs them.
+// The activities R Journey runs. Only list activities the organization actually
+// runs or has actually planned.
+//
+// Two fields decide where each one appears on the Activities page:
+//   kind:   'own'      → the "Our activities" list
+//           'partner'  → the "With partners" list
+//   status: 'past'     → under "Past"
+//           'now'      → under "Now"
+//           'planned'  → under "Coming soon" (shown with no photo)
+// Within each group, activities appear in the order they're listed here.
 
 import type { ImageSlot } from './images';
+
+export type ActivityKind = 'own' | 'partner';
+export type ActivityStatus = 'past' | 'now' | 'planned';
 
 export interface Activity {
   id: string; // anchor on the Activities page, e.g. /activities#stem-builders-camp
   name: string;
-  cardColor: 'yellow' | 'orange'; // home page clearing card
-  cardSummary: string; // one sentence for the home page card
-  panelColor: 'yellow' | 'orange' | 'pink'; // Activities page story block
-  image: ImageSlot;
-  paragraphs: string[]; // Activities page story block text
+  kind: ActivityKind;
+  status: ActivityStatus;
+  paragraphs: string[]; // Activities page text
+  image?: ImageSlot; // past and now activities (planned ones show no photo)
+  panelColor?: 'yellow' | 'orange' | 'pink'; // past and now activities
+  // Home page clearing card (only for activities in `homeCards` below):
+  cardColor?: 'yellow' | 'orange';
+  cardSummary?: string; // one sentence
 }
 
+// TODO: confirm with owner: each activity's `kind` and `status`.
 export const activities: Activity[] = [
-  {
-    id: 'stem-builders-camp',
-    name: 'STEM Builders Camp',
-    cardColor: 'yellow',
-    cardSummary: 'Children with ASD learn the basics of coding, one step at a time.',
-    panelColor: 'yellow',
-    image: {
-      src: '',
-      alt: 'Children at STEM Builders Camp',
-      label: 'Photo: STEM Builders Camp',
-    },
-    paragraphs: [
-      'Children with ASD learn the basics of coding: how to give a computer clear instructions and see what it does with them.',
-      'We run the camp with STEM Leaders, whose coaches teach the sessions. For neurodivergent children who enjoy patterns, logic, and building things, it is an early look at skills that can lead to real work later on.',
-    ],
-  },
   {
     id: 'nurture-with-love',
     name: 'Nurture with Love',
+    kind: 'own',
+    status: 'past',
     cardColor: 'orange',
     cardSummary: 'Children and teens with ASD arrange bouquets by hand, then help sell them.',
     panelColor: 'orange',
@@ -47,8 +48,38 @@ export const activities: Activity[] = [
     ],
   },
   {
+    id: 'buddy-program',
+    name: 'Buddy Program',
+    kind: 'own',
+    status: 'planned',
+    paragraphs: [
+      'Teens with ASD will be paired with a neurotypical teen to shadow or help out at a real workplace, chosen around what each neurodivergent teen is interested in. A teen who loves flowers, for example, could spend time in a flower shop.',
+      'Both buddies get something from it: early job skills, more responsibility, and a new friend. We plan to make the Buddy Program free to join.',
+    ],
+  },
+  {
+    id: 'stem-builders-camp',
+    name: 'STEM Builders Camp',
+    kind: 'partner',
+    status: 'now',
+    cardColor: 'yellow',
+    cardSummary: 'Children with ASD learn the basics of coding, one step at a time.',
+    panelColor: 'yellow',
+    image: {
+      src: '',
+      alt: 'Children at STEM Builders Camp',
+      label: 'Photo: STEM Builders Camp',
+    },
+    paragraphs: [
+      'Children with ASD learn the basics of coding: how to give a computer clear instructions and see what it does with them.',
+      'We run the camp with STEM Leaders, whose coaches teach the sessions. For neurodivergent children who enjoy patterns, logic, and building things, it is an early look at skills that can lead to real work later on.',
+    ],
+  },
+  {
     id: 'badminton-camp',
     name: 'Badminton Camp',
+    kind: 'partner',
+    status: 'now',
     cardColor: 'yellow',
     cardSummary: 'Children with ASD learn to play badminton with volunteer coaches.',
     panelColor: 'yellow',
@@ -62,6 +93,36 @@ export const activities: Activity[] = [
       'Badminton is good for coordination, and it gives neurodivergent children a way into a sport at their own pace.',
     ],
   },
+  {
+    id: 'violin-program',
+    name: 'Violin Program',
+    kind: 'partner',
+    status: 'planned',
+    paragraphs: [
+      'A violin program for children and teens with ASD is on the way, hosted at Peak Sports in Morrisville.',
+      "We're still working out the details. If your neurodivergent child would like to try the violin, tell us and we'll let you know when it starts.",
+    ],
+  },
+];
+
+// The three cards on the home page, in display order (colors alternate
+// yellow, orange, yellow). Each needs `cardColor` and `cardSummary`.
+export const homeCards: Activity[] = ['stem-builders-camp', 'nurture-with-love', 'badminton-camp'].map((id) => {
+  const activity = activities.find((a) => a.id === id);
+  if (!activity) throw new Error(`homeCards: no activity with id "${id}"`);
+  return activity;
+});
+
+// The Activities page lists and their time groups, in display order.
+export const kinds: { kind: ActivityKind; label: string; view: string }[] = [
+  { kind: 'own', label: 'Our activities', view: 'own' }, // the default list
+  { kind: 'partner', label: 'With partners', view: 'partners' }, // ?view=partners
+];
+
+export const statuses: { status: ActivityStatus; label: string }[] = [
+  { status: 'past', label: 'Past' },
+  { status: 'now', label: 'Now' },
+  { status: 'planned', label: 'Coming soon' },
 ];
 
 // Faint fragments of common assumptions shown over the home page cards

@@ -2,41 +2,24 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeading from '../components/PageHeading.astro';
 import Band from '../components/Band.astro';
-import StoryBlock from '../components/StoryBlock.astro';
+import ActivityLists from '../components/ActivityLists.astro';
 import CtaStrip from '../components/CtaStrip.astro';
 import CallOrText from '../components/CallOrText.astro';
-import { activities } from '../data/activities';
 ---
 
 <BaseLayout
   title="Activities"
-  description="STEM Builders Camp, Nurture with Love, and Badminton Camp: the activities R Journey runs for children and teens with Autism Spectrum Disorder (ASD) in the Triangle. Call or text to join."
+  description="The activities R Journey runs for children and teens with Autism Spectrum Disorder (ASD) in the Triangle, on our own and with partners: what we've done, what's running now, and what's coming soon. Call or text to join."
 >
   <PageHeading heading="Activities">
     <p>
-      These are the activities R Journey runs for children and teens with Autism Spectrum Disorder (ASD). To join one,
-      or to ask when the next session is, call or text us.
+      These are the activities R Journey runs for children and teens with Autism Spectrum Disorder (ASD). Some we run on
+      our own and some with partners. Each list goes from what we've done, to what's running now, to what we're
+      planning.
     </p>
   </PageHeading>
 
-  <Band>
-    <div class="stories">
-      {
-        activities.map((activity, index) => (
-          <StoryBlock
-            id={activity.id}
-            heading={activity.name}
-            image={activity.image}
-            color={activity.panelColor}
-            reverse={index % 2 === 1}
-          >
-            {activity.paragraphs.map((text) => <p>{text}</p>)}
-            <CallOrText />
-          </StoryBlock>
-        ))
-      }
-    </div>
-  </Band>
+  <ActivityLists />
 
   <Band tight class="cta-band">
     <CtaStrip id="not-sure" heading="Not sure which one fits?">
@@ -46,16 +29,6 @@ import { activities } from '../data/activities';
 </BaseLayout>
 
 <style>
-  .stories {
-    display: grid;
-    gap: var(--space-9);
-  }
-
-  /* Anchor links from the home page cards land with a little room above the block. */
-  .stories :global(.story) {
-    scroll-margin-top: var(--space-6);
-  }
-
   :global(.cta-band) {
     padding-top: 0;
     padding-bottom: var(--section-space);

@@ -1,20 +1,23 @@
 ---
 // The sign-up action used everywhere: a "Call or text" button (tel:)
 // with a smaller "Send a text" link (sms:) beside it. There is no form.
+// `label` replaces the button text where "Call or text" doesn't fit the
+// situation, e.g. "Tell us you're interested" for something not running yet.
 import Button from './Button.astro';
 import { site } from '../data/site';
 
 interface Props {
   variant?: 'black' | 'yellow';
+  label?: string;
   class?: string;
 }
 
-const { variant = 'black', class: className } = Astro.props;
+const { variant = 'black', label, class: className } = Astro.props;
 ---
 
 <div class:list={['call-or-text', className]}>
   <Button href={site.phone.tel} variant={variant}>
-    Call or text <span class="call-or-text__number">{site.phone.display}</span>
+    {label ?? <Fragment>Call or text <span class="call-or-text__number">{site.phone.display}</span></Fragment>}
   </Button>
   <a class="call-or-text__sms" href={site.phone.sms}>Send a text</a>
 </div>

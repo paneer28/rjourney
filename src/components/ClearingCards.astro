@@ -7,7 +7,7 @@
 // Touch: the first tap clears a card; a second tap on its button follows the link.
 // Screen readers hear only the title, sentence, and link (the layer is aria-hidden).
 import Button from './Button.astro';
-import { activities, clutterFragments } from '../data/activities';
+import { homeCards, clutterFragments } from '../data/activities';
 
 interface Props {
   headingId: string;
@@ -45,7 +45,7 @@ const fragmentsFor = (cardIndex: number) =>
 
   <ul class="ccards" role="list">
     {
-      activities.map((activity, index) => (
+      homeCards.map((activity, index) => (
         <li class="ccard" style={`--card-color: var(--${activity.cardColor})`}>
           <div class="ccard__clutter" aria-hidden="true">
             {fragmentsFor(index).map((f) => (
