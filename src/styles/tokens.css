@@ -29,6 +29,19 @@
   --dark-band-fg: var(--white);
   --on-pink-heading: var(--white); /* large headlines only; body text on pink is black */
   --focus-color: var(--black); /* dark bands switch this to white */
+
+  /* The full-screen site menu */
+  --menu-bg: #000000;
+  --menu-fg: #ffffff;
+  --menu-row-a: #272727; /* section rows alternate a, b, a, b */
+  --menu-row-b: #000000;
+  --menu-tile-a: #1c1c1c; /* item tiles alternate a, b, a, b */
+  --menu-tile-b: #303030;
+  --menu-item-bg: #1f1f1f; /* item rows on narrow screens */
+  --menu-divider: #3a3a3a; /* 1px lines between item rows on narrow screens */
+  --menu-active-bg: var(--yellow); /* active row, hovered or focused tile, Close */
+  --menu-active-fg: #000000;
+  --menu-outline: transparent; /* Calm outlines rows and tiles */
   --focus-width: 3px;
   --focus-offset: 3px;
 
@@ -81,7 +94,7 @@
   --clutter-opacity: 0.08; /* faint: the words must never read as our own statements (max ~12%) */
   --card-rest-mix: 55%; /* how much of its full color a clearing card shows at rest */
   --card-dim-mix: 40%; /* ...and while a neighboring card is active */
-  --journey-gap: 7.5rem; /* 120px between items in an Activities list; each connector spans it, long enough to watch it draw */
+  --journey-gap: 7.5rem; /* 120px between items in a program list; each connector spans it, long enough to watch it draw */
   --connector-inset: calc(var(--story-shift) + var(--space-6)); /* connector's distance from the left edge */
   --connectors: visible; /* Calm hides them but keeps the spacing */
 
@@ -93,7 +106,12 @@
   --hover-scale: 1; /* card scale-up on hover; Vivid raises it */
   --arrow-shift: 0px; /* how far a button's arrow slides on hover */
 
-  /* Activities page: switching between the two lists */
+  /* The site menu */
+  --menu-fade: 200ms; /* opening and closing */
+  --menu-tiles-fade: 150ms; /* a section's items appearing */
+  --menu-tile-stagger: 0ms; /* Vivid fades items in one after another */
+
+  /* Our programs page: switching between the two lists */
   --switch-dur: 280ms; /* the black marker sliding to the other segment */
   --switch-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --journey-out: 120ms; /* the outgoing list fading out */
@@ -103,7 +121,7 @@
   --journey-settle: 8px; /* how far incoming elements rise as they fade in */
   --connector-enter: journey-enter; /* Vivid swaps in journey-draw */
 
-  /* Activities page: scroll reveal (an approved exception to the no-scroll-motion rule; Standard and Vivid only) */
+  /* Our programs page: scroll reveal (an approved exception to the no-scroll-motion rule; Standard and Vivid only) */
   --reveal-line: 0.8; /* the trigger line, as a fraction of the viewport height from the top */
   --reveal-dur: 320ms; /* an element fading in when the line reaches it */
   --reveal-settle: 8px; /* how far it rises as it fades in */
@@ -131,6 +149,18 @@
   --dark-band-fg: var(--ink);
   --on-pink-heading: var(--ink);
   --focus-color: var(--ink);
+
+  --menu-bg: var(--paper);
+  --menu-fg: var(--ink);
+  --menu-row-a: var(--paper);
+  --menu-row-b: var(--paper);
+  --menu-tile-a: var(--white);
+  --menu-tile-b: var(--white);
+  --menu-item-bg: var(--white);
+  --menu-divider: var(--ink);
+  --menu-active-bg: var(--yellow); /* straw */
+  --menu-active-fg: var(--ink);
+  --menu-outline: var(--ink);
 
   --heading-font: var(--font-body);
   --heading-weight: 700;
@@ -171,6 +201,10 @@
   --hover-scale: 1;
   --arrow-shift: 0px;
 
+  --menu-fade: 0ms;
+  --menu-tiles-fade: 0ms;
+  --menu-tile-stagger: 0ms;
+
   --switch-dur: 0ms;
   --journey-out: 0ms;
   --journey-in: 0ms;
@@ -203,6 +237,9 @@
   --hover-scale: 1.05;
   --arrow-shift: 6px;
   --button-lift: 3px;
+
+  --menu-tiles-fade: 200ms;
+  --menu-tile-stagger: 40ms; /* items fade in one after another */
 
   --switch-dur: 320ms;
   --journey-settle: 16px;

@@ -1,9 +1,9 @@
 ---
-// Site header on every page: logo on a white block at the left; a row of
-// joined blocks at the right: nav links (white), Donate (pink), Display (orange).
+// Site header on every page: logo on a white block at the left; three joined
+// blocks at the right: Donate (pink), Display (orange), Menu (black).
+// Menu opens the full-screen site menu (SiteMenu.astro). Without JavaScript it
+// is a plain link to /menu, a page listing every page.
 // Not sticky. With `overlay`, it sits on top of the page's hero photo.
-// On narrow screens the nav links collapse behind a "Menu" button
-// (with JavaScript off they simply wrap onto their own row).
 import DonateButton from './DonateButton.astro';
 import DisplayButton from './DisplayButton.astro';
 import DisplayHint from './DisplayHint.astro';
@@ -14,16 +14,6 @@ interface Props {
 }
 
 const { overlay = false } = Astro.props;
-
-const links = [
-  { href: '/', label: 'Home' },
-  { href: '/about', label: 'About' },
-  { href: '/activities', label: 'Activities' },
-  { href: '/contact', label: 'Contact' },
-];
-
-// Compare without a trailing slash so /about and /about/ both match.
-const current = Astro.url.pathname.replace(/\/$/, '') || '/';
 ---
 
 <header class:list={['site-header', { 'site-header--overlay': overlay }]}>
@@ -33,59 +23,33 @@ const current = Astro.url.pathname.replace(/\/$/, '') || '/';
     </a>
 
     <div class="site-header__blocks">
-      <button
-        type="button"
-        class="site-header__block site-header__menu needs-js"
-        aria-expanded="false"
-        aria-controls="site-nav"
-      >
-        Menu
-      </button>
-
-      <nav id="site-nav" class="site-header__nav" aria-label="Main">
-        <ul role="list">
-          {
-            links.map((link) => (
-              <li>
-                <a href={link.href} class="site-header__link" aria-current={current === link.href ? 'page' : undefined}>
-                  {link.label}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </nav>
-
       <DonateButton bare class="site-header__block site-header__donate" />
       <DisplayButton class="site-header__block site-header__display" />
+
+      <button
+        type="button"
+        id="menu-button"
+        class="site-header__block site-header__menu needs-js"
+        aria-haspopup="dialog"
+        aria-expanded="false"
+        aria-controls="site-menu"
+      >
+        <svg class="site-header__menu-icon" viewBox="0 0 20 14" width="20" height="14" aria-hidden="true" focusable="false">
+          <path d="M0 1h20M0 7h20M0 13h20" fill="none" stroke="currentColor" stroke-width="2"></path>
+        </svg>
+        Menu
+      </button>
+      <a href="/menu" class="site-header__block site-header__menu no-js-only">
+        <svg class="site-header__menu-icon" viewBox="0 0 20 14" width="20" height="14" aria-hidden="true" focusable="false">
+          <path d="M0 1h20M0 7h20M0 13h20" fill="none" stroke="currentColor" stroke-width="2"></path>
+        </svg>
+        Menu
+      </a>
     </div>
   </div>
 
   <DisplayHint />
 </header>
-
-<script>
-  // Mobile menu: the "Menu" button shows and hides the nav links.
-  const menuButton = document.querySelector<HTMLButtonElement>('.site-header__menu');
-  const nav = document.getElementById('site-nav');
-
-  function setOpen(open: boolean) {
-    menuButton?.setAttribute('aria-expanded', String(open));
-    nav?.toggleAttribute('data-open', open);
-  }
-
-  menuButton?.addEventListener('click', () => {
-    setOpen(menuButton.getAttribute('aria-expanded') !== 'true');
-  });
-
-  // Escape closes the menu and returns focus to the button.
-  nav?.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-      setOpen(false);
-      menuButton?.focus();
-    }
-  });
-</script>
 
 <style>
   .site-header {
@@ -140,10 +104,10 @@ const current = Astro.url.pathname.replace(/\/$/, '') || '/';
     align-items: stretch;
   }
 
-  .site-header__blocks > :global(.site-header__block),
-  .site-header__link {
+  .site-header__blocks > :global(.site-header__block) {
     display: flex;
     align-items: center;
+    gap: var(--space-3);
     padding: var(--space-4) var(--space-5);
     border: 0;
     color: var(--ink);
@@ -158,21 +122,12 @@ const current = Astro.url.pathname.replace(/\/$/, '') || '/';
   }
 
   .site-header__blocks > :global(.site-header__block:hover),
-  .site-header__blocks > :global(.site-header__block:focus-visible),
-  .site-header__link:hover,
-  .site-header__link:focus-visible,
-  .site-header__link[aria-current='page'] {
+  .site-header__blocks > :global(.site-header__block:focus-visible) {
     text-decoration-color: currentColor;
   }
 
-  .site-header__blocks > :global(.site-header__block:focus-visible),
-  .site-header__link:focus-visible {
+  .site-header__blocks > :global(.site-header__block:focus-visible) {
     outline-offset: calc(-1 * var(--focus-width) - 2px);
-  }
-
-  .site-header__menu,
-  .site-header__nav {
-    background: var(--white);
   }
 
   .site-header__blocks > :global(.site-header__donate) {
@@ -183,21 +138,20 @@ const current = Astro.url.pathname.replace(/\/$/, '') || '/';
     background: var(--orange);
   }
 
-  .site-header__nav ul {
-    display: flex;
-    height: 100%;
-    padding: 0;
-    list-style: none;
+  .site-header__blocks > .site-header__menu {
+    background: var(--black);
+    color: var(--on-black);
+    --focus-color: var(--on-black);
   }
 
-  .site-header__link {
-    height: 100%;
+  .site-header__menu-icon {
+    flex: none;
   }
 
-  /* ---------- Narrow screens: links behind the Menu button ---------- */
+  /* Narrow screens: the same blocks, a little tighter. */
   @media (max-width: 55.99rem) {
-    .site-header__blocks > :global(.site-header__block),
-    .site-header__link {
+    .site-header__blocks > :global(.site-header__block) {
+      gap: var(--space-2);
       padding: var(--space-3) var(--space-4);
     }
 
@@ -208,47 +162,12 @@ const current = Astro.url.pathname.replace(/\/$/, '') || '/';
     .site-header__wordmark {
       font-size: 1.5rem;
     }
-
-    /* With JavaScript, the nav is a dropdown under the bar. */
-    :global(html:not(.no-js)) .site-header__nav {
-      display: none;
-      position: absolute;
-      top: 100%;
-      right: 0;
-      width: min(100%, 20rem);
-      border: 3px solid var(--ink);
-    }
-
-    :global(html:not(.no-js)) .site-header__nav[data-open] {
-      display: block;
-    }
-
-    :global(html:not(.no-js)) .site-header__nav ul {
-      flex-direction: column;
-    }
-
-    :global(html:not(.no-js)) .site-header__link {
-      padding: var(--space-4) var(--space-5);
-    }
-
-    /* Without JavaScript, the links wrap onto their own row. */
-    :global(html.no-js) .site-header__blocks {
-      flex-wrap: wrap;
-    }
-
-    :global(html.no-js) .site-header__nav {
-      flex-basis: 100%;
-      order: 2;
-    }
-
-    :global(html.no-js) .site-header__nav ul {
-      flex-wrap: wrap;
-    }
   }
 
-  @media (min-width: 56rem) {
-    .site-header__blocks > .site-header__menu {
-      display: none;
+  /* The narrowest phones: just enough room for all three blocks, even in Calm's larger text. */
+  @media (max-width: 22.5rem) {
+    .site-header__blocks > :global(.site-header__block) {
+      padding-inline: var(--space-3);
     }
   }
 </style>

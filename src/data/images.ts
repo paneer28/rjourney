@@ -24,7 +24,7 @@ export const images = {
   homeHero: {
     src: '/images/badminton-camp.jpg',
     alt: 'Three players on an indoor badminton court look up at the shuttlecock after a hit.',
-    label: 'Photo: children at an R Journey activity',
+    label: 'Photo: children at an R Journey program',
     position: 'center 18%', // keeps the players' faces in view in the wide crop
   },
   // Three diamond photos in the home page "Want to join in?" band.

@@ -1,0 +1,146 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import IntroBand from '../../components/IntroBand.astro';
+import Band from '../../components/Band.astro';
+import CtaStrip from '../../components/CtaStrip.astro';
+import Button from '../../components/Button.astro';
+import DonateButton from '../../components/DonateButton.astro';
+import { statistics } from '../../data/statistics';
+
+const colors = ['orange', 'yellow', 'orange'];
+---
+
+<BaseLayout
+  title="The bigger picture"
+  description="Autism Spectrum Disorder (ASD) is far more common than most people think: about 1 in 31 children aged 8 in the United States has been identified with ASD."
+>
+  <PageHeading heading="The bigger picture">
+    <p>Autism Spectrum Disorder (ASD) is far more common than most people think.</p>
+  </PageHeading>
+
+  <Band labelledby="figures-heading">
+    <h2 id="figures-heading" class="visually-hidden">The numbers</h2>
+    <ul class="figures" role="list">
+      {
+        statistics.map((stat, i) => (
+          <li class="figure" style={`--figure-color: var(--${colors[i % colors.length]})`}>
+            <p class="figure__number">{stat.figure}</p>
+            <p class="figure__text">{stat.text}</p>
+          </li>
+        ))
+      }
+    </ul>
+    <h3 class="sources__heading">Sources</h3>
+    <ol class="sources">
+      {
+        statistics.map((stat) => (
+          <li>
+            <a href={stat.url}>{stat.source}</a>
+          </li>
+        ))
+      }
+    </ol>
+  </Band>
+
+  <IntroBand id="what-the-numbers-mean" heading="What the numbers mean" color="white">
+    <p>
+      One in 31 is roughly one child in every classroom. More children with ASD are being identified now than at any
+      time since the count began.
+    </p>
+    <p>
+      ASD is found in every racial, ethnic, and economic group. These neurodivergent children are in every school, every
+      team, and every neighborhood, including ours.
+    </p>
+  </IntroBand>
+
+  <IntroBand id="why-it-matters" heading="Why working with them matters">
+    <p>
+      The numbers tell us how many children with ASD there are. They don't tell us what those children can do. That
+      depends a great deal on what they are offered.
+    </p>
+    <p>
+      The worldwide study ranks autism among the ten leading causes of non-fatal health burden for people under 20, and
+      its authors call for early support for neurodivergent young people and the people who care for them.
+    </p>
+  </IntroBand>
+
+  <IntroBand id="encouragement" heading="What encouragement does" color="yellow">
+    <p>
+      A child with ASD who is given a place to practice, a patient coach, and people who expect them to show up gets
+      more confident each time. A child who is left out learns to stop trying.
+    </p>
+    <p>
+      What separates those two neurodivergent children is rarely ability. It is opportunity and encouragement, and both
+      can be supplied by ordinary people. That is the work R Journey does.
+    </p>
+  </IntroBand>
+
+  <Band tight class="page-cta">
+    <CtaStrip id="reach-more" heading="Help us reach more of them">
+      <div slot="action" class="actions">
+        <DonateButton variant="yellow" />
+        <Button href="/programs" variant="yellow">Our programs</Button>
+      </div>
+    </CtaStrip>
+  </Band>
+</BaseLayout>
+
+<style>
+  /* Three large number blocks. The final numbers show at once; nothing counts up. */
+  .figures {
+    display: grid;
+    gap: var(--space-5);
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .figures {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .figure {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-7) var(--space-6);
+    background: var(--figure-color);
+    color: var(--ink);
+  }
+
+  .figure__number {
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
+    font-size: var(--fs-hero);
+    line-height: 1;
+  }
+
+  .sources__heading {
+    margin-top: var(--space-7);
+    font-family: var(--font-body);
+    font-weight: 700;
+    text-transform: none;
+    font-size: var(--fs-small);
+  }
+
+  .sources {
+    display: grid;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+    padding-left: 1.25em;
+    font-size: var(--fs-small);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+  }
+
+  :global(.page-cta) {
+    --band-space-top: var(--section-space);
+    --band-space-bottom: var(--section-space);
+  }
+</style>

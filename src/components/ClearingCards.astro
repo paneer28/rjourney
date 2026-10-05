@@ -1,5 +1,5 @@
 ---
-// The home page activity cards. At rest each card is slightly washed out under a
+// The home page program cards. At rest each card is slightly washed out under a
 // faint layer of overlapping words (common assumptions about autism). Hover,
 // keyboard focus, or a tap clears the layer: the card settles into full color,
 // comes forward, and its neighbors dim. Calm has no clutter layer at all.
@@ -7,7 +7,7 @@
 // Touch: the first tap clears a card; a second tap on its button follows the link.
 // Screen readers hear only the title, sentence, and link (the layer is aria-hidden).
 import Button from './Button.astro';
-import { homeCards, clutterFragments } from '../data/activities';
+import { homeCards, clutterFragments } from '../data/programs';
 
 interface Props {
   headingId: string;
@@ -41,12 +41,12 @@ const fragmentsFor = (cardIndex: number) =>
 <div class="ccards-section">
   <h2 id={headingId} class="ccards__heading">{heading}</h2>
   <p class="ccards__caption ccards__caption--standard">Hover over a card, or tap it, to clear away the assumptions.</p>
-  <p class="ccards__caption ccards__caption--calm">Three activities, each built around something children enjoy.</p>
+  <p class="ccards__caption ccards__caption--calm">Three programs, each built around something children enjoy.</p>
 
   <ul class="ccards" role="list">
     {
-      homeCards.map((activity, index) => (
-        <li class="ccard" style={`--card-color: var(--${activity.cardColor})`}>
+      homeCards.map((program, index) => (
+        <li class="ccard" style={`--card-color: var(--${program.cardColor})`}>
           <div class="ccard__clutter" aria-hidden="true">
             {fragmentsFor(index).map((f) => (
               <span
@@ -58,10 +58,10 @@ const fragmentsFor = (cardIndex: number) =>
             ))}
           </div>
           <div class="ccard__content">
-            <h3 class="ccard__title">{activity.name}</h3>
-            <p class="ccard__summary">{activity.cardSummary}</p>
-            <Button href={`/activities#${activity.id}`} class="ccard__button">
-              Find out more<span class="visually-hidden"> about {activity.name}</span>
+            <h3 class="ccard__title">{program.name}</h3>
+            <p class="ccard__summary">{program.cardSummary}</p>
+            <Button href={`/programs#${program.id}`} class="ccard__button">
+              Find out more<span class="visually-hidden"> about {program.name}</span>
             </Button>
           </div>
         </li>

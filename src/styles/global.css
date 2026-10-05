@@ -154,6 +154,21 @@ main:focus {
   outline: none;
 }
 
+/* A page that fills exactly one screen (the Donate page): the header, then
+   <main> taking the remaining height. Taller content still scrolls. */
+body.page-fill {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+body.page-fill main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 /* Decoration that bleeds off the edge (story block rectangles, diamond photos)
    must never cause sideways scrolling. */
 main {
@@ -175,5 +190,10 @@ main {
 
 /* Things that need JavaScript to work are hidden when it is off. */
 .no-js .needs-js {
+  display: none !important;
+}
+
+/* Fallbacks used only when JavaScript is off. */
+html:not(.no-js) .no-js-only {
   display: none !important;
 }

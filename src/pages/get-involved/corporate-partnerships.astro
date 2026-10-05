@@ -1,0 +1,95 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import Band from '../../components/Band.astro';
+import Panel from '../../components/Panel.astro';
+import CtaStrip from '../../components/CtaStrip.astro';
+import CallOrText from '../../components/CallOrText.astro';
+import { site } from '../../data/site';
+
+const ways = [
+  { heading: 'Sponsor a program.', text: 'Cover the supplies for a program, or a season of sessions.', color: 'yellow' },
+  {
+    heading: 'Share your space or equipment.',
+    text: 'Peak Sports in Morrisville donates the court time for our badminton camp.',
+    color: 'orange',
+  },
+  {
+    heading: 'Open your doors.',
+    text: 'Our Buddy Program, coming soon, will pair neurodivergent teens with a buddy to shadow and help out in real workplaces.',
+    color: 'orange',
+  },
+  { heading: 'Volunteer as a team.', text: 'Bring your colleagues to help run a session.', color: 'yellow' },
+] as const;
+---
+
+<BaseLayout
+  title="Corporate partnerships"
+  description="A local business can do a lot for children with Autism Spectrum Disorder (ASD): sponsor a program, share space or equipment, open your doors, or volunteer as a team."
+>
+  <PageHeading heading="Corporate partnerships">
+    <p>A local business can do a lot for children with Autism Spectrum Disorder (ASD).</p>
+  </PageHeading>
+
+  <Band labelledby="ways-heading">
+    <h2 id="ways-heading" class="heading-center">Ways to help</h2>
+    <div class="ways">
+      {
+        ways.map((way) => (
+          <Panel heading={way.heading} color={way.color} headingLevel="h3">
+            <p>{way.text}</p>
+          </Panel>
+        ))
+      }
+    </div>
+  </Band>
+
+  <Band color="white" labelledby="expect-heading">
+    <div class="flow">
+      <h2 id="expect-heading">What you can expect from us</h2>
+      <p>
+        We are a small organization, so you will deal with the same people from start to finish, and we will tell you
+        plainly how your support was used.
+      </p>
+      <p class="small">{site.statusLine}</p>
+    </div>
+  </Band>
+
+  <Band tight class="page-cta">
+    <CtaStrip id="lets-talk" heading="Let's talk about what would suit your business">
+      <div slot="action" class="actions">
+        <CallOrText variant="yellow" />
+        <a class="email-link" href={`mailto:${site.email}`}>Or email {site.email}</a>
+      </div>
+    </CtaStrip>
+  </Band>
+</BaseLayout>
+
+<style>
+  .ways {
+    display: grid;
+    gap: var(--space-5);
+    margin-top: var(--space-7);
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .ways {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .actions {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .email-link {
+    font-weight: 700;
+    font-size: var(--fs-small);
+  }
+
+  :global(.page-cta) {
+    --band-space-top: var(--section-space);
+    --band-space-bottom: var(--section-space);
+  }
+</style>

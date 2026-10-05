@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import IntroBand from '../../components/IntroBand.astro';
+import Band from '../../components/Band.astro';
+import CtaStrip from '../../components/CtaStrip.astro';
+import CallOrText from '../../components/CallOrText.astro';
+import { site } from '../../data/site';
+
+// TODO: confirm steps with owner.
+const steps = [
+  { heading: 'Talk to us.', text: 'Call, text, or email and tell us what you teach.', color: 'yellow' },
+  { heading: 'Plan one session.', text: 'We design a first session together and keep it small.', color: 'orange' },
+  {
+    heading: 'Run it and decide.',
+    text: 'Afterward we look at how it went and decide together whether to keep going.',
+    color: 'white',
+  },
+];
+---
+
+<BaseLayout
+  title="Partner on a program"
+  description="If your nonprofit, club, school, or studio teaches something children enjoy, R Journey would like to build a program with you for children and teens with Autism Spectrum Disorder (ASD)."
+>
+  <PageHeading heading="Partner on a program">
+    <p>Teach what you know to children who will love it.</p>
+  </PageHeading>
+
+  <IntroBand id="how-it-works" heading="How our partnerships work">
+    <p>
+      Some of our best programs are ones we run with someone else. STEM Leaders bring the coaches for STEM Builders Camp.
+      Rookie Rackets coach badminton alongside our volunteers.
+    </p>
+    <p>
+      If your nonprofit, club, school, or studio teaches something children enjoy, we would like to build a program with
+      you for children and teens with Autism Spectrum Disorder (ASD). You bring what you know. We bring volunteers and
+      what we have learned about making a session work for neurodivergent children.
+    </p>
+  </IntroBand>
+
+  <!-- TODO: confirm steps with owner. -->
+  <Band color="white" labelledby="getting-started-heading">
+    <h2 id="getting-started-heading" class="heading-center">Getting started</h2>
+    <ol class="steps card-row">
+      {
+        steps.map((step, i) => (
+          <li class={`step step--${step.color}`}>
+            <span class="step__number" aria-hidden="true">
+              {i + 1}
+            </span>
+            <h3 class="step__heading">{step.heading}</h3>
+            <p>{step.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </Band>
+
+  <Band tight class="page-cta">
+    <CtaStrip id="have-an-idea" heading="Have an idea for a program?">
+      <div slot="action" class="actions">
+        <CallOrText variant="yellow" />
+        <a class="email-link" href={`mailto:${site.email}`}>Or email {site.email}</a>
+      </div>
+    </CtaStrip>
+  </Band>
+</BaseLayout>
+
+<style>
+  .steps {
+    padding: 0;
+    list-style: none;
+  }
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-7) var(--space-6);
+    color: var(--ink);
+  }
+
+  .step--yellow { background: var(--yellow); }
+  .step--orange { background: var(--orange); }
+  .step--white {
+    background: var(--paper);
+  }
+
+  .step__number {
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
+    font-size: var(--fs-hero);
+    line-height: 1;
+  }
+
+  .step__heading {
+    font-size: var(--fs-card);
+  }
+
+  .actions {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .email-link {
+    font-weight: 700;
+    font-size: var(--fs-small);
+  }
+
+  :global(.page-cta) {
+    --band-space-top: var(--section-space);
+    --band-space-bottom: var(--section-space);
+  }
+</style>

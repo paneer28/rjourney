@@ -1,12 +1,11 @@
 ---
-// Every Donate button on the site. Reads the donate URL from site.ts:
-// while it is empty, links to the giving section of the Contact page;
-// once it is set, opens that URL in a new tab.
+// Every Donate button on the site. All of them go to the Donate page (/donate),
+// via `donateLink` in site.ts.
 //
 // `bare` renders a plain link (no button styling) for places with their own
 // look, such as the pink Donate block in the header.
 import Button from './Button.astro';
-import { site } from '../data/site';
+import { donateLink } from '../data/site';
 
 interface Props {
   variant?: 'black' | 'yellow';
@@ -17,8 +16,7 @@ interface Props {
 
 const { variant = 'black', bare = false, class: className, label = 'Donate' } = Astro.props;
 
-const hasUrl = site.donateUrl !== '';
-const href = hasUrl ? site.donateUrl : '/contact#give';
+const { href, external: hasUrl } = donateLink;
 ---
 
 {

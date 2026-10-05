@@ -1,0 +1,65 @@
+---
+// Every page on the site, grouped like the menu (src/data/menu.ts).
+// The header's Menu button links here when JavaScript is off; with JavaScript
+// it opens the full-screen menu instead.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeading from '../components/PageHeading.astro';
+import Band from '../components/Band.astro';
+import { menu } from '../data/menu';
+---
+
+<BaseLayout title="Menu" description="Every page on the R Journey website.">
+  <PageHeading heading="Menu" />
+
+  <Band labelledby="all-pages-heading">
+    <h2 id="all-pages-heading" class="visually-hidden">All pages</h2>
+    <ul class="groups" role="list">
+      <li class="group">
+        <ul role="list">
+          <li><a href="/">Home</a></li>
+        </ul>
+      </li>
+      {
+        menu.map((section) => (
+          <li class="group">
+            <h3 class="group__heading">{section.label}</h3>
+            <ul role="list">
+              {section.items.map((item) => (
+                <li>
+                  <a href={item.href}>{item.label}</a>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ul>
+  </Band>
+</BaseLayout>
+
+<style>
+  .groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: var(--space-7) var(--space-6);
+    padding: 0;
+    list-style: none;
+  }
+
+  .groups ul {
+    display: grid;
+    gap: var(--space-3);
+    padding: 0;
+    list-style: none;
+  }
+
+  .group__heading {
+    margin-bottom: var(--space-4);
+    font-size: var(--fs-card);
+  }
+
+  .groups a {
+    font-weight: 700;
+    font-size: 1.15em;
+  }
+</style>

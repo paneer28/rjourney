@@ -30,10 +30,20 @@ export const site = {
   // Leave empty to hide the address everywhere. Example: '123 Main St, Apex, NC 27502'
   mailingAddress: '',
 
-  // Leave empty until online giving is set up. While empty, Donate buttons link to /contact.
+  // The online giving page (e.g. a payment provider's donation form). Leave empty
+  // until online giving is set up. Every Donate link on the site goes to the
+  // Donate page (/donate); this decides what that page's main button does:
+  // while empty, visitors are asked to call or text; once set, a Donate button
+  // opens this URL in a new tab.
   donateUrl: '',
 
   // Use this exact wording wherever legal status is mentioned.
   statusLine:
     'R Journey is a North Carolina nonprofit corporation. Our application for 501(c)(3) tax-exempt status is pending with the IRS.',
+};
+
+// Where every Donate link goes: the Donate buttons, the menu, and the footer.
+export const donateLink = {
+  href: '/donate',
+  external: false,
 };

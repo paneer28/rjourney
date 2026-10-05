@@ -1,34 +1,34 @@
-// The activities R Journey runs. Only list activities the organization actually
+// The programs R Journey runs. Only list programs the organization actually
 // runs or has actually planned.
 //
-// Two fields decide where each one appears on the Activities page:
-//   kind:   'own'      → the "Our activities" list
+// Two fields decide where each one appears on the Our programs page (/programs):
+//   kind:   'own'      → the "Run by us" list
 //           'partner'  → the "With partners" list
 //   status: 'past'     → under "Past"
 //           'now'      → under "Now"
 //           'planned'  → under "Coming soon" (shown with no photo)
-// Within each group, activities appear in the order they're listed here.
+// Within each group, programs appear in the order they're listed here.
 
 import type { ImageSlot } from './images';
 
-export type ActivityKind = 'own' | 'partner';
-export type ActivityStatus = 'past' | 'now' | 'planned';
+export type ProgramKind = 'own' | 'partner';
+export type ProgramStatus = 'past' | 'now' | 'planned';
 
-export interface Activity {
-  id: string; // anchor on the Activities page, e.g. /activities#stem-builders-camp
+export interface Program {
+  id: string; // anchor on the Our programs page, e.g. /programs#stem-builders-camp
   name: string;
-  kind: ActivityKind;
-  status: ActivityStatus;
-  paragraphs: string[]; // Activities page text
-  image?: ImageSlot; // past and now activities (planned ones show no photo)
-  panelColor?: 'yellow' | 'orange' | 'pink'; // past and now activities
-  // Home page clearing card (only for activities in `homeCards` below):
+  kind: ProgramKind;
+  status: ProgramStatus;
+  paragraphs: string[]; // Our programs page text
+  image?: ImageSlot; // past and now programs (planned ones show no photo)
+  panelColor?: 'yellow' | 'orange' | 'pink'; // past and now programs
+  // Home page clearing card (only for programs in `homeCards` below):
   cardColor?: 'yellow' | 'orange';
   cardSummary?: string; // one sentence
 }
 
-// TODO: confirm with owner: each activity's `kind` and `status`.
-export const activities: Activity[] = [
+// TODO: confirm with owner: each program's `kind` and `status`.
+export const programs: Program[] = [
   {
     id: 'nurture-with-love',
     name: 'Nurture with Love',
@@ -44,7 +44,7 @@ export const activities: Activity[] = [
     },
     paragraphs: [
       'Children and teens with ASD who are curious about floristry arrange fresh bouquets by hand. Then the bouquets go on sale, and the young florists help sell them.',
-      'Arranging flowers builds fine motor skills. Selling them gives neurodivergent young people practice talking with customers. Every bouquet sold pays for more R Journey activities.',
+      'Arranging flowers builds fine motor skills. Selling them gives neurodivergent young people practice talking with customers. Every bouquet sold pays for more R Journey programs.',
     ],
   },
   {
@@ -107,19 +107,19 @@ export const activities: Activity[] = [
 
 // The three cards on the home page, in display order (colors alternate
 // yellow, orange, yellow). Each needs `cardColor` and `cardSummary`.
-export const homeCards: Activity[] = ['stem-builders-camp', 'nurture-with-love', 'badminton-camp'].map((id) => {
-  const activity = activities.find((a) => a.id === id);
-  if (!activity) throw new Error(`homeCards: no activity with id "${id}"`);
-  return activity;
+export const homeCards: Program[] = ['stem-builders-camp', 'nurture-with-love', 'badminton-camp'].map((id) => {
+  const program = programs.find((p) => p.id === id);
+  if (!program) throw new Error(`homeCards: no program with id "${id}"`);
+  return program;
 });
 
-// The Activities page lists and their time groups, in display order.
-export const kinds: { kind: ActivityKind; label: string; view: string }[] = [
-  { kind: 'own', label: 'Our activities', view: 'own' }, // the default list
+// The Our programs page lists and their time groups, in display order.
+export const kinds: { kind: ProgramKind; label: string; view: string }[] = [
+  { kind: 'own', label: 'Run by us', view: 'own' }, // the default list
   { kind: 'partner', label: 'With partners', view: 'partners' }, // ?view=partners
 ];
 
-export const statuses: { status: ActivityStatus; label: string }[] = [
+export const statuses: { status: ProgramStatus; label: string }[] = [
   { status: 'past', label: 'Past' },
   { status: 'now', label: 'Now' },
   { status: 'planned', label: 'Coming soon' },

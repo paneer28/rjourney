@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeading from '../components/PageHeading.astro';
+import Band from '../components/Band.astro';
+import ProgramLists from '../components/ProgramLists.astro';
+import CtaStrip from '../components/CtaStrip.astro';
+import CallOrText from '../components/CallOrText.astro';
+---
+
+<BaseLayout
+  title="Our programs"
+  description="The programs R Journey runs for children and teens with Autism Spectrum Disorder (ASD) in the Triangle, on our own and with partners: what we've done, what's running now, and what's coming soon. Call or text to join."
+>
+  <PageHeading heading="Our programs">
+    <p>
+      These are the programs R Journey runs for children and teens with Autism Spectrum Disorder (ASD). Some we run on
+      our own and some with partners. Each list goes from what we've done, to what's running now, to what we're
+      planning.
+    </p>
+  </PageHeading>
+
+  <ProgramLists />
+
+  <Band tight class="cta-band">
+    <CtaStrip id="not-sure" heading="Not sure which one fits?">
+      <CallOrText slot="action" variant="yellow" />
+    </CtaStrip>
+  </Band>
+</BaseLayout>
+
+<style>
+  :global(.cta-band) {
+    padding-top: 0;
+    padding-bottom: var(--section-space);
+  }
+</style>

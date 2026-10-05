@@ -4,7 +4,6 @@ import PageHeading from '../components/PageHeading.astro';
 import Band from '../components/Band.astro';
 import Panel from '../components/Panel.astro';
 import CallOrText from '../components/CallOrText.astro';
-import DonateButton from '../components/DonateButton.astro';
 import { site } from '../data/site';
 
 // The contact blocks. `href` makes the block a link; the mail block appears only
@@ -24,7 +23,7 @@ const details = [
 
 <BaseLayout
   title="Contact"
-  description="Call or text R Journey at (858) 610-9661 to sign up for an activity, ask a question, or make a donation. Based in Apex, North Carolina, serving families across the Triangle."
+  description="Call or text R Journey at (858) 610-9661 to sign up for a program or ask a question. Based in Apex, North Carolina, serving families across the Triangle."
 >
   <PageHeading heading="Talk to us" />
 
@@ -61,21 +60,12 @@ const details = [
 
   <Band tight class="panels-band">
     <div class="panels">
-      <Panel heading="Sign up for an activity" color="orange" id="sign-up">
+      <Panel heading="Sign up for a program" color="orange" id="sign-up">
         <p>
-          Call or text and tell us which activity you're interested in. We'll let you know when the next session is and
+          Call or text and tell us which program you're interested in. We'll let you know when the next session is and
           what to bring.
         </p>
         <CallOrText />
-      </Panel>
-
-      <Panel heading="Make a donation" color="pink" id="give">
-        <p>Every gift goes toward activities for children and teens with Autism Spectrum Disorder (ASD).</p>
-        <p class="small">{site.statusLine}</p>
-        {
-          /* While there is no donate URL, a Donate button here would link to this same page. */
-          site.donateUrl ? <DonateButton variant="yellow" /> : <CallOrText variant="yellow" />
-        }
       </Panel>
     </div>
   </Band>
@@ -151,7 +141,7 @@ const details = [
     outline-offset: calc(-1 * var(--focus-width) - 2px);
   }
 
-  /* ---------- Sign up and give, side by side on wide screens ---------- */
+  /* ---------- Sign up: half width on wide screens, lined up with the blocks above ---------- */
   :global(.panels-band) {
     padding-top: 0;
     padding-bottom: var(--section-space);

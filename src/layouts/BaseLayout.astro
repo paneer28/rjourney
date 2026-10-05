@@ -9,6 +9,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import DisplayPanel from '../components/DisplayPanel.astro';
+import SiteMenu from '../components/SiteMenu.astro';
 import { site } from '../data/site';
 import { MODE_KEY, HINT_KEY } from '../scripts/display-mode';
 
@@ -16,9 +17,10 @@ interface Props {
   title: string;
   description: string;
   headerOverlay?: boolean; // true on pages whose hero photo runs under the header
+  fillScreen?: boolean; // the page fills exactly one screen, with no footer (the Donate page)
 }
 
-const { title, description, headerOverlay = false } = Astro.props;
+const { title, description, headerOverlay = false, fillScreen = false } = Astro.props;
 const fullTitle = title === site.name ? `${site.name}: ${site.tagline}` : `${title} | ${site.name}`;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 ---
@@ -62,13 +64,14 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : un
     <meta property="og:description" content={description} />
     {canonical && <meta property="og:url" content={canonical} />}
   </head>
-  <body>
+  <body class:list={{ 'page-fill': fillScreen }}>
     <a class="skip-link" href="#main">Skip to content</a>
     <Header overlay={headerOverlay} />
     <main id="main" tabindex="-1">
       <slot />
     </main>
-    <Footer />
+    {!fillScreen && <Footer />}
+    <SiteMenu />
     <DisplayPanel />
   </body>
 </html>

@@ -1,0 +1,81 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeading from '../../components/PageHeading.astro';
+import IntroBand from '../../components/IntroBand.astro';
+import Band from '../../components/Band.astro';
+import CtaStrip from '../../components/CtaStrip.astro';
+import Button from '../../components/Button.astro';
+
+// TODO: real stories from participants and families can be added to this page
+// later, with written permission from each person (and a parent for children).
+---
+
+<BaseLayout
+  title="People"
+  description="Every child with Autism Spectrum Disorder (ASD) is different. R Journey starts with the person: what they enjoy, what they find hard, and what they would like to be able to do."
+>
+  <PageHeading heading="People">
+    <p>Numbers count children. They can't tell you about any one of them.</p>
+  </PageHeading>
+
+  <IntroBand id="no-two-alike" heading="No two alike">
+    <p>
+      One child with Autism Spectrum Disorder (ASD) might talk for an hour about how a flower is put together and find it
+      hard to say hello to a stranger. Another might say very little and never miss a shuttlecock. A third might find a
+      noisy gym overwhelming, yet sit with a line of code until it works.
+    </p>
+    <p>
+      No two neurodivergent children need the same thing. So we start with the person: what they enjoy, what they find
+      hard, and what they would like to be able to do.
+    </p>
+  </IntroBand>
+
+  <IntroBand id="small-wins" heading="Small wins, kept" color="yellow">
+    <p>
+      What a child with ASD takes home from a program is often small and specific. A first rally over the net. A bouquet
+      a stranger paid for. A few lines of code that finally run.
+    </p>
+    <p>
+      Those moments add up. Each one is proof, to a neurodivergent child and to everyone watching, that 'I can do this'
+      is true.
+    </p>
+  </IntroBand>
+
+  <IntroBand id="family" heading="The family behind each child" color="white">
+    <p>
+      Behind every child with ASD is a family. Many parents have spent years looking for a place where their child is
+      welcome as they are. Brothers and sisters have grown up helping.
+    </p>
+    <p>
+      When a neurodivergent child has somewhere to go and something to look forward to, the whole family gets some of
+      that back.
+    </p>
+  </IntroBand>
+
+  <Band color="orange" labelledby="teens-heading">
+    <div class="flow">
+      <h2 id="teens-heading">If you're a teen reading this</h2>
+      <p class="lead">
+        This page is about you. You don't have to be good at something to try it here, and you don't have to act like
+        anyone else. Come as you are.
+      </p>
+    </div>
+  </Band>
+
+  <Band tight class="page-cta">
+    <CtaStrip id="see-programs" heading="See what we run">
+      <Button slot="action" href="/programs" variant="yellow">Our programs</Button>
+    </CtaStrip>
+  </Band>
+</BaseLayout>
+
+<style>
+  .lead {
+    font-size: 1.2em;
+  }
+
+  :global(.page-cta) {
+    --band-space-top: var(--section-space);
+    --band-space-bottom: var(--section-space);
+  }
+</style>

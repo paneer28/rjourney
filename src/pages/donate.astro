@@ -1,0 +1,213 @@
+---
+// The Donate page: one screen, nothing to scroll. A pink panel in the middle,
+// with flat blocks in the home page's colors laid around it like cut paper.
+// Every Donate link on the site comes here (donateLink in site.ts).
+//
+// The main button depends on `donateUrl` in site.ts: while it's empty, visitors
+// are asked to call or text; once it's set, a Donate button opens it in a new tab.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/Button.astro';
+import CallOrText from '../components/CallOrText.astro';
+import { site } from '../data/site';
+---
+
+<BaseLayout
+  title="Donate"
+  description="Help R Journey keep its programs running for children and teens with Autism Spectrum Disorder (ASD) in the Triangle. Every gift goes toward the programs."
+  fillScreen
+>
+  <section class="give" aria-labelledby="give-heading">
+    <!-- Decoration: flat blocks in the site's colors. Hidden in Calm. -->
+    <div class="give__blocks" aria-hidden="true">
+      <span class="block block--yellow-big"></span>
+      <span class="block block--black"></span>
+      <span class="block block--orange"></span>
+      <span class="block block--yellow-small"></span>
+      <span class="block block--white"></span>
+    </div>
+
+    <div class="container give__container">
+      <div class="give__panel flow">
+        <h1 id="give-heading">Help us keep the programs running</h1>
+        <p>Every gift goes toward programs for children and teens with Autism Spectrum Disorder (ASD).</p>
+        {
+          site.donateUrl ? (
+            <div class="give__action">
+              <Button href={site.donateUrl} variant="yellow" newTab>
+                Donate
+              </Button>
+            </div>
+          ) : (
+            <div class="give__action">
+              <p class="give__how">To give, call or text us and we'll tell you how.</p>
+              <CallOrText variant="yellow" />
+            </div>
+          )
+        }
+        <p class="small give__status">{site.statusLine}</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Fills the space under the header; the panel sits in the middle. */
+  .give {
+    position: relative;
+    isolation: isolate;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding-block: clamp(var(--space-4), 5vh, var(--space-7));
+    overflow: hidden;
+  }
+
+  .give__container {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Sized to fit one screen: the headline and padding scale with the screen's height. */
+  .give__panel {
+    width: min(100%, 40rem);
+    margin-inline: auto;
+    padding: clamp(var(--space-5), 6vh, var(--space-7)) clamp(var(--space-5), 3vw, var(--space-6));
+    background: var(--pink);
+    color: var(--ink);
+    --focus-color: var(--ink);
+  }
+
+  .give__panel.flow > * + * {
+    margin-top: clamp(var(--space-3), 2.5vh, var(--space-5));
+  }
+
+  .give__panel h1 {
+    font-size: clamp(2rem, min(6vw, 8vh), 4.5rem);
+    color: var(--on-pink-heading);
+  }
+
+  .give__action {
+    display: grid;
+    gap: var(--space-3);
+    padding-top: var(--space-2);
+  }
+
+  .give__how {
+    font-weight: 700;
+  }
+
+  .give__status {
+    padding-top: var(--space-2);
+  }
+
+  /* ---------- The blocks around the panel ---------- */
+  .give__blocks {
+    display: var(--decoration);
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  .block {
+    position: absolute;
+  }
+
+  .block--yellow-big {
+    top: 0;
+    left: 0;
+    width: 42%;
+    height: 62%;
+    background: var(--yellow);
+  }
+
+  .block--black {
+    top: 12%;
+    right: 6%;
+    width: 16%;
+    height: 30%;
+    background: var(--black);
+  }
+
+  .block--orange {
+    right: 0;
+    bottom: 0;
+    width: 38%;
+    height: 48%;
+    background: var(--orange);
+  }
+
+  .block--yellow-small {
+    right: 26%;
+    bottom: 14%;
+    width: 7%;
+    aspect-ratio: 1;
+    background: var(--yellow);
+  }
+
+  .block--white {
+    left: 8%;
+    bottom: 8%;
+    width: 14%;
+    height: 18%;
+    background: var(--white);
+  }
+
+  /* Short phone screens: tighter still, so it fits without scrolling. */
+  @media (max-width: 55.99rem) and (max-height: 900px) {
+    .give {
+      padding-block: var(--space-3);
+    }
+
+    .give__panel {
+      padding: var(--space-4);
+    }
+
+    .give__panel.flow > * + * {
+      margin-top: var(--space-3);
+    }
+
+    .give__panel h1 {
+      font-size: 1.75rem;
+    }
+
+    .give__action {
+      gap: var(--space-2);
+      padding-top: 0;
+    }
+  }
+
+  /* Narrow screens: the panel spans the width; the blocks frame it top and bottom. */
+  @media (max-width: 55.99rem) {
+    .give__panel {
+      font-size: 0.9em;
+    }
+
+    .block--yellow-big {
+      width: 70%;
+      height: 34%;
+    }
+
+    .block--black {
+      top: 6%;
+      right: 0;
+      width: 24%;
+      height: 16%;
+    }
+
+    .block--orange {
+      width: 72%;
+      height: 30%;
+    }
+
+    .block--yellow-small {
+      right: auto;
+      left: 10%;
+      bottom: 6%;
+      width: 14%;
+    }
+
+    .block--white {
+      display: none;
+    }
+  }
+</style>
