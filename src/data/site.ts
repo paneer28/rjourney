@@ -13,6 +13,10 @@ export const site = {
   // Leave empty to show the "R Journey" text wordmark. Example: '/images/logo.svg'
   logo: '',
 
+  // Small cartoon flowers tucked around the site as decoration (an easter egg:
+  // they spin when hovered). Set to false to remove them everywhere.
+  flowers: true,
+
   phone: {
     display: '(858) 610-9661',
     tel: `tel:+1${phoneDigits}`,

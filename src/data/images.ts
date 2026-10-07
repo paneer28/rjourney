@@ -8,6 +8,11 @@
 // important, set `position` to choose which part stays in view, as a CSS
 // object-position: 'center 20%' keeps the upper part, 'center 80%' the lower.
 //
+// `zoom` enlarges a photo within its slot (e.g. 1.3 for 30% closer), toward the
+// middle of the slot, or toward `zoomOrigin` if set. A zoomOrigin low in the
+// slot (e.g. 'center 90%') pushes the picture up; high (e.g. 'center 10%') down.
+// The photo always still fills the slot.
+//
 // Diamond photos are also zoomed in to fill the diamond. `focus` sets the
 // point they zoom toward (default '50% 50%', the center). Lower the first
 // number to move the subject right inside the diamond, raise it to move it left.
@@ -18,6 +23,8 @@ export interface ImageSlot {
   label: string; // visible on the placeholder until a real photo is added
   position?: string; // optional focus point for cropping, e.g. 'center 20%'
   focus?: string; // diamond photos only: the point the zoom centers on, e.g. '40% 50%'
+  zoom?: number; // optional: enlarge the photo within its slot, e.g. 1.3
+  zoomOrigin?: string; // optional: the point in the slot the zoom grows from, e.g. 'center 90%'
 }
 
 export const images = {
@@ -29,7 +36,12 @@ export const images = {
   },
   // Three diamond photos in the home page "Want to join in?" band.
   joinDiamonds: [
-    { src: '', alt: 'Children at STEM Builders Camp', label: 'Photo: STEM Builders Camp' },
+    {
+      src: '/images/stem-builders.png',
+      alt: 'Two young people at a laptop, one pointing to blocks of code on the screen.',
+      label: 'Photo: STEM Builders Camp',
+      position: '81% center', // shifts the picture left about a quarter of the diamond
+    },
     {
       src: '/images/flower-pic-2.jpg',
       alt: 'A bouquet of pink and coral dahlias in a glass mason jar tied with twine.',

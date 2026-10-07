@@ -7,6 +7,7 @@
 // are asked to call or text; once it's set, a Donate button opens it in a new tab.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/Button.astro';
+import Flower from '../components/Flower.astro';
 import CallOrText from '../components/CallOrText.astro';
 import { site } from '../data/site';
 ---
@@ -24,6 +25,8 @@ import { site } from '../data/site';
       <span class="block block--orange"></span>
       <span class="block block--yellow-small"></span>
       <span class="block block--white"></span>
+      <Flower petals="pink" center="yellow" size="4rem" rotate={-12} style="top: 16%; left: 9%" />
+      <Flower petals="white" center="orange" size="3rem" rotate={18} style="bottom: 14%; right: 9%" />
     </div>
 
     <div class="container give__container">

@@ -23,7 +23,15 @@ const { image, ratio = '4 / 3', eager = false, class: className } = Astro.props;
         alt={image.alt}
         loading={eager ? 'eager' : 'lazy'}
         decoding="async"
-        style={image.position ? `object-position: ${image.position}` : undefined}
+        style={
+          [
+            image.position && `object-position: ${image.position}`,
+            image.zoom && `scale: ${image.zoom}`,
+            image.zoom && image.zoomOrigin && `transform-origin: ${image.zoomOrigin}`,
+          ]
+            .filter(Boolean)
+            .join('; ') || undefined
+        }
       />
     ) : (
       <div class="placeholder" role={image.alt ? 'img' : undefined} aria-label={image.alt || undefined} aria-hidden={image.alt ? undefined : 'true'}>

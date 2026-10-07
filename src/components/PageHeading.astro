@@ -7,6 +7,7 @@
 //     <p>…</p>
 //   </PageHeading>
 import Band from './Band.astro';
+import Flower from './Flower.astro';
 
 interface Props {
   heading: string;
@@ -16,14 +17,27 @@ const { heading } = Astro.props;
 ---
 
 <Band color="yellow" labelledby="page-heading" class="page-heading">
-  <div class="flow">
+  <div class="flow page-heading__inner">
     <h1 id="page-heading">{heading}</h1>
     <slot />
+    <Flower petals="pink" center="yellow" size="4.5rem" rotate={-8} class="page-heading__flower" style="top: 0; right: 7%" />
+    <Flower petals="white" center="orange" size="2.5rem" rotate={20} class="page-heading__flower" style="top: 5rem; right: 2%" />
   </div>
 </Band>
 
 <style>
   .page-heading :global(p) {
     font-size: 1.15em;
+  }
+
+  .page-heading__inner {
+    position: relative;
+  }
+
+  /* The heading needs the full width on narrow screens. */
+  @media (max-width: 55.99rem) {
+    .page-heading__inner :global(.page-heading__flower) {
+      display: none;
+    }
   }
 </style>

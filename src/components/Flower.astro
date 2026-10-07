@@ -1,0 +1,71 @@
+---
+// A small cartoon flower: decoration only, tucked into corners around the site.
+// Hovering it makes it spin a little (an easter egg). Hidden in Calm, skipped by
+// screen readers, and turned off everywhere with `flowers: false` in site.ts.
+//
+// Place it inside a positioned element and set its spot with `style`, e.g.
+//   <Flower petals="yellow" center="orange" size="3rem" style="top: -1rem; right: -1rem" />
+import { site } from '../data/site';
+
+type Color = 'pink' | 'yellow' | 'orange' | 'white';
+
+interface Props {
+  petals?: Color;
+  center?: Color;
+  size?: string; // e.g. '3rem'
+  rotate?: number; // degrees
+  style?: string; // position within the parent
+  class?: string;
+}
+
+const { petals = 'pink', center = 'yellow', size = '3rem', rotate = 0, style = '', class: className } = Astro.props;
+
+// Five round petals around the middle.
+const petalSpots = [0, 72, 144, 216, 288].map((angle) => {
+  const radians = ((angle - 90) * Math.PI) / 180;
+  return { x: 20 + Math.cos(radians) * 10.5, y: 20 + Math.sin(radians) * 10.5 };
+});
+---
+
+{
+  site.flowers && (
+    <span
+      class:list={['flower', className]}
+      style={`--flower-size: ${size}; --flower-rotate: ${rotate}deg; --petal: var(--${petals}); --middle: var(--${center}); ${style}`}
+      aria-hidden="true"
+    >
+      <svg viewBox="0 0 40 40" focusable="false">
+        <g stroke="var(--ink)" stroke-width="2">
+          {petalSpots.map((spot) => (
+            <circle cx={spot.x.toFixed(2)} cy={spot.y.toFixed(2)} r="8.5" fill="var(--petal)" />
+          ))}
+          <circle cx="20" cy="20" r="6.5" fill="var(--middle)" />
+        </g>
+      </svg>
+    </span>
+  )
+}
+
+<style>
+  .flower {
+    display: var(--decoration);
+    position: absolute;
+    z-index: 2;
+    width: var(--flower-size);
+    height: var(--flower-size);
+    transform: rotate(var(--flower-rotate));
+    transition: transform var(--dur-slow) var(--ease);
+  }
+
+  .flower svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  /* The easter egg: a little spin on hover (and a bounce in Vivid). */
+  .flower:hover {
+    transform: rotate(calc(var(--flower-rotate) + 72deg)) scale(var(--hover-scale));
+  }
+</style>

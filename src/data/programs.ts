@@ -38,9 +38,12 @@ export const programs: Program[] = [
     cardSummary: 'Children and teens with ASD arrange bouquets by hand, then help sell them.',
     panelColor: 'orange',
     image: {
-      src: '',
-      alt: 'Bouquets from Nurture with Love',
+      src: '/images/flower-sale-bouquets.jpg',
+      alt: "Three bouquets of dahlias and baby's breath in glass jars tied with twine.",
       label: 'Photo: bouquets from Nurture with Love',
+      position: 'center 100%',
+      zoom: 1.3, // closer in on the bouquets...
+      zoomOrigin: 'center 52%', // ...with the picture pushed up about an eighth of the frame
     },
     paragraphs: [
       'Children and teens with ASD who are curious about floristry arrange fresh bouquets by hand. Then the bouquets go on sale, and the young florists help sell them.',
@@ -66,8 +69,8 @@ export const programs: Program[] = [
     cardSummary: 'Children with ASD learn the basics of coding, one step at a time.',
     panelColor: 'yellow',
     image: {
-      src: '',
-      alt: 'Children at STEM Builders Camp',
+      src: '/images/stem-builders.png',
+      alt: 'Two young people at a laptop, one pointing to blocks of code on the screen, with a small robot model on the table.',
       label: 'Photo: STEM Builders Camp',
     },
     paragraphs: [
@@ -84,9 +87,12 @@ export const programs: Program[] = [
     cardSummary: 'Children with ASD learn to play badminton with volunteer coaches.',
     panelColor: 'yellow',
     image: {
-      src: '',
-      alt: 'Children at Badminton Camp',
+      src: '/images/badminton-camp-3.jpg',
+      alt: 'A coach and a young player in a red shirt on a badminton court, with shuttlecocks scattered around them.',
       label: 'Photo: Badminton Camp',
+      position: 'center 55%', // keeps both people whole
+      zoom: 1.2, // a little closer...
+      zoomOrigin: 'left center', // ...growing from the left edge, which shifts the picture right
     },
     paragraphs: [
       'Children with ASD learn badminton from the very first serve. Volunteers from R Journey and Rookie Rackets, a fellow nonprofit, coach together, and Peak Sports in Morrisville donates the court time.',

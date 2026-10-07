@@ -6,6 +6,7 @@ import Button from './Button.astro';
 import CallOrText from './CallOrText.astro';
 import DonateButton from './DonateButton.astro';
 import DisplayButton from './DisplayButton.astro';
+import Flower from './Flower.astro';
 import { site } from '../data/site';
 ---
 
@@ -27,6 +28,7 @@ import { site } from '../data/site';
 
     <section class="tile tile--pink" aria-labelledby="footer-give">
       <h2 id="footer-give">Help us grow</h2>
+      <Flower petals="yellow" center="orange" size="2.75rem" rotate={-10} style="top: 1rem; right: 1rem" />
       <DonateButton variant="yellow" />
     </section>
 
@@ -72,6 +74,10 @@ import { site } from '../data/site';
   .tile--white { background: var(--white); }
   .tile--pink { background: var(--pink); }
   .tile--orange { background: var(--orange); }
+
+  .tile--pink {
+    position: relative;
+  }
 
   .tile--pink h2 {
     color: var(--on-pink-heading);

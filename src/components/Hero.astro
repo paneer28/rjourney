@@ -15,6 +15,7 @@
 //     <Fragment slot="actions">…buttons…</Fragment>
 //   </Hero>
 import Placeholder from './Placeholder.astro';
+import Flower from './Flower.astro';
 import type { ImageSlot } from '../data/images';
 
 interface Props {
@@ -30,6 +31,7 @@ const { image, heading, below = 'paper' } = Astro.props;
   <Placeholder image={image} ratio="16 / 7" eager class="hero__photo" />
   <div class="container hero__container">
     <div class="hero__panel flow">
+      <Flower petals="yellow" center="orange" size="3.5rem" rotate={12} style="top: -1.5rem; right: -1.25rem" />
       <h1 id="hero-heading">{heading}</h1>
       <slot />
       <div class="hero__actions">
