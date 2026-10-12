@@ -9,9 +9,10 @@ interface Props {
   variant?: 'black' | 'yellow';
   newTab?: boolean;
   class?: string;
+  [attr: `data-${string}`]: string | undefined;
 }
 
-const { href, variant = 'black', newTab = false, class: className } = Astro.props;
+const { href, variant = 'black', newTab = false, class: className, ...attrs } = Astro.props;
 ---
 
 <a
@@ -19,6 +20,7 @@ const { href, variant = 'black', newTab = false, class: className } = Astro.prop
   class:list={['button', `button--${variant}`, className]}
   target={newTab ? '_blank' : undefined}
   rel={newTab ? 'noopener' : undefined}
+  {...attrs}
 >
   <span class="button__label"><slot /></span>
   {newTab && <span class="visually-hidden"> (opens in a new tab)</span>}

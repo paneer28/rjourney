@@ -11,14 +11,15 @@
 // #program-id in the URL), and the module script handles switching.
 import Band from './Band.astro';
 import StoryBlock from './StoryBlock.astro';
-import CallOrText from './CallOrText.astro';
+import FormButton from './FormButton.astro';
 import Flower from './Flower.astro';
 import { programs, kinds, statuses, type Program, type ProgramStatus } from '../data/programs';
 
 // Button label for each status. A visitor is never invited to join something that isn't running.
-const buttonLabel: Record<ProgramStatus, string | undefined> = {
+// Every button opens the sign-up form, which lists the current and coming-soon programs.
+const buttonLabel: Record<ProgramStatus, string> = {
   past: 'Ask about the next one',
-  now: undefined, // the default "Call or text (858) 610-9661"
+  now: 'Sign up',
   planned: "Tell us you're interested",
 };
 
@@ -130,7 +131,7 @@ const lists = kinds.map(({ kind, label, view }) => {
                     {program.paragraphs.map((text) => (
                       <p>{text}</p>
                     ))}
-                    <CallOrText label={buttonLabel[status]} />
+                    <FormButton form="signup">{buttonLabel[status]}</FormButton>
                   </article>
                 </div>
               );
@@ -148,7 +149,7 @@ const lists = kinds.map(({ kind, label, view }) => {
                   {program.paragraphs.map((text) => (
                     <p>{text}</p>
                   ))}
-                  <CallOrText label={buttonLabel[status]} />
+                  <FormButton form="signup">{buttonLabel[status]}</FormButton>
                 </StoryBlock>
               </div>
             );

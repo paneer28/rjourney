@@ -8,14 +8,14 @@ import DiamondBand from '../components/DiamondBand.astro';
 import CtaStrip from '../components/CtaStrip.astro';
 import Button from '../components/Button.astro';
 import DonateButton from '../components/DonateButton.astro';
-import CallOrText from '../components/CallOrText.astro';
+import FormButton from '../components/FormButton.astro';
 import { images } from '../data/images';
 import { site } from '../data/site';
 ---
 
 <BaseLayout
   title={site.name}
-  description="R Journey runs hands-on programs for children and teens with Autism Spectrum Disorder (ASD) in Apex, North Carolina, and across the Triangle. Call or text to join a program, or make a donation."
+  description="R Journey runs hands-on programs for children and teens with Autism Spectrum Disorder (ASD) in Apex, North Carolina, and across the Triangle. Sign up for a program, or make a donation."
   headerOverlay
 >
   <Hero image={images.homeHero} heading="A place to learn, play, and belong" below="yellow">
@@ -44,11 +44,11 @@ import { site } from '../data/site';
 
   <DiamondBand id="join" heading="Want to join in?" images={images.joinDiamonds}>
     <p>
-      Parents, call or text us. We'll tell you what's running now and help you choose a program for your child with
-      ASD.
+      Parents, tell us a little about your child. We'll tell you what's running now and help you choose a program for
+      your child with ASD.
     </p>
-    <p>Teens, you're welcome to reach out yourself, or ask a parent to. If calling is hard, a text works just as well.</p>
-    <CallOrText variant="yellow" />
+    <p>Teens, you're welcome to fill it in yourself, or ask a parent to. A parent or guardian signs the waiver.</p>
+    <FormButton form="signup" variant="yellow">Sign up for a program</FormButton>
   </DiamondBand>
 
   <Band color="black" tight>

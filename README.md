@@ -44,7 +44,7 @@ Each program in `src/data/programs.ts` has two fields that decide where it appea
 | `kind` | `'own'` or `'partner'` | Which list it's in: **Run by us** or **With partners** |
 | `status` | `'past'`, `'now'`, or `'planned'` | Which group it's in: **Past**, **Now**, or **Coming soon** |
 
-- **Moving a program along:** change its `status`. When a planned program starts, set it to `'now'`; when it ends, `'past'`. Its button changes with it: "Ask about the next one" (past), "Call or text (858) 610-9661" (now), "Tell us you're interested" (coming soon).
+- **Moving a program along:** change its `status`. When a planned program starts, set it to `'now'`; when it ends, `'past'`. Its button label changes with it: "Ask about the next one" (past), "Sign up" (now), "Tell us you're interested" (coming soon). Every one opens the sign-up form. When you add, rename, or start a program, also update the program list in the sign-up and volunteer forms on Tally.
 - **Order:** within a group, programs appear in the order they're listed in the file.
 - **Empty groups** don't appear at all.
 - **Photos:** past and now programs show a photo beside a color panel, so give them an `image` and a `panelColor`. Coming soon programs show no photo.
@@ -92,6 +92,22 @@ Photos are cropped to fit their slot, so nothing on the page shifts when they lo
 **People:** in `team.ts`, set each person's `photo.src`. If you leave `photo.alt` empty, the person's name is used.
 
 **Logo:** put the logo in `public/images/` and set `logo` in `site.ts` (for example `'/images/logo.svg'`). It replaces the "R Journey" text in the header and sits on a white block.
+
+## Forms
+
+Signing up, volunteering, partnering, and questions go through four Tally forms (tally.so, logged in as the R Journey account). Their ids are in `src/data/site.ts` under `forms`:
+
+| Form | Used on |
+|---|---|
+| `signup`: Sign up for a program, with the waiver | Home "Want to join in?", every program card, the Programs page, Contact, the footer |
+| `volunteer`: Volunteer, with the waiver | The menu, under Get involved |
+| `partner`: Partner with R Journey | Partner on a program, Corporate partnerships |
+| `question`: Ask a question | Contact |
+
+- **Changing questions:** edit the form in Tally. The site doesn't need to change.
+- **Adding a form button:** `<FormButton form="signup">Label</FormButton>`. It opens the form as a popup over the page. If Tally's script doesn't load, it opens the form's own page.
+- **Responses** are emailed to the address in `site.ts` and kept in Tally.
+- **The waiver** inside the sign-up and volunteer forms is a copy of `Liability Waiver - R Journey.pdf`. If the PDF changes, update the forms too.
 
 ## The Donate page and the donate URL
 
@@ -152,7 +168,7 @@ It lives in `src/components/ProgramLists.astro` (see the comment above its inlin
 All in `src/components/`:
 
 - **Layout:** `Header`, `Footer`, `SiteMenu` (the full-screen menu), `DisplayPanel`, `DisplayButton`, `DisplayHint`
-- **Buttons:** `Button`, `DonateButton`, `CallOrText` (the "Call or text" button plus a "Send a text" link; there's no sign-up form)
+- **Buttons:** `Button`, `DonateButton`, `FormButton` (opens a Tally form, see "Forms" above), `CallOrText` (the "Call or text" button plus a "Send a text" link; used on the Donate page)
 - **Sections:** `Band` (full-width color section), `PageHeading`, `Hero`, `IntroBand` (two columns), `StoryBlock`, `Panel`, `CtaStrip`, `DiamondBand`
 - **Other:** `ClearingCards` (home page program cards), `ProgramLists` (the Our programs page switch and lists), `PersonCard`, `Placeholder` (image slot)
 

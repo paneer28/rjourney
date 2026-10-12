@@ -4,7 +4,7 @@
 // To add a section, add an entry with an `id` (used in the HTML), a `label`,
 // and its items. The menu lays itself out from this list; nothing else changes.
 
-import { donateLink } from './site';
+import { donateLink, formUrl } from './site';
 
 export interface MenuItem {
   label: string;
@@ -37,6 +37,7 @@ export const menu: MenuSection[] = [
     label: 'Get involved',
     items: [
       { label: 'Donate', href: donateLink.href, external: donateLink.external },
+      { label: 'Volunteer', href: formUrl('volunteer'), external: true },
       { label: 'Partner on a program', href: '/get-involved/partner-on-a-program' },
       { label: 'Corporate partnerships', href: '/get-involved/corporate-partnerships' },
     ],

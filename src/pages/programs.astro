@@ -4,12 +4,12 @@ import PageHeading from '../components/PageHeading.astro';
 import Band from '../components/Band.astro';
 import ProgramLists from '../components/ProgramLists.astro';
 import CtaStrip from '../components/CtaStrip.astro';
-import CallOrText from '../components/CallOrText.astro';
+import FormButton from '../components/FormButton.astro';
 ---
 
 <BaseLayout
   title="Our programs"
-  description="The programs R Journey runs for children and teens with Autism Spectrum Disorder (ASD) in the Triangle, on our own and with partners: what we've done, what's running now, and what's coming soon. Call or text to join."
+  description="The programs R Journey runs for children and teens with Autism Spectrum Disorder (ASD) in the Triangle, on our own and with partners: what we've done, what's running now, and what's coming soon. Sign up online."
 >
   <PageHeading heading="Our programs">
     <p>
@@ -23,7 +23,7 @@ import CallOrText from '../components/CallOrText.astro';
 
   <Band tight class="cta-band">
     <CtaStrip id="not-sure" heading="Not sure which one fits?">
-      <CallOrText slot="action" variant="yellow" />
+      <FormButton slot="action" form="signup" variant="yellow">Tell us about your child</FormButton>
     </CtaStrip>
   </Band>
 </BaseLayout>

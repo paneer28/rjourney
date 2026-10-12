@@ -54,7 +54,7 @@ The organization has an application for tax-exempt status pending and will ask f
 
 **Donate buttons:** every Donate button reads the donate URL from `site.ts`. While it is empty, the buttons link to the Contact page. Once it is set, they open that URL in a new tab. Build this as one `DonateButton` component.
 
-**Sign-up:** there is no form. Signing up means calling or texting the phone number. Every sign-up button is labeled "Call or text (858) 610-9661" and links to `tel:`; place a smaller "Send a text" link beside it that uses `sms:`.
+**Sign-up:** (updated October 2026) signing up, volunteering, partnering, and general questions use Tally forms, opened as popups by `FormButton`; the form ids live in `site.ts`. The sign-up and volunteer forms include the liability waiver. The phone number stays in the contact details and footer, and "Call or text" remains the action on the Donate page until online giving is set up.
 
 ### Images
 

@@ -1,0 +1,20 @@
+---
+// A Button that opens one of the Tally forms listed in site.ts. With JavaScript
+// it opens as a popup over the page (see TallyPopups.astro); without, the link
+// goes to the form's own page.
+//   <FormButton form="signup">Sign up for a program</FormButton>
+import Button from './Button.astro';
+import { site, formUrl, type FormName } from '../data/site';
+
+interface Props {
+  form: FormName;
+  variant?: 'black' | 'yellow';
+  class?: string;
+}
+
+const { form, variant = 'black', class: className } = Astro.props;
+---
+
+<Button href={formUrl(form)} variant={variant} class={className} data-tally-form={site.forms[form]}>
+  <slot />
+</Button>

@@ -4,7 +4,7 @@ import PageHeading from '../../components/PageHeading.astro';
 import Band from '../../components/Band.astro';
 import Panel from '../../components/Panel.astro';
 import CtaStrip from '../../components/CtaStrip.astro';
-import CallOrText from '../../components/CallOrText.astro';
+import FormButton from '../../components/FormButton.astro';
 import { site } from '../../data/site';
 
 const ways = [
@@ -58,7 +58,7 @@ const ways = [
   <Band tight class="page-cta">
     <CtaStrip id="lets-talk" heading="Let's talk about what would suit your business">
       <div slot="action" class="actions">
-        <CallOrText variant="yellow" />
+        <FormButton form="partner" variant="yellow">Get in touch</FormButton>
         <a class="email-link" href={`mailto:${site.email}`}>Or email {site.email}</a>
       </div>
     </CtaStrip>

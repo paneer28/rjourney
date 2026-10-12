@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHeading from '../components/PageHeading.astro';
 import Band from '../components/Band.astro';
 import Panel from '../components/Panel.astro';
-import CallOrText from '../components/CallOrText.astro';
+import FormButton from '../components/FormButton.astro';
 import { site } from '../data/site';
 
 // The contact blocks. `href` makes the block a link; the mail block appears only
@@ -23,7 +23,7 @@ const details = [
 
 <BaseLayout
   title="Contact"
-  description="Call or text R Journey at (858) 610-9661 to sign up for a program or ask a question. Based in Apex, North Carolina, serving families across the Triangle."
+  description="Sign up for an R Journey program or ask us a question online, or call or text (858) 610-9661. Based in Apex, North Carolina, serving families across the Triangle."
 >
   <PageHeading heading="Talk to us" />
 
@@ -31,10 +31,10 @@ const details = [
     <h2 id="reach-heading" class="visually-hidden">How to reach us</h2>
     <div class="flow">
       <p class="lead">
-        The quickest way to reach us is a call or a text. Tell us a little about your child, or about yourself, and what
-        you're interested in. We'll take it from there.
+        Sign up or ask a question with the forms below, or call, text, or email. Tell us a little about your child, or
+        about yourself, and what you're interested in. We'll take it from there.
       </p>
-      <p>If calling is hard for you, text or email instead. Any of them is fine.</p>
+      <p>If calling is hard for you, a form, text, or email is just as good.</p>
     </div>
 
     <ul class="details" role="list">
@@ -62,10 +62,14 @@ const details = [
     <div class="panels">
       <Panel heading="Sign up for a program" color="orange" id="sign-up">
         <p>
-          Call or text and tell us which program you're interested in. We'll let you know when the next session is and
+          Tell us about your child and which program interests you. We'll let you know when the next session is and
           what to bring.
         </p>
-        <CallOrText />
+        <FormButton form="signup">Sign up</FormButton>
+      </Panel>
+      <Panel heading="Ask a question" color="yellow" id="ask">
+        <p>Anything else on your mind? Send us a question and we'll get back to you.</p>
+        <FormButton form="question">Ask a question</FormButton>
       </Panel>
     </div>
   </Band>
@@ -141,7 +145,7 @@ const details = [
     outline-offset: calc(-1 * var(--focus-width) - 2px);
   }
 
-  /* ---------- Sign up: half width on wide screens, lined up with the blocks above ---------- */
+  /* ---------- Sign up and Ask a question: side by side on wide screens, lined up with the blocks above ---------- */
   :global(.panels-band) {
     padding-top: 0;
     padding-bottom: var(--section-space);

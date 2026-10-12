@@ -31,6 +31,15 @@ export const site = {
     url: 'https://www.instagram.com/rjourneyorg/',
   },
 
+  // Tally forms (tally.so). Each id is the end of the form's link, tally.so/r/<id>.
+  // Edit the questions in Tally; the site only needs the id.
+  forms: {
+    signup: 'GxNYjO', // Sign up for a program (includes the waiver)
+    volunteer: 'ODp8eM', // Volunteer with R Journey (includes the waiver)
+    partner: 'VLRoB6', // Partner with R Journey: businesses, nonprofits, instructors
+    question: 'RGX86Q', // Ask R Journey a question
+  },
+
   // Leave empty to hide the address everywhere. Example: '123 Main St, Apex, NC 27502'
   mailingAddress: '',
 
@@ -45,6 +54,12 @@ export const site = {
   statusLine:
     'R Journey is a North Carolina nonprofit corporation. Our application for 501(c)(3) tax-exempt status is pending with the IRS.',
 };
+
+export type FormName = keyof typeof site.forms;
+
+// A form's own page on Tally. FormButton opens the same form in a popup instead,
+// and falls back to this link if the popup script hasn't loaded.
+export const formUrl = (form: FormName) => `https://tally.so/r/${site.forms[form]}`;
 
 // Where every Donate link goes: the Donate buttons, the menu, and the footer.
 export const donateLink = {

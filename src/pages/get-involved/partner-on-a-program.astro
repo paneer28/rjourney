@@ -4,7 +4,7 @@ import PageHeading from '../../components/PageHeading.astro';
 import IntroBand from '../../components/IntroBand.astro';
 import Band from '../../components/Band.astro';
 import CtaStrip from '../../components/CtaStrip.astro';
-import CallOrText from '../../components/CallOrText.astro';
+import FormButton from '../../components/FormButton.astro';
 import { site } from '../../data/site';
 
 // TODO: confirm steps with owner.
@@ -60,7 +60,7 @@ const steps = [
   <Band tight class="page-cta">
     <CtaStrip id="have-an-idea" heading="Have an idea for a program?">
       <div slot="action" class="actions">
-        <CallOrText variant="yellow" />
+        <FormButton form="partner" variant="yellow">Share your idea</FormButton>
         <a class="email-link" href={`mailto:${site.email}`}>Or email {site.email}</a>
       </div>
     </CtaStrip>

@@ -3,7 +3,7 @@
 // separated by thin gaps, with an orange strip of contact details at the bottom.
 // Calm stacks the blocks in one column.
 import Button from './Button.astro';
-import CallOrText from './CallOrText.astro';
+import FormButton from './FormButton.astro';
 import DonateButton from './DonateButton.astro';
 import DisplayButton from './DisplayButton.astro';
 import Flower from './Flower.astro';
@@ -23,7 +23,7 @@ import { site } from '../data/site';
 
     <section class="tile tile--white" aria-labelledby="footer-join">
       <h2 id="footer-join">Join a program</h2>
-      <CallOrText />
+      <FormButton form="signup">Sign up for a program</FormButton>
     </section>
 
     <section class="tile tile--pink" aria-labelledby="footer-give">
