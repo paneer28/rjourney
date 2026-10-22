@@ -10,6 +10,7 @@
 // Within each group, programs appear in the order they're listed here.
 
 import type { ImageSlot } from './images';
+import type { FormName } from './site';
 
 export type ProgramKind = 'own' | 'partner';
 export type ProgramStatus = 'past' | 'now' | 'planned';
@@ -20,6 +21,7 @@ export interface Program {
   kind: ProgramKind;
   status: ProgramStatus;
   paragraphs: string[]; // Our programs page text
+  form?: FormName; // the program's own sign-up form; defaults to the general 'signup' form
   image?: ImageSlot; // past and now programs (planned ones show no photo)
   panelColor?: 'yellow' | 'orange' | 'pink'; // past and now programs
   // Home page clearing card (only for programs in `homeCards` below):
@@ -83,6 +85,7 @@ export const programs: Program[] = [
     name: 'Badminton Camp',
     kind: 'partner',
     status: 'now',
+    form: 'badminton',
     cardColor: 'yellow',
     cardSummary: 'Children with ASD learn to play badminton with volunteer coaches.',
     panelColor: 'yellow',

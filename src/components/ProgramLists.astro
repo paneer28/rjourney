@@ -16,7 +16,8 @@ import Flower from './Flower.astro';
 import { programs, kinds, statuses, type Program, type ProgramStatus } from '../data/programs';
 
 // Button label for each status. A visitor is never invited to join something that isn't running.
-// Every button opens the sign-up form, which lists the current and coming-soon programs.
+// Each button opens the program's own form if it has one, otherwise the general
+// sign-up form, which lists the current and coming-soon programs.
 const buttonLabel: Record<ProgramStatus, string> = {
   past: 'Ask about the next one',
   now: 'Sign up',
@@ -131,7 +132,7 @@ const lists = kinds.map(({ kind, label, view }) => {
                     {program.paragraphs.map((text) => (
                       <p>{text}</p>
                     ))}
-                    <FormButton form="signup">{buttonLabel[status]}</FormButton>
+                    <FormButton form={program.form ?? 'signup'}>{buttonLabel[status]}</FormButton>
                   </article>
                 </div>
               );
@@ -149,7 +150,7 @@ const lists = kinds.map(({ kind, label, view }) => {
                   {program.paragraphs.map((text) => (
                     <p>{text}</p>
                   ))}
-                  <FormButton form="signup">{buttonLabel[status]}</FormButton>
+                  <FormButton form={program.form ?? 'signup'}>{buttonLabel[status]}</FormButton>
                 </StoryBlock>
               </div>
             );

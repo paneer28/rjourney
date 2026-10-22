@@ -1,0 +1,26 @@
+# Reopens the Badminton Camp sign-up form for the next Sunday, with 6 spots.
+# See scripts/badminton-weekly.mjs. Needs the TALLY_API_KEY repository secret.
+name: Badminton form weekly reset
+
+on:
+  schedule:
+    # Sunday 7 PM in Raleigh is 23:00 UTC during daylight time and 00:00 UTC
+    # Monday in winter. Both run; the script only changes the form once a week.
+    - cron: "5 23 * * 0"
+    - cron: "5 0 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node scripts/badminton-weekly.mjs
+        env:
+          TALLY_API_KEY: ${{ secrets.TALLY_API_KEY }}

@@ -35,6 +35,7 @@ export const site = {
   // Edit the questions in Tally; the site only needs the id.
   forms: {
     signup: 'GxNYjO', // Sign up for a program (includes the waiver)
+    badminton: 'RWGbed', // Sign up for Badminton Camp only (includes the waiver)
     volunteer: 'ODp8eM', // Volunteer with R Journey (includes the waiver)
     partner: 'VLRoB6', // Partner with R Journey: businesses, nonprofits, instructors
     question: 'RGX86Q', // Ask R Journey a question
