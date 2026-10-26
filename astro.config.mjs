@@ -2,7 +2,8 @@
 import { defineConfig } from 'astro/config';
 
 // Static site, deployed to Cloudflare Pages (build: `npm run build`, output: `dist`).
-// TODO: set `site` to the real domain once it is known, so Open Graph URLs are absolute.
+// `site` makes canonical, Open Graph, and sitemap URLs absolute.
 export default defineConfig({
+  site: 'https://rjourney.org',
   output: 'static',
 });

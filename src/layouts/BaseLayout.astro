@@ -12,6 +12,8 @@ import DisplayPanel from '../components/DisplayPanel.astro';
 import TallyPopups from '../components/TallyPopups.astro';
 import SiteMenu from '../components/SiteMenu.astro';
 import { site } from '../data/site';
+import { images } from '../data/images';
+import { programs } from '../data/programs';
 import { MODE_KEY, HINT_KEY } from '../scripts/display-mode';
 
 interface Props {
@@ -24,6 +26,44 @@ interface Props {
 const { title, description, headerOverlay = false, fillScreen = false } = Astro.props;
 const fullTitle = title === site.name ? `${site.name}: ${site.tagline}` : `${title} | ${site.name}`;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+const shareImage = Astro.site ? new URL(images.homeHero.src, Astro.site).href : undefined;
+
+// Structured data: tells search engines and AI answers what R Journey is, where
+// it works, and how to reach it. Built from site.ts, so it stays in step with the page text.
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'NGO',
+  name: site.name,
+  alternateName: 'RJourney',
+  slogan: site.tagline,
+  description:
+    'R Journey runs hands-on programs for children and teens with Autism Spectrum Disorder (ASD) in Apex, North Carolina, and across the Triangle.',
+  url: Astro.site?.href,
+  logo: Astro.site ? new URL('/favicon.svg', Astro.site).href : undefined,
+  image: shareImage,
+  foundingDate: String(site.founded),
+  foundingLocation: site.location,
+  address: { '@type': 'PostalAddress', addressLocality: 'Apex', addressRegion: 'NC', addressCountry: 'US' },
+  areaServed: [
+    { '@type': 'City', name: 'Apex, North Carolina' },
+    { '@type': 'Place', name: 'Research Triangle, North Carolina' },
+  ],
+  telephone: site.phone.tel.replace('tel:', ''),
+  email: site.email,
+  sameAs: [site.instagram.url],
+  knowsAbout: ['Autism Spectrum Disorder (ASD)', 'Programs for autistic children and teens', 'Inclusive recreation'],
+  audience: { '@type': 'PeopleAudience', audienceType: 'Children and teens with Autism Spectrum Disorder (ASD) and their families' },
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Programs',
+    itemListElement: programs
+      .filter((program) => program.status === 'now')
+      .map((program) => ({
+        '@type': 'Offer',
+        itemOffered: { '@type': 'Service', name: program.name, url: new URL(`/programs#${program.id}`, Astro.site).href },
+      })),
+  },
+};
 ---
 
 <!doctype html>
@@ -64,6 +104,15 @@ const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : un
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     {canonical && <meta property="og:url" content={canonical} />}
+    <meta property="og:locale" content="en_US" />
+    {shareImage && <meta property="og:image" content={shareImage} />}
+    {shareImage && <meta property="og:image:alt" content={images.homeHero.alt} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    {shareImage && <meta name="twitter:image" content={shareImage} />}
+    <link rel="sitemap" href="/sitemap.xml" />
+    <script type="application/ld+json" set:html={JSON.stringify(organization)} />
   </head>
   <body class:list={{ 'page-fill': fillScreen }}>
     <a class="skip-link" href="#main">Skip to content</a>

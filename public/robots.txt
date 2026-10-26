@@ -1,0 +1,5 @@
+# Every search engine and AI crawler is welcome to read the whole site.
+User-agent: *
+Allow: /
+
+Sitemap: https://rjourney.org/sitemap.xml
