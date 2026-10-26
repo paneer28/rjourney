@@ -12,7 +12,7 @@
 import { readFileSync } from 'node:fs';
 
 const SPOTS = 6;
-const FIRST_CLASS = '2026-10-25';
+const FIRST_CLASS = '2026-11-08';
 const RESET_HOUR = 19; // 7 PM in Raleigh, after class
 const TZ = 'America/New_York';
 const DATE = /^Sunday, [A-Z][a-z]+ \d{1,2}, \d{4}$/; // the text after "Class date:" on the form
