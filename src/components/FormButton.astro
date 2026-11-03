@@ -3,18 +3,23 @@
 // it opens as a popup over the page (see TallyPopups.astro); without, the link
 // goes to the form's own page.
 //   <FormButton form="signup">Sign up for a program</FormButton>
+// `program` pre-selects that answer on the interest form. It must match the
+// form's answer exactly, and arrives through the form's `program` hidden field.
+//   <FormButton form="interest" program="Violin Program">Tell us you're interested</FormButton>
 import Button from './Button.astro';
 import { site, formUrl, type FormName } from '../data/site';
 
 interface Props {
   form: FormName;
+  program?: string;
   variant?: 'black' | 'yellow';
   class?: string;
 }
 
-const { form, variant = 'black', class: className } = Astro.props;
+const { form, program, variant = 'black', class: className } = Astro.props;
+const href = program ? `${formUrl(form)}?program=${encodeURIComponent(program)}` : formUrl(form);
 ---
 
-<Button href={formUrl(form)} variant={variant} class={className} data-tally-form={site.forms[form]}>
+<Button href={href} variant={variant} class={className} data-tally-form={site.forms[form]} data-tally-program={program}>
   <slot />
 </Button>

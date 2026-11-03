@@ -8,6 +8,7 @@ export const GET: APIRoute = ({ site }) => {
   const paths = Object.keys(import.meta.glob('./**/*.astro'))
     .map((file) => file.replace(/^\./, '').replace(/\.astro$/, '').replace(/\/index$/, '/'))
     .filter((path) => !skip.includes(path))
+    .map((path) => (path.endsWith('/') ? path : `${path}/`)) // the canonical form; /about redirects to /about/
     .sort();
   const urls = paths.map((path) => `  <url><loc>${new URL(path, site)}</loc></url>`).join('\n');
   return new Response(

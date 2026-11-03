@@ -2,7 +2,7 @@
 
 The website for R Journey, a nonprofit in Apex, North Carolina, that runs hands-on programs for children and teens with Autism Spectrum Disorder (ASD).
 
-Pages: Home, About, Our programs, Contact, Donate, People, The bigger picture, Partner on a program, and Corporate partnerships. Built with [Astro](https://astro.build) as a static site. Plain CSS, no UI framework, no analytics, no cookies, no third-party scripts. Fonts (Anton and Figtree) are self-hosted from the `@fontsource` packages.
+Pages: Home, About, Our programs, Contact, Donate, People, The bigger picture, Partner on a program, and Corporate partnerships. Built with [Astro](https://astro.build) as a static site. Plain CSS, no UI framework, no analytics. The only third-party script is Tally's form embed (see "Forms"), and the site itself sets no cookies. Fonts (Anton and Figtree) are self-hosted from the `@fontsource` packages.
 
 ## Running the site
 
@@ -44,7 +44,7 @@ Each program in `src/data/programs.ts` has two fields that decide where it appea
 | `kind` | `'own'` or `'partner'` | Which list it's in: **Run by us** or **With partners** |
 | `status` | `'past'`, `'now'`, or `'planned'` | Which group it's in: **Past**, **Now**, or **Coming soon** |
 
-- **Moving a program along:** change its `status`. When a planned program starts, set it to `'now'`; when it ends, `'past'`. Its button label changes with it: "Ask about the next one" (past), "Sign up" (now), "Tell us you're interested" (coming soon). Every one opens the sign-up form. When you add, rename, or start a program, also update the program list in the sign-up and volunteer forms on Tally.
+- **Moving a program along:** change its `status`. When a planned program starts, set it to `'now'`; when it ends, `'past'`. Its button label changes with it: "Ask about the next one" (past), "Sign up" (now), "Tell us you're interested" (coming soon). The button opens the program's `form`, or the general sign-up form if it has none (see "Forms"). When you add, rename, or start a program, also update the program lists on Tally (see "Adding a program").
 - **Order:** within a group, programs appear in the order they're listed in the file.
 - **Empty groups** don't appear at all.
 - **Photos:** past and now programs show a photo beside a color panel, so give them an `image` and a `panelColor`. Coming soon programs show no photo.
@@ -95,19 +95,43 @@ Photos are cropped to fit their slot, so nothing on the page shifts when they lo
 
 ## Forms
 
-Signing up, volunteering, partnering, and questions go through four Tally forms (tally.so, logged in as the R Journey account). Their ids are in `src/data/site.ts` under `forms`:
+Signing up, volunteering, partnering, and questions go through six Tally forms (tally.so, logged in as the R Journey account). Their ids are in `src/data/site.ts` under `forms`:
 
 | Form | Used on |
 |---|---|
-| `signup`: Sign up for a program, with the waiver | Home "Want to join in?", every program card, the Programs page, Contact, the footer |
+| `signup`: Sign up for a program, with the waiver | Home "Want to join in?", STEM Builders Camp, the Programs page "Not sure" button, Contact, the footer |
+| `interest`: Tell us you're interested, no waiver | Past and coming-soon program buttons, with the program pre-selected |
+| `badminton`: Badminton Camp only, with the waiver | The Badminton Camp button (see "The badminton form's weekly reset") |
 | `volunteer`: Volunteer, with the waiver | The menu, under Get involved |
 | `partner`: Partner with R Journey | Partner on a program, Corporate partnerships |
 | `question`: Ask a question | Contact |
 
 - **Changing questions:** edit the form in Tally. The site doesn't need to change.
-- **Adding a form button:** `<FormButton form="signup">Label</FormButton>`. It opens the form as a popup over the page. If Tally's script doesn't load, it opens the form's own page.
-- **Responses** are emailed to the address in `site.ts` and kept in Tally.
+- **Adding a form button:** `<FormButton form="signup">Label</FormButton>`. A mouse click or tap opens the form as a popup over the page. From the keyboard, or if Tally's script doesn't load, it opens the form's own page, because Tally's popup can't be closed from the keyboard.
+- **After publishing with the API or a script,** open the form's public link and check the questions show. A form can be marked published while its public page is empty.
+- **Responses** are kept in Tally and sync to the "R Journey - All form responses" Google Sheet, one tab per form. Connect a new form in Tally under Integrations, Google Sheets. Email notifications are set in Tally, not by the address in `site.ts`.
 - **The waiver** inside the sign-up and volunteer forms is a copy of `Liability Waiver - R Journey.pdf`. If the PDF changes, update the forms too.
+
+### Adding a program
+
+Planned design: one yearly family registration holds the waiver, each running program has a short sign-up form, and past and coming-soon programs share the interest form.
+
+**Not finished yet.** The Family registration (`gbaOe4`) and STEM Builders Camp (`yXM7Nx`) forms are unpublished drafts until the owner approves the new waiver wording. Until then, running programs keep the waiver in their current forms. Once approved: publish both, update `Liability Waiver - R Journey.pdf`, add the ids to `site.forms`, point STEM Builders Camp at its form and the footer, home, and "Not sure" buttons at the registration form, then convert the Badminton form last.
+
+For a coming-soon or past program:
+
+1. Add it to `programs.ts` with `form: 'interest'`.
+2. Add its name to the "Which program are you interested in?" question on the interest form, spelled exactly like `name`. The `program` hidden field only pre-selects an exact match.
+
+When it starts running, copy a short sign-up form in Tally, connect it to the Google Sheet, add its id to `site.forms`, set the program's `form`, and set its `status` to `'now'`.
+
+## The badminton form's weekly reset
+
+Badminton Camp has its own form so it can hold 6 spots per class. `.github/workflows/badminton-weekly.yml` runs `scripts/badminton-weekly.mjs` after each Sunday class. It moves the form's date to the next Sunday and sets the response limit to the sign-ups so far plus 6. It needs the `TALLY_API_KEY` repository secret.
+
+- **Keep the date format.** The form must keep its "Class date:" text with the date as `Sunday, <Month> <day>, <year>`, or the script stops with an error.
+- **Runs start late.** GitHub often starts scheduled runs hours after the set time, so the form may reopen later on Sunday night.
+- **Keep the repo active.** GitHub can turn off scheduled workflows after 60 days with no repository activity. If that happens, turn it back on in the Actions tab.
 
 ## The Donate page and the donate URL
 
@@ -170,11 +194,11 @@ All in `src/components/`:
 - **Layout:** `Header`, `Footer`, `SiteMenu` (the full-screen menu), `DisplayPanel`, `DisplayButton`, `DisplayHint`
 - **Buttons:** `Button`, `DonateButton`, `FormButton` (opens a Tally form, see "Forms" above), `CallOrText` (the "Call or text" button plus a "Send a text" link; used on the Donate page)
 - **Sections:** `Band` (full-width color section), `PageHeading`, `Hero`, `IntroBand` (two columns), `StoryBlock`, `Panel`, `CtaStrip`, `DiamondBand`
-- **Other:** `ClearingCards` (home page program cards), `ProgramLists` (the Our programs page switch and lists), `PersonCard`, `Placeholder` (image slot)
+- **Other:** `ClearingCards` (home page program cards), `ProgramLists` (the Our programs page switch and lists), `PersonCard`, `Placeholder` (image slot), `Flower` (decorative flowers, turned off with `flowers: false` in `site.ts`), `TallyPopups` (opens `FormButton` links as popups)
 
 ## Accessibility
 
-The site meets WCAG 2.2 AA in all three modes. When you change something, check:
+An automated axe check of WCAG 2.2 A and AA found no violations in all three modes at phone and desktop widths (November 2026). Automated checks catch only part of WCAG, so this isn't a full audit, and the site hasn't been tested with a screen reader. When you change something, check:
 
 - **Contrast:** text on yellow, orange, and white is always black. On pink, body text is black and only large headlines may be white. Text on black is white.
 - **Keyboard:** everything works with Tab, Enter, and the arrow keys (in the Display panel), with a visible focus outline. There's a "Skip to content" link.

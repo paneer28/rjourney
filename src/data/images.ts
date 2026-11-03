@@ -37,7 +37,7 @@ export const images = {
   // Three diamond photos in the home page "Want to join in?" band.
   joinDiamonds: [
     {
-      src: '/images/stem-builders.png',
+      src: '/images/stem-builders.jpg',
       alt: 'Two young people at a laptop, one pointing to blocks of code on the screen.',
       label: 'Photo: STEM Builders Camp',
       position: '81% center', // shifts the picture left about a quarter of the diamond
