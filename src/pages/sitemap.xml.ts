@@ -2,7 +2,7 @@
 // Lists every page automatically; add a path to `skip` to leave a page out.
 import type { APIRoute } from 'astro';
 
-const skip = ['/activities', '/menu']; // a redirect, and a list of links
+const skip = ['/activities', '/menu', '/404']; // a redirect, a list of links, and the not-found page
 
 export const GET: APIRoute = ({ site }) => {
   const paths = Object.keys(import.meta.glob('./**/*.astro'))
