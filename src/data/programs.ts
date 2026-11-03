@@ -21,7 +21,7 @@ export interface Program {
   kind: ProgramKind;
   status: ProgramStatus;
   paragraphs: string[]; // Our programs page text
-  form?: FormName; // defaults to the general 'signup' form. Past and planned programs use 'interest'
+  form?: FormName; // defaults to the general 'signup' form. Past and planned programs use 'interest', as does a running program with no sign-up form
   image?: ImageSlot; // past and now programs (planned ones show no photo)
   panelColor?: 'yellow' | 'orange' | 'pink'; // past and now programs
   // Home page clearing card (only for programs in `homeCards` below):
@@ -69,6 +69,7 @@ export const programs: Program[] = [
     name: 'STEM Builders Camp',
     kind: 'partner',
     status: 'now',
+    form: 'interest', // no sign-up form until there are session dates
     cardColor: 'yellow',
     cardSummary: 'Children with ASD learn the basics of coding, one step at a time.',
     panelColor: 'yellow',
