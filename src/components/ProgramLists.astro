@@ -17,8 +17,7 @@ import { programs, kinds, statuses, type Program, type ProgramStatus } from '../
 
 // Button label for each status. A visitor is never invited to join something that isn't running.
 // Each button opens the program's `form`, otherwise the general sign-up form.
-// The interest form opens with the program already selected, and a running
-// program that uses it says "Tell us you're interested", not "Sign up".
+// The interest form opens with the program already selected.
 const buttonLabel: Record<ProgramStatus, string> = {
   past: 'Ask about the next one',
   now: 'Sign up',
@@ -154,7 +153,7 @@ const lists = kinds.map(({ kind, label, view }) => {
                     <p>{text}</p>
                   ))}
                   <FormButton form={program.form ?? 'signup'} program={program.form === 'interest' ? program.name : undefined}>
-                    {program.form === 'interest' && status === 'now' ? buttonLabel.planned : buttonLabel[status]}
+                    {buttonLabel[status]}
                   </FormButton>
                 </StoryBlock>
               </div>

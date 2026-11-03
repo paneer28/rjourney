@@ -21,7 +21,7 @@ export interface Program {
   kind: ProgramKind;
   status: ProgramStatus;
   paragraphs: string[]; // Our programs page text
-  form?: FormName; // defaults to the general 'signup' form. Past and planned programs use 'interest', as does a running program with no sign-up form
+  form?: FormName; // defaults to the general 'signup' form. Past and planned programs use 'interest'
   image?: ImageSlot; // past and now programs (planned ones show no photo)
   panelColor?: 'yellow' | 'orange' | 'pink'; // past and now programs
   // Home page clearing card (only for programs in `homeCards` below):
@@ -68,10 +68,10 @@ export const programs: Program[] = [
     id: 'stem-builders-camp',
     name: 'STEM Builders Camp',
     kind: 'partner',
-    status: 'now',
-    form: 'interest', // no sign-up form until there are session dates
+    status: 'planned', // until there are session dates; `image` and `panelColor` are kept for when it runs
+    form: 'interest',
     cardColor: 'yellow',
-    cardSummary: 'Children with ASD learn the basics of coding, one step at a time.',
+    cardSummary: 'Children with ASD will learn the basics of coding, one step at a time.',
     panelColor: 'yellow',
     image: {
       src: '/images/stem-builders.jpg',
@@ -79,8 +79,8 @@ export const programs: Program[] = [
       label: 'Photo: STEM Builders Camp',
     },
     paragraphs: [
-      'Children with ASD learn the basics of coding: how to give a computer clear instructions and see what it does with them.',
-      'We run the camp with STEM Leaders, whose coaches teach the sessions. For neurodivergent children who enjoy patterns, logic, and building things, it is an early look at skills that can lead to real work later on.',
+      'Children with ASD will learn the basics of coding: how to give a computer clear instructions and see what it does with them.',
+      'We will run the camp with STEM Leaders, whose coaches will teach the sessions. For neurodivergent children who enjoy patterns, logic, and building things, it will be an early look at skills that can lead to real work later on.',
     ],
   },
   {
