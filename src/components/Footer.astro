@@ -124,7 +124,7 @@ import { site } from '../data/site';
   /* ---------- Mosaic layout on wide screens (not in Calm) ---------- */
   @media (min-width: 56rem) {
     :global(html:not([data-mode='calm'])) .mosaic {
-      /* The middle column is widest so "Call or text (858) 610-9661" fits on one line. */
+      /* The middle column is widest so its "Sign up for a program" button has room. */
       grid-template-columns: 4fr 5fr 3fr;
       grid-template-areas:
         'more join give'

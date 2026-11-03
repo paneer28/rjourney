@@ -27,8 +27,6 @@ export const statistics: Statistic[] = [
     figure: '1 in 150',
     text: 'was the United States figure when the CDC began counting in 2000.',
     source: 'CDC, Autism and Developmental Disabilities Monitoring Network.',
-    // TODO: confirm with owner: the brief gave no URL for this figure; this is
-    // the same CDC data page as the first figure, which covers the network's reports.
     url: 'https://www.cdc.gov/autism/data-research/',
   },
 ];

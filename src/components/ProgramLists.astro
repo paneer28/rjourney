@@ -16,8 +16,8 @@ import Flower from './Flower.astro';
 import { programs, kinds, statuses, type Program, type ProgramStatus } from '../data/programs';
 
 // Button label for each status. A visitor is never invited to join something that isn't running.
-// Each button opens the program's own form if it has one, otherwise the general
-// sign-up form, which lists the current and coming-soon programs.
+// Each button opens the program's `form`, otherwise the general sign-up form.
+// The interest form opens with the program already selected.
 const buttonLabel: Record<ProgramStatus, string> = {
   past: 'Ask about the next one',
   now: 'Sign up',
@@ -78,7 +78,7 @@ const lists = kinds.map(({ kind, label, view }) => {
             >
               {list.hasNow && <span class="switch__now" aria-hidden="true" />}
               {list.label}
-              {list.hasNow && <span class="visually-hidden">, has an program running now</span>}
+              {list.hasNow && <span class="visually-hidden">, has a program running now</span>}
             </button>
           ))
         }
@@ -132,7 +132,9 @@ const lists = kinds.map(({ kind, label, view }) => {
                     {program.paragraphs.map((text) => (
                       <p>{text}</p>
                     ))}
-                    <FormButton form={program.form ?? 'signup'}>{buttonLabel[status]}</FormButton>
+                    <FormButton form={program.form ?? 'signup'} program={program.form === 'interest' ? program.name : undefined}>
+                      {buttonLabel[status]}
+                    </FormButton>
                   </article>
                 </div>
               );
@@ -150,7 +152,9 @@ const lists = kinds.map(({ kind, label, view }) => {
                   {program.paragraphs.map((text) => (
                     <p>{text}</p>
                   ))}
-                  <FormButton form={program.form ?? 'signup'}>{buttonLabel[status]}</FormButton>
+                  <FormButton form={program.form ?? 'signup'} program={program.form === 'interest' ? program.name : undefined}>
+                    {buttonLabel[status]}
+                  </FormButton>
                 </StoryBlock>
               </div>
             );
@@ -170,7 +174,7 @@ const lists = kinds.map(({ kind, label, view }) => {
   SCROLL REVEAL: AN APPROVED EXCEPTION TO THE SITE'S MOTION RULE.
   The site's rule is that nothing moves unless the visitor hovers, focuses, taps,
   or clicks, and scroll-triggered animation is banned. The owner has approved this
-  one exception: as the visitor scrolls down an program list, each connector draws
+  one exception: as the visitor scrolls down a program list, each connector draws
   downward and the next element fades in when the line reaches it.
   It applies ONLY to the two program lists on this page, and ONLY in Standard and
   Vivid. Calm shows everything from the start. Do not copy it elsewhere on the site.

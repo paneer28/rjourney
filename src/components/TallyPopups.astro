@@ -2,15 +2,25 @@
 // Opens FormButton links as Tally popups. Loads Tally's embed script; until it
 // has loaded (or if it's blocked), a click follows the link to the form's own
 // page instead. Ctrl/Cmd/Shift-click still opens the page in a new tab.
+//
+// Keyboard activation (a click with detail 0) also follows the link: Tally's
+// popup can't be closed from the keyboard and lets focus fall behind it.
 ---
 
 <script is:inline async src="https://tally.so/widgets/embed.js"></script>
 <script>
   document.addEventListener('click', (event) => {
     const link = (event.target as Element).closest<HTMLElement>('[data-tally-form]');
+    if (event.detail === 0) return;
     const tally = (window as any).Tally;
     if (!link || !tally || event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
     event.preventDefault();
-    tally.openPopup(link.dataset.tallyForm, { layout: 'modal', width: 720 });
+    const program = link.dataset.tallyProgram;
+    tally.openPopup(link.dataset.tallyForm, {
+      layout: 'modal',
+      width: 720,
+      hiddenFields: program ? { program } : undefined,
+      onClose: () => link.focus(),
+    });
   });
 </script>

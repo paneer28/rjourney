@@ -21,7 +21,7 @@ export interface Program {
   kind: ProgramKind;
   status: ProgramStatus;
   paragraphs: string[]; // Our programs page text
-  form?: FormName; // the program's own sign-up form; defaults to the general 'signup' form
+  form?: FormName; // defaults to the general 'signup' form. Past and planned programs use 'interest'
   image?: ImageSlot; // past and now programs (planned ones show no photo)
   panelColor?: 'yellow' | 'orange' | 'pink'; // past and now programs
   // Home page clearing card (only for programs in `homeCards` below):
@@ -36,6 +36,7 @@ export const programs: Program[] = [
     name: 'Nurture with Love',
     kind: 'own',
     status: 'past',
+    form: 'interest',
     cardColor: 'orange',
     cardSummary: 'Children and teens with ASD arrange bouquets by hand, then help sell them.',
     panelColor: 'orange',
@@ -57,6 +58,7 @@ export const programs: Program[] = [
     name: 'Buddy Program',
     kind: 'own',
     status: 'planned',
+    form: 'interest',
     paragraphs: [
       'Teens with ASD will be paired with a neurotypical teen to shadow or help out at a real workplace, chosen around what each neurodivergent teen is interested in. A teen who loves flowers, for example, could spend time in a flower shop.',
       'Both buddies get something from it: early job skills, more responsibility, and a new friend. We plan to make the Buddy Program free to join.',
@@ -71,7 +73,7 @@ export const programs: Program[] = [
     cardSummary: 'Children with ASD learn the basics of coding, one step at a time.',
     panelColor: 'yellow',
     image: {
-      src: '/images/stem-builders.png',
+      src: '/images/stem-builders.jpg',
       alt: 'Two young people at a laptop, one pointing to blocks of code on the screen, with a small robot model on the table.',
       label: 'Photo: STEM Builders Camp',
     },
@@ -107,6 +109,7 @@ export const programs: Program[] = [
     name: 'Violin Program',
     kind: 'partner',
     status: 'planned',
+    form: 'interest',
     paragraphs: [
       'A violin program for children and teens with ASD is on the way, hosted at Peak Sports in Morrisville.',
       "We're still working out the details. If your neurodivergent child would like to try the violin, tell us and we'll let you know when it starts.",

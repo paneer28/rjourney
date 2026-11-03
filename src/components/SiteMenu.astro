@@ -176,7 +176,7 @@ const currentSection = menu.findIndex((section) => section.items.some((item) => 
       });
     });
 
-    // Following a link that stays on this page (e.g. #give) closes the menu.
+    // Following a link that stays on this page (e.g. to the current page) closes the menu.
     dialog.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((link) => {
       link.addEventListener('click', () => {
         const url = new URL(link.href, location.href);
