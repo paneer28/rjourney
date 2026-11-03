@@ -99,7 +99,7 @@ Signing up, volunteering, partnering, and questions go through six Tally forms (
 
 | Form | Used on |
 |---|---|
-| `signup`: Sign up for a program, with the waiver | Home "Want to join in?", the Programs page "Not sure" button, Contact, the footer |
+| `signup`: Sign up for a program, with the waiver | Home "Want to join in?", Nurture with Love, the Programs page "Not sure" button, Contact, the footer |
 | `interest`: Tell us you're interested, no waiver | Past and coming-soon program buttons, with the program pre-selected |
 | `badminton`: Badminton Camp only, with the waiver | The Badminton Camp button (see "The badminton form's weekly reset") |
 | `volunteer`: Volunteer, with the waiver | The menu, under Get involved |
