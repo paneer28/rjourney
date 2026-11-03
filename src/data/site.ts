@@ -41,7 +41,7 @@ export const site = {
     question: 'RGX86Q', // Ask R Journey a question
     interest: 'J1qBdR', // Past and coming-soon programs; the button pre-selects the program
     // Built but not published until the new waiver is approved (see the README):
-    // registration: 'gbaOe4', stem: 'yXM7Nx'
+    // registration: 'gbaOe4'
   },
 
   // Leave empty to hide the address everywhere. Example: '123 Main St, Apex, NC 27502'
