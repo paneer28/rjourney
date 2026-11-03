@@ -35,10 +35,10 @@ export const programs: Program[] = [
     id: 'nurture-with-love',
     name: 'Nurture with Love',
     kind: 'own',
-    status: 'past',
+    status: 'planned', // running again; `image` and `panelColor` are kept for when it does
     form: 'interest',
     cardColor: 'orange',
-    cardSummary: 'Children and teens with ASD arrange bouquets by hand, then help sell them.',
+    cardSummary: 'Children and teens with ASD will arrange bouquets by hand, then help sell them.',
     panelColor: 'orange',
     image: {
       src: '/images/flower-sale-bouquets.jpg',
@@ -49,7 +49,7 @@ export const programs: Program[] = [
       zoomOrigin: 'center 52%', // ...with the picture pushed up about an eighth of the frame
     },
     paragraphs: [
-      'Children and teens with ASD who are curious about floristry arrange fresh bouquets by hand. Then the bouquets go on sale, and the young florists help sell them.',
+      'Children and teens with ASD who are curious about floristry will arrange fresh bouquets by hand. Then the bouquets will go on sale, and the young florists will help sell them.',
       'Arranging flowers builds fine motor skills. Selling them gives neurodivergent young people practice talking with customers. Every bouquet sold pays for more R Journey programs.',
     ],
   },
