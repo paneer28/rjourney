@@ -100,7 +100,7 @@ Signing up, volunteering, partnering, and questions go through six Tally forms (
 | Form | Used on |
 |---|---|
 | `signup`: Sign up for a program, with the waiver | Home "Want to join in?", the Programs page "Not sure" button, Contact, the footer |
-| `interest`: Tell us you're interested, no waiver | STEM Builders Camp and past and coming-soon program buttons, with the program pre-selected |
+| `interest`: Tell us you're interested, no waiver | Past and coming-soon program buttons, with the program pre-selected |
 | `badminton`: Badminton Camp only, with the waiver | The Badminton Camp button (see "The badminton form's weekly reset") |
 | `volunteer`: Volunteer, with the waiver | The menu, under Get involved |
 | `partner`: Partner with R Journey | Partner on a program, Corporate partnerships |
@@ -116,7 +116,7 @@ Signing up, volunteering, partnering, and questions go through six Tally forms (
 
 Planned design: one yearly family registration holds the waiver, each running program has a short sign-up form, and past and coming-soon programs share the interest form.
 
-**Not finished yet.** The Family registration form (`gbaOe4`) is an unpublished draft until the owner approves the new waiver wording. Until then, Badminton Camp and the general sign-up form keep the waiver. STEM Builders Camp uses the interest form until it has session dates, then gets a short sign-up form. Once the waiver is approved: publish the registration form, update `Liability Waiver - R Journey.pdf`, add its id to `site.forms`, point the footer, home, and "Not sure" buttons at it, then convert the Badminton form last.
+**Not finished yet.** The Family registration form (`gbaOe4`) is an unpublished draft until the owner approves the new waiver wording. Until then, Badminton Camp and the general sign-up form keep the waiver. STEM Builders Camp is listed as coming soon until it has session dates, then gets a short sign-up form. Once the waiver is approved: publish the registration form, update `Liability Waiver - R Journey.pdf`, add its id to `site.forms`, point the footer, home, and "Not sure" buttons at it, then convert the Badminton form last.
 
 For a coming-soon or past program:
 
