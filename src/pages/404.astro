@@ -1,0 +1,33 @@
+---
+// Shown by GitHub Pages for any address that doesn't exist.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeading from '../components/PageHeading.astro';
+import Band from '../components/Band.astro';
+import Button from '../components/Button.astro';
+---
+
+<BaseLayout title="Page not found" description="This page isn't on the R Journey website.">
+  <PageHeading heading="We can't find that page">
+    <p>The link may be old, or the address may have a typo.</p>
+  </PageHeading>
+
+  <Band labelledby="next-heading">
+    <div class="flow">
+      <h2 id="next-heading">Where to next</h2>
+      <p>You can start at the home page or see what we run.</p>
+      <div class="actions">
+        <Button href="/">Home</Button>
+        <Button href="/programs">Our programs</Button>
+      </div>
+    </div>
+  </Band>
+</BaseLayout>
+
+<style>
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+    padding-top: var(--space-3);
+  }
+</style>
