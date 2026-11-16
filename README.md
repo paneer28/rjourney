@@ -31,7 +31,7 @@ Text lives in data files, so you can change it without touching layout.
 | `src/data/images.ts` | Photo slots that aren't tied to a program or person (home page hero and the three diamond photos) |
 | `src/pages/*.astro` | Page-specific copy (headings and paragraphs for each page) |
 
-**The legal status line** is in `site.ts` as `statusLine`. Every page reads it from there. Do not describe donations as tax-deductible until the IRS approves the 501(c)(3) application.
+**The legal status line** is in `site.ts` as `statusLine`. Every page reads it from there. The IRS approved R Journey's 501(c)(3) tax-exempt status in November 2026.
 
 **The email address** in `site.ts` is a placeholder (marked `TODO`). Confirm it before launch.
 

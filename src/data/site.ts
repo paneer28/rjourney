@@ -56,7 +56,7 @@ export const site = {
 
   // Use this exact wording wherever legal status is mentioned.
   statusLine:
-    'R Journey is a North Carolina nonprofit corporation. Our application for 501(c)(3) tax-exempt status is pending with the IRS.',
+    'R Journey is a North Carolina nonprofit corporation with 501(c)(3) tax-exempt status from the IRS.',
 };
 
 export type FormName = keyof typeof site.forms;
