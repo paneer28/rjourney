@@ -54,6 +54,9 @@ export const site = {
   // opens this URL in a new tab.
   donateUrl: '',
 
+  // IRS employer identification number, shown on the Donate page.
+  ein: '41-2977531',
+
   // Use this exact wording wherever legal status is mentioned.
   statusLine:
     'R Journey is a North Carolina nonprofit corporation with 501(c)(3) tax-exempt status from the IRS.',
