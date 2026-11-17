@@ -1,0 +1,782 @@
+---
+// The Thank you page: where donors land after giving on Zeffy (set it as the
+// donation form's redirect, https://rjourney.org/thank-you/).
+//
+// A hidden page: it isn't in the menu, the footer, or the sitemap, and search
+// engines are asked not to list it (noindex). It confirms the gift arrived,
+// says where the receipt is, and points donors on to the programs.
+//
+// Sections, top to bottom:
+//   1. A pink panel with the thank-you, beside a white "receipt" card, with
+//      flat blocks and flowers around them (the flowers bloom in on load).
+//   2. A yellow band on where the gift goes.
+//   3. What happens next, in three panels.
+//   4. A black band with photo cards for the programs, and a link to all of them.
+//   5. A sign-off from the team, with a way to reach us.
+import BaseLayout from '../layouts/BaseLayout.astro';
+import IntroBand from '../components/IntroBand.astro';
+import Band from '../components/Band.astro';
+import Button from '../components/Button.astro';
+import Flower from '../components/Flower.astro';
+import Placeholder from '../components/Placeholder.astro';
+import CallOrText from '../components/CallOrText.astro';
+import { site } from '../data/site';
+import { programs } from '../data/programs';
+
+// Program cards: every program with a photo, running ones first.
+const statusLabel = { now: 'Running now', planned: 'Coming soon', past: 'Past program' } as const;
+const statusOrder = { now: 0, planned: 1, past: 2 } as const;
+const cards = programs
+  .filter((program) => program.image && program.status !== 'past')
+  .sort((a, b) => statusOrder[a.status] - statusOrder[b.status]);
+
+// Coming-soon programs without a photo get a line under the cards instead.
+const alsoComing = programs.filter((program) => program.status === 'planned' && !program.image);
+const listOf = (names: string[]) =>
+  names.length < 2 ? names.join('') : `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
+
+// The running programs, by name, for the "where your gift goes" band.
+const running = programs.filter((program) => program.status === 'now').map((program) => program.name);
+---
+
+<BaseLayout
+  title="Thank you"
+  description="Thank you for your donation to R Journey. We've received your gift, and your receipt is on its way by email."
+  noindex
+>
+  <!-- ============ 1. The thank-you ============ -->
+  <section class="thanks" aria-labelledby="thanks-heading">
+    <div class="thanks__blocks" aria-hidden="true">
+      <span class="tblock tblock--yellow"></span>
+      <span class="tblock tblock--black"></span>
+      <span class="tblock tblock--orange"></span>
+      <span class="tblock tblock--white"></span>
+      <span class="tblock tblock--yellow-small"></span>
+    </div>
+
+    <div class="container thanks__container">
+      <div class="thanks__panel flow">
+        <Flower petals="yellow" center="orange" size="4rem" rotate={-14} class="bloom" style="--i: 0; top: -2rem; left: -1.5rem" />
+        <Flower petals="white" center="pink" size="2.5rem" rotate={22} class="bloom" style="--i: 2; top: -1rem; left: 2.25rem" />
+
+        <p class="stamp">
+          <svg class="stamp__check" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false">
+            <path d="M4 12.5l5 5L20 6.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"></path>
+          </svg>
+          We've received your donation
+        </p>
+
+        <h1 id="thanks-heading">
+          Thank you so much, <span class="thanks__line">from the bottom of our hearts</span>
+        </h1>
+
+        <p class="thanks__lede">
+          Your gift just reached R Journey, and every person on our team is grateful for it.
+        </p>
+        <p>
+          It goes toward programs where children and teens with Autism Spectrum Disorder (ASD) learn something new, meet
+          people, and have a good time doing it. Thank you for believing they deserve that.
+        </p>
+      </div>
+
+      <aside class="receipt" aria-labelledby="receipt-heading">
+        <Flower petals="pink" center="yellow" size="3.25rem" rotate={8} class="bloom" style="--i: 1; top: -1.6rem; right: -1.4rem" />
+        <Flower petals="orange" center="white" size="2rem" rotate={-20} class="bloom" style="--i: 3; top: 1.4rem; right: -2.1rem" />
+
+        <div class="receipt__top">
+          <h2 id="receipt-heading" class="receipt__heading">Your gift</h2>
+          <span class="receipt__badge">Received</span>
+        </div>
+
+        <dl class="receipt__rows">
+          <div class="receipt__row">
+            <dt>To</dt>
+            <dd>{site.name}, {site.location}</dd>
+          </div>
+          <div class="receipt__row">
+            <dt>Receipt</dt>
+            <dd>On its way to your email from Zeffy, our donation platform</dd>
+          </div>
+          <div class="receipt__row">
+            <dt>Tax-deductible</dt>
+            <dd>Yes, to the extent allowed by law</dd>
+          </div>
+          <div class="receipt__row">
+            <dt>Our EIN</dt>
+            <dd class="receipt__ein">{site.ein}</dd>
+          </div>
+        </dl>
+
+        <p class="receipt__note small">Keep the email receipt for your tax records. {site.statusLine}</p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ 2. Where the gift goes ============ -->
+  <IntroBand id="gift" heading="Your gift goes straight to the programs" color="yellow">
+    <p>
+      R Journey is a young nonprofit in Apex, North Carolina, started in {site.founded}. We run hands-on programs for
+      children and teens with ASD across {site.region}, and we're growing one program at a time.
+    </p>
+    {
+      running.length > 0 && (
+        <p>
+          Right now that means {listOf(running)}. Gifts like yours keep them running, and they're how the next program
+          gets started.
+        </p>
+      )
+    }
+    <p class="gift__pull">You're part of R Journey now.</p>
+  </IntroBand>
+
+  <!-- ============ 3. What happens next ============ -->
+  <Band labelledby="next-heading" class="next">
+    <h2 id="next-heading" class="heading-center">What happens next</h2>
+    <ol class="steps" role="list">
+      <li class="step step--white">
+        <span class="step__number" aria-hidden="true">1</span>
+        <h3 class="step__heading">Check your email</h3>
+        <p>
+          Zeffy emails your receipt in a few minutes. If you don't see it, look in your spam or promotions folder, or
+          get in touch and we'll send it again.
+        </p>
+      </li>
+      <li class="step step--orange">
+        <span class="step__number" aria-hidden="true">2</span>
+        <h3 class="step__heading">Your gift goes to work</h3>
+        <p>
+          It goes toward the programs: supplies, sessions, and the things that make each one a place where
+          neurodivergent young people feel at home.
+        </p>
+      </li>
+      <li class="step step--pink">
+        <span class="step__number" aria-hidden="true">3</span>
+        <h3 class="step__heading">Follow along</h3>
+        <p>
+          See the programs your gift supports on Instagram, at{' '}
+          <a href={site.instagram.url}>@{site.instagram.handle}</a>.
+        </p>
+      </li>
+    </ol>
+  </Band>
+
+  <!-- ============ 4. The programs ============ -->
+  <section class="more on-dark" aria-labelledby="more-heading">
+    <div class="container">
+      <div class="more__intro flow">
+        <h2 id="more-heading">Check out more of our programs</h2>
+        <p>Here's what your gift helps make happen. Know a family who'd enjoy one? Pass it along.</p>
+      </div>
+
+      <ul class="pcards" role="list" style={`--pcard-count: ${Math.min(cards.length, 3)}`}>
+        {
+          cards.map((program) => (
+            <li class:list={['pcard', `pcard--${program.panelColor ?? 'yellow'}`]} style={`--card-color: var(--${program.panelColor ?? 'yellow'})`}>
+              <div class="pcard__photo">
+                {program.image && <Placeholder image={program.image} ratio="4 / 3" />}
+                <span class:list={['pcard__status', `pcard__status--${program.status}`]}>{statusLabel[program.status]}</span>
+              </div>
+              <div class="pcard__body">
+                <h3 class="pcard__name">
+                  <a href={`/programs#${program.id}`} class="pcard__link">
+                    {program.name}
+                  </a>
+                </h3>
+                <p>{program.cardSummary ?? program.paragraphs[0]}</p>
+                <span class="pcard__more" aria-hidden="true">
+                  Learn more
+                  <svg viewBox="0 0 40 12" width="40" height="12" focusable="false">
+                    <path d="M0 6h38M33 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.5"></path>
+                  </svg>
+                </span>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+
+      {
+        alsoComing.length > 0 && (
+          <p class="more__also">
+            Also on the way: {listOf(alsoComing.map((program) => program.name))}.
+          </p>
+        )
+      }
+
+      <div class="more__action">
+        <Button href="/programs" variant="yellow">See all our programs</Button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 5. Sign-off ============ -->
+  <Band color="white" labelledby="signoff-heading" class="signoff">
+    <div class="signoff__inner">
+      <div class="signoff__bouquet" aria-hidden="true">
+        <Flower petals="pink" center="yellow" size="4.5rem" rotate={-6} style="left: 30%; top: 0" />
+        <Flower petals="yellow" center="orange" size="3.5rem" rotate={18} style="left: 4%; top: 2.2rem" />
+        <Flower petals="orange" center="yellow" size="3rem" rotate={-24} style="right: 6%; top: 2.6rem" />
+        <Flower petals="white" center="pink" size="2.25rem" rotate={10} style="left: 58%; top: 4.4rem" />
+      </div>
+      <p class="signoff__kicker">With love,</p>
+      <h2 id="signoff-heading">The R Journey team</h2>
+      <p class="signoff__text">
+        Have a question about your gift, or want to see a program for yourself? We'd love to hear from you.
+      </p>
+      <CallOrText class="signoff__call" />
+    </div>
+  </Band>
+</BaseLayout>
+
+<style>
+  /* =====================================================================
+     1. The thank-you: pink panel + receipt card, with blocks around them
+     ===================================================================== */
+  .thanks {
+    position: relative;
+    isolation: isolate;
+    padding-block: var(--space-8) var(--section-space);
+    overflow: hidden;
+  }
+
+  .thanks__blocks {
+    display: var(--decoration);
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  .tblock {
+    position: absolute;
+  }
+
+  .tblock--yellow {
+    top: 0;
+    left: 0;
+    width: 46%;
+    height: 58%;
+    background: var(--yellow);
+  }
+
+  .tblock--black {
+    top: 10%;
+    right: 4%;
+    width: 14%;
+    height: 26%;
+    background: var(--black);
+  }
+
+  .tblock--orange {
+    right: 0;
+    bottom: 0;
+    width: 40%;
+    height: 46%;
+    background: var(--orange);
+  }
+
+  .tblock--white {
+    left: 6%;
+    bottom: 6%;
+    width: 13%;
+    height: 20%;
+    background: var(--white);
+  }
+
+  .tblock--yellow-small {
+    right: 30%;
+    bottom: 8%;
+    width: 5%;
+    aspect-ratio: 1;
+    background: var(--yellow);
+  }
+
+  .thanks__container {
+    position: relative;
+    display: grid;
+    gap: var(--space-7);
+  }
+
+  .thanks__panel {
+    position: relative;
+    padding: var(--space-7) var(--space-6);
+    background: var(--pink);
+    color: var(--ink);
+    --focus-color: var(--ink);
+  }
+
+  .thanks__panel h1 {
+    font-size: clamp(2.75rem, 7vw, 5.75rem);
+    color: var(--on-pink-heading);
+  }
+
+  /* The second half of the headline in black, so it reads as two beats. */
+  .thanks__line {
+    display: block;
+    color: var(--ink);
+  }
+
+  .thanks__lede {
+    font-size: 1.3em;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  /* "We've received your donation": a black tag with a yellow check. */
+  .stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-4) var(--space-2) var(--space-3);
+    background: var(--black);
+    color: var(--on-black);
+    font-weight: 700;
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--yellow);
+  }
+
+  .stamp__check {
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--yellow);
+  }
+
+  /* ---------- The receipt card ---------- */
+  .receipt {
+    position: relative;
+    align-self: start;
+    padding: var(--space-6);
+    padding-bottom: var(--space-7);
+    background: var(--white);
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--black);
+  }
+
+  .receipt__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding-bottom: var(--space-4);
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .receipt__heading {
+    font-size: var(--fs-card);
+  }
+
+  .receipt__badge {
+    padding: var(--space-1) var(--space-3);
+    background: var(--yellow);
+    border: 2px solid var(--ink);
+    font-size: var(--fs-small);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .receipt__rows {
+    display: grid;
+  }
+
+  .receipt__row {
+    display: grid;
+    gap: var(--space-1);
+    padding-block: var(--space-4);
+    border-bottom: 2px dashed var(--pale-gray);
+  }
+
+  .receipt__row dt {
+    font-size: var(--fs-small);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .receipt__row dd {
+    line-height: 1.4;
+  }
+
+  .receipt__ein {
+    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+  }
+
+  .receipt__note {
+    padding-top: var(--space-4);
+    max-width: none;
+  }
+
+  /* Wide screens, Standard and Vivid: side by side, the receipt tilted and
+     overlapping the panel's edge like a ticket tucked against it. */
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .thanks {
+      padding-block: var(--section-space);
+    }
+
+    :global(html:not([data-mode='calm'])) .thanks__container {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+      gap: 0;
+      align-items: center;
+    }
+
+    :global(html:not([data-mode='calm'])) .thanks__panel {
+      padding: var(--space-8) calc(var(--space-8) + var(--overlap)) var(--space-8) var(--space-8);
+    }
+
+    :global(html:not([data-mode='calm'])) .receipt {
+      align-self: center;
+      margin-left: calc(-1 * var(--overlap));
+      transform: rotate(2deg);
+      transition: transform var(--dur-slow) var(--ease);
+    }
+
+    :global(html:not([data-mode='calm'])) .receipt:hover {
+      transform: rotate(0deg) scale(var(--hover-scale));
+    }
+  }
+
+  @media (max-width: 55.99rem) {
+    .thanks__panel {
+      padding: var(--space-7) var(--space-5) var(--space-6);
+    }
+
+    .tblock--yellow {
+      width: 70%;
+      height: 30%;
+    }
+
+    .tblock--black {
+      top: 4%;
+      width: 20%;
+      height: 10%;
+    }
+
+    .tblock--orange {
+      width: 70%;
+      height: 26%;
+    }
+
+    .tblock--white,
+    .tblock--yellow-small {
+      display: none;
+    }
+
+    .receipt {
+      margin-inline: var(--space-3);
+    }
+  }
+
+  /* The flowers bloom in one after another when the page opens. Calm hides
+     them; durations come from tokens, so with no motion they simply appear. */
+  .thanks :global(.bloom) {
+    animation: bloom calc(var(--dur-slow) * 2) var(--ease) both;
+    animation-delay: calc(300ms + var(--i, 0) * var(--dur-fast));
+  }
+
+  @keyframes bloom {
+    from {
+      scale: 0;
+      opacity: 0;
+    }
+    60% {
+      scale: 1.15;
+      opacity: 1;
+    }
+    to {
+      scale: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .thanks :global(.bloom) {
+      animation: none;
+    }
+  }
+
+  /* =====================================================================
+     2. Where the gift goes
+     ===================================================================== */
+  .gift__pull {
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
+    text-transform: var(--heading-transform);
+    font-size: var(--fs-card);
+    line-height: var(--heading-leading);
+    padding-top: var(--space-3);
+  }
+
+  /* =====================================================================
+     3. What happens next
+     ===================================================================== */
+  .steps {
+    display: grid;
+    gap: var(--space-5);
+    margin-top: var(--space-7);
+    padding: 0;
+    list-style: none;
+  }
+
+  .step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-7) var(--space-6) var(--space-6);
+    color: var(--ink);
+    --focus-color: var(--ink);
+  }
+
+  .step--white { background: var(--white); }
+  .step--orange { background: var(--orange); }
+  .step--pink { background: var(--pink); }
+
+  .step__number {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    background: var(--black);
+    color: var(--on-black);
+    font-family: var(--font-display);
+    font-size: 2rem;
+    line-height: 1;
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--yellow);
+  }
+
+  .step__heading {
+    font-size: var(--fs-card);
+  }
+
+  .step--pink .step__heading {
+    color: var(--on-pink-heading);
+  }
+
+  .step a {
+    font-weight: 700;
+  }
+
+  /* Three across, staggered down like the home page cards. */
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .steps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+    }
+
+    :global(html:not([data-mode='calm'])) .step:nth-child(2) {
+      margin-top: calc(var(--stagger) / 2);
+    }
+
+    :global(html:not([data-mode='calm'])) .step:nth-child(3) {
+      margin-top: var(--stagger);
+    }
+  }
+
+  /* =====================================================================
+     4. The programs
+     ===================================================================== */
+  .more {
+    padding-block: var(--section-space);
+    background: var(--dark-band-bg);
+    color: var(--dark-band-fg);
+  }
+
+  .more__intro {
+    text-align: center;
+  }
+
+  .more__intro p {
+    margin-inline: auto;
+    font-size: 1.1em;
+  }
+
+  .pcards {
+    display: grid;
+    gap: var(--space-6);
+    margin-top: var(--space-7);
+    padding: 0;
+    list-style: none;
+  }
+
+  .pcard {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--card-color);
+    color: var(--ink);
+    --focus-color: var(--ink);
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--white);
+    transition:
+      transform var(--dur) var(--ease),
+      box-shadow var(--dur) var(--ease);
+  }
+
+  .pcard__photo {
+    position: relative;
+  }
+
+  .pcard__status {
+    position: absolute;
+    top: var(--space-4);
+    left: var(--space-4);
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--fs-small);
+    font-weight: 700;
+    border: 2px solid var(--ink);
+  }
+
+  .pcard__status--now {
+    background: var(--yellow);
+    color: var(--ink);
+  }
+
+  .pcard__status--planned,
+  .pcard__status--past {
+    background: var(--white);
+    color: var(--ink);
+  }
+
+  .pcard__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-6);
+  }
+
+  .pcard__name {
+    font-size: var(--fs-card);
+  }
+
+  .pcard--pink .pcard__name {
+    color: var(--on-pink-heading);
+  }
+
+  /* The whole card is the link; the name is its accessible label. */
+  .pcard__link {
+    text-decoration: none;
+  }
+
+  .pcard__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .pcard__link:focus-visible {
+    outline: none;
+  }
+
+  .pcard:has(.pcard__link:focus-visible) {
+    outline: var(--focus-width) solid var(--dark-band-fg);
+    outline-offset: var(--focus-offset);
+  }
+
+  .pcard__more {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: auto;
+    padding-top: var(--space-3);
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+    transition: text-decoration-color var(--dur) var(--ease);
+  }
+
+  .pcard__more svg {
+    width: 2.5rem;
+    height: auto;
+    transition: transform var(--dur) var(--ease);
+  }
+
+  .pcard:hover,
+  .pcard:has(.pcard__link:focus-visible) {
+    transform: translate(var(--button-lift), calc(-1 * var(--button-lift))) scale(var(--hover-scale));
+    box-shadow: calc(-1 * (var(--shadow-offset) + 4px)) calc(var(--shadow-offset) + 4px) 0 var(--white);
+  }
+
+  .pcard:hover .pcard__more {
+    text-decoration-color: currentColor;
+  }
+
+  .pcard:hover .pcard__more svg {
+    transform: translateX(var(--arrow-shift));
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .pcards {
+      grid-template-columns: repeat(var(--pcard-count, 3), minmax(0, 1fr));
+    }
+
+    /* The middle card sits a little lower, like the cut-paper cards elsewhere. */
+    :global(html:not([data-mode='calm'])) .pcard:nth-child(2) {
+      margin-top: var(--stagger);
+      margin-bottom: calc(-1 * var(--stagger));
+    }
+  }
+
+  .more__also {
+    margin: calc(var(--space-7) + var(--stagger)) auto 0;
+    text-align: center;
+    font-weight: 700;
+  }
+
+  .more__action {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-7);
+  }
+
+  :global(html[data-mode='calm']) .more__also {
+    margin-top: var(--space-7);
+  }
+
+  /* Calm: the black band turns to paper, so the cards' shadow goes ink. */
+  :global(html[data-mode='calm']) .pcard {
+    border: 2px solid var(--ink);
+    box-shadow: none;
+  }
+
+  /* =====================================================================
+     5. Sign-off
+     ===================================================================== */
+  .signoff__inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .signoff__bouquet {
+    display: var(--decoration);
+    position: relative;
+    width: 14rem;
+    height: 7.5rem;
+    margin-bottom: var(--space-5);
+  }
+
+  .signoff__kicker {
+    font-size: 1.4em;
+    font-weight: 700;
+  }
+
+  .signoff__inner h2 {
+    margin-top: var(--space-2);
+    font-size: clamp(2.75rem, 7vw, 5.5rem);
+  }
+
+  .signoff__text {
+    margin-top: var(--space-5);
+    font-size: 1.1em;
+  }
+
+  .signoff__inner :global(.signoff__call) {
+    justify-content: center;
+    margin-top: var(--space-6);
+  }
+</style>

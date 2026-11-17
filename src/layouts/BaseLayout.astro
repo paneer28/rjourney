@@ -21,9 +21,10 @@ interface Props {
   description: string;
   headerOverlay?: boolean; // true on pages whose hero photo runs under the header
   fillScreen?: boolean; // the page fills exactly one screen, with no footer (the Donate page)
+  noindex?: boolean; // hidden pages (e.g. /thank-you): search engines skip them
 }
 
-const { title, description, headerOverlay = false, fillScreen = false } = Astro.props;
+const { title, description, headerOverlay = false, fillScreen = false, noindex = false } = Astro.props;
 const fullTitle = title === site.name ? `${site.name}: ${site.tagline}` : `${title} | ${site.name}`;
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 const shareImage = Astro.site ? new URL(images.homeHero.src, Astro.site).href : undefined;
@@ -96,6 +97,7 @@ const organization = {
 
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     {canonical && <link rel="canonical" href={canonical} />}
 
