@@ -31,10 +31,12 @@ interface Props {
 }
 
 const { id, heading, items } = Astro.props;
+// Photos only when every card has one, so the cards stay the same shape.
+const showImages = items.every((item) => item.image);
 const headingId = `${id}-heading`;
 ---
 
-<section id={id} class="next-cards on-dark" aria-labelledby={headingId}>
+<section id={id} class="next-cards" aria-labelledby={headingId}>
   <div class="container">
     <div class="next-cards__head">
       <h2 id={headingId}>{heading}</h2>
@@ -44,9 +46,11 @@ const headingId = `${id}-heading`;
       {
         items.map((item) => {
           const href = item.form ? formUrl(item.form) : item.href;
+          // The band is pink, so a pink card would vanish: it becomes white.
+          const color = item.color === 'pink' ? 'white' : item.color;
           return (
-            <li class:list={['ncard', `ncard--${item.color}`]}>
-              {item.image && <Placeholder image={item.image} ratio="16 / 10" class="ncard__photo" />}
+            <li class:list={['ncard', `ncard--${color}`]}>
+              {showImages && item.image && <Placeholder image={item.image} ratio="16 / 10" class="ncard__photo" />}
               <div class="ncard__body">
                 <h3 class="ncard__title">
                   <a href={href} class="ncard__link" data-tally-form={item.form ? site.forms[item.form] : undefined}>
@@ -71,9 +75,13 @@ const headingId = `${id}-heading`;
 
 <style>
   .next-cards {
-    padding-block: var(--section-space) calc(var(--section-space) + var(--stagger));
-    background: var(--dark-band-bg);
-    color: var(--dark-band-fg);
+    padding-block: var(--section-space);
+    background: var(--pink);
+    color: var(--ink);
+  }
+
+  .next-cards h2 {
+    color: var(--on-pink-heading);
   }
 
   .next-cards__head {
@@ -97,10 +105,15 @@ const headingId = `${id}-heading`;
     flex-direction: column;
     color: var(--ink);
     --focus-color: var(--ink);
-    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--white);
+    border: 2px solid var(--ink);
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--black);
     transition:
       transform var(--dur) var(--ease),
       box-shadow var(--dur) var(--ease);
+  }
+
+  .ncard :global(.ncard__photo) {
+    border-bottom: 2px solid var(--ink);
   }
 
   .ncard--yellow { background: var(--yellow); }
@@ -141,7 +154,7 @@ const headingId = `${id}-heading`;
   }
 
   .ncard:has(.ncard__link:focus-visible) {
-    outline: var(--focus-width) solid var(--dark-band-fg);
+    outline: var(--focus-width) solid var(--ink);
     outline-offset: var(--focus-offset);
   }
 
@@ -169,7 +182,7 @@ const headingId = `${id}-heading`;
   .ncard:hover,
   .ncard:has(.ncard__link:focus-visible) {
     transform: translate(var(--button-lift), calc(-1 * var(--button-lift))) scale(var(--hover-scale));
-    box-shadow: calc(-1 * (var(--shadow-offset) + 4px)) calc(var(--shadow-offset) + 4px) 0 var(--white);
+    box-shadow: calc(-1 * (var(--shadow-offset) + 4px)) calc(var(--shadow-offset) + 4px) 0 var(--black);
   }
 
   .ncard:hover .ncard__more {
@@ -183,11 +196,15 @@ const headingId = `${id}-heading`;
   @media (min-width: 56rem) {
     :global(html:not([data-mode='calm'])) .ncards {
       grid-template-columns: repeat(var(--count), minmax(0, 1fr));
-      align-items: start;
+      align-items: stretch;
     }
 
     :global(html:not([data-mode='calm'])) .ncard:nth-child(2) {
-      margin-top: var(--stagger);
+      translate: 0 calc(var(--stagger) / 2);
+    }
+
+    :global(html:not([data-mode='calm'])) .ncards {
+      padding-bottom: calc(var(--stagger) / 2);
     }
   }
 
@@ -198,12 +215,7 @@ const headingId = `${id}-heading`;
   }
 
   /* Calm: the band is paper, so cards get an ink outline instead of a white shadow. */
-  :global(html[data-mode='calm']) .next-cards {
-    padding-bottom: var(--section-space);
-  }
-
   :global(html[data-mode='calm']) .ncard {
-    border: 2px solid var(--ink);
     box-shadow: none;
   }
 

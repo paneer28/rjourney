@@ -10,6 +10,10 @@ import Flower from '../../components/Flower.astro';
 import NextCards from '../../components/NextCards.astro';
 import { photos } from '../../data/images';
 import { site } from '../../data/site';
+import { programs } from '../../data/programs';
+
+const withPartners = programs.filter((program) => program.kind === 'partner' && program.status !== 'past').length;
+const allCurrent = programs.filter((program) => program.status !== 'past').length;
 
 // The partners R Journey works with today, and what each one does.
 const partners = [
@@ -53,7 +57,7 @@ const weBring = [
     heading: 'What we’ve learned',
     text: 'How to make a session work for neurodivergent children: what to plan for, and what to leave room for.',
   },
-  { heading: 'The families', text: 'We find the children, handle sign-ups and waivers, and stay in touch with parents.' },
+  { heading: 'The families', text: 'Families come to us through our other programs. We handle sign-ups and waivers, and stay in touch with parents.' },
 ];
 
 // TODO: confirm steps with owner.
@@ -74,7 +78,7 @@ const ideas = ['Sport', 'Music', 'Art', 'Cooking', 'Gardening', 'Coding', 'Dance
   title="Partner on a program"
   description="If your nonprofit, club, school, or studio teaches something children enjoy, R Journey would like to build a program with you for children and teens with Autism Spectrum Disorder (ASD)."
 >
-  <PageHero heading="Partner on a program" kicker="Get involved" images={[photos.badmintonCoach, photos.coding]}>
+  <PageHero heading="Partner on a program" kicker="Get involved" images={[photos.badmintonCoach, photos.bouquetJar]}>
     <p>Teach what you know to children who will love it.</p>
     <p>
       If your nonprofit, club, school, or studio teaches something children enjoy, we'd like to build a program with you
@@ -87,7 +91,10 @@ const ideas = ['Sport', 'Music', 'Art', 'Cooking', 'Gardening', 'Coding', 'Dance
   <Band labelledby="partners-heading">
     <div class="partners-head flow">
       <h2 id="partners-heading">Who we work with now</h2>
-      <p>Some of our best programs are ones we run with someone else.</p>
+      <p>
+        {withPartners} of our {allCurrent} programs are run with a partner. They bring the skill; we bring the volunteers
+        and the families.
+      </p>
     </div>
     <ul class="partners" role="list">
       {
@@ -182,7 +189,6 @@ const ideas = ['Sport', 'Music', 'Art', 'Cooking', 'Gardening', 'Coding', 'Dance
         label: 'For businesses',
         href: '/get-involved/corporate-partnerships',
         color: 'yellow',
-        image: photos.bouquets,
       },
       {
         title: 'Volunteer',
@@ -197,7 +203,6 @@ const ideas = ['Sport', 'Music', 'Art', 'Cooking', 'Gardening', 'Coding', 'Dance
         label: 'See our programs',
         href: '/programs',
         color: 'orange',
-        image: photos.badmintonCoach,
       },
     ]}
   />
@@ -331,7 +336,7 @@ const ideas = ['Sport', 'Music', 'Art', 'Cooking', 'Gardening', 'Coding', 'Dance
     height: 4rem;
     background: var(--black);
     color: var(--on-black);
-    font-family: var(--font-display);
+    font-family: var(--heading-font);
     font-size: 3rem;
     line-height: 1;
   }
@@ -379,7 +384,7 @@ const ideas = ['Sport', 'Music', 'Art', 'Cooking', 'Gardening', 'Coding', 'Dance
     height: 3.5rem;
     background: var(--black);
     color: var(--on-black);
-    font-family: var(--font-display);
+    font-family: var(--heading-font);
     font-size: 2rem;
     line-height: 1;
     box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--pink);

@@ -57,7 +57,7 @@ const promises = [
   title="Corporate partnerships"
   description="A local business can do a lot for children with Autism Spectrum Disorder (ASD): sponsor a program, share space or equipment, open your doors, or volunteer as a team."
 >
-  <PageHero heading="Corporate partnerships" kicker="Get involved" images={[photos.badmintonCourt, photos.bouquetJar]}>
+  <PageHero heading="Corporate partnerships" kicker="Get involved" color="white" images={[photos.badmintonWarmup, photos.bouquets]}>
     <p>A local business can do a lot for children with Autism Spectrum Disorder (ASD).</p>
     <p>Here are four ways to help, and what you can expect from us in return.</p>
     <FormButton slot="actions" form="partner">Get in touch</FormButton>
@@ -95,7 +95,7 @@ const promises = [
   <!-- A partner already doing it -->
   <Band color="white" labelledby="spotlight-heading">
     <p class="spotlight-kicker">Already doing it</p>
-    <StoryBlock id="spotlight" heading="Peak Sports, Morrisville" image={photos.badmintonCoach} color="yellow">
+    <StoryBlock id="spotlight" heading="Peak Sports, Morrisville" image={photos.badmintonCourt} color="yellow">
       <p>
         Peak Sports donates the court time for our Badminton Camp. Every session, children with ASD learn the game on
         courts they've given us, coached by volunteers from R Journey and Rookie Rackets.
@@ -106,7 +106,7 @@ const promises = [
   </Band>
 
   <!-- What you can expect -->
-  <section class="expect on-dark" aria-labelledby="expect-heading">
+  <section class="expect" aria-labelledby="expect-heading">
     <div class="container">
       <h2 id="expect-heading" class="heading-center">What you can expect from us</h2>
       <ul class="promises" role="list">
@@ -134,7 +134,7 @@ const promises = [
     <div class="container talk__inner">
       <div class="talk__panel flow">
         <h2 id="talk-heading">Let's talk about what would suit your business</h2>
-        <p>Tell us a little about your business and what you have in mind. We'll take it from there.</p>
+        <p>Tell us a little about your business and what you have in mind. Then we'll work out the details together.</p>
         <div class="talk__actions">
           <FormButton form="partner" variant="yellow">Get in touch</FormButton>
           <a class="talk__email" href={`mailto:${site.email}`}>Or email {site.email}</a>
@@ -153,7 +153,6 @@ const promises = [
         label: 'Run a program with us',
         href: '/get-involved/partner-on-a-program',
         color: 'yellow',
-        image: photos.coding,
       },
       {
         title: 'Give',
@@ -245,8 +244,8 @@ const promises = [
   /* ---------- What you can expect ---------- */
   .expect {
     padding-block: var(--section-space);
-    background: var(--dark-band-bg);
-    color: var(--dark-band-fg);
+    background: var(--yellow);
+    color: var(--ink);
   }
 
   .promises {
@@ -262,7 +261,7 @@ const promises = [
     gap: var(--space-3);
     align-content: start;
     padding-top: var(--space-5);
-    border-top: 3px solid var(--yellow);
+    border-top: 3px solid var(--ink);
   }
 
   .promise__check {
@@ -270,8 +269,8 @@ const promises = [
     place-items: center;
     width: 3rem;
     height: 3rem;
-    background: var(--yellow);
-    color: var(--ink);
+    background: var(--black);
+    color: var(--yellow);
   }
 
   .promise__check svg {
@@ -315,7 +314,7 @@ const promises = [
 
   .kblock--yellow {
     left: 0;
-    top: 0;
+    bottom: 0;
     width: 40%;
     height: 60%;
     background: var(--yellow);
@@ -323,7 +322,7 @@ const promises = [
 
   .kblock--orange {
     right: 0;
-    bottom: 0;
+    top: 0;
     width: 34%;
     height: 55%;
     background: var(--orange);

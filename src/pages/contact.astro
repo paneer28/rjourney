@@ -4,15 +4,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHero from '../components/PageHero.astro';
 import Band from '../components/Band.astro';
 import FormButton from '../components/FormButton.astro';
-import NextCards from '../components/NextCards.astro';
 import { site, type FormName } from '../data/site';
-import { photos } from '../data/images';
+import Flower from '../components/Flower.astro';
 
 // The contact tiles. `href` makes the tile a link; the mail tile appears only
 // when a mailing address is set in site.ts.
 const details = [
-  { icon: 'phone', label: 'Call or text', value: site.phone.display, href: site.phone.tel, color: 'yellow' },
-  { icon: 'mail', label: 'Email', value: site.email, href: `mailto:${site.email}`, color: 'white' },
   { icon: 'camera', label: 'Instagram', value: `@${site.instagram.handle}`, href: site.instagram.url, color: 'orange' },
   ...(site.mailingAddress ? [{ icon: 'pin', label: 'Mail', value: site.mailingAddress, color: 'white' }] : []),
   { icon: 'pin', label: 'Where we are', value: 'Apex, North Carolina. Serving families across the Triangle.', color: 'pink' },
@@ -60,16 +57,24 @@ const steps = [
   title="Contact"
   description="Sign up for an R Journey program or ask us a question online, or call or text (858) 610-9661. Based in Apex, North Carolina, serving families across the Triangle."
 >
-  <PageHero heading="Talk to us" kicker="Who we are" images={[photos.bouquets, photos.badmintonCourt]}>
+  <PageHero heading="Talk to us" kicker="Get in touch" color="orange">
     <p>Call, text, email, or fill in a form: whichever is easiest for you.</p>
     <p>
       Tell us a little about your child, or about yourself, and what you're interested in. We'll take it from there.
     </p>
+    <div slot="aside" class="note">
+      <p class="note__label">Call or text</p>
+      <a class="note__number" href={site.phone.tel}>{site.phone.display}</a>
+      <a class="note__sms" href={site.phone.sms}>Or send a text</a>
+      <p class="note__label note__label--second">Email</p>
+      <a class="note__email" href={`mailto:${site.email}`}>{site.email}</a>
+      <Flower petals="yellow" center="pink" size="3.5rem" rotate={-12} style="top: -1.75rem; right: -1.25rem" />
+    </div>
   </PageHero>
 
   <!-- Ways to reach us -->
   <Band labelledby="reach-heading">
-    <h2 id="reach-heading" class="heading-center">How to reach us</h2>
+    <h2 id="reach-heading" class="heading-center">Where to find us</h2>
     <ul class="details" role="list" style={`--detail-count: ${details.length}`}>
       {
         details.map((detail) => {
@@ -145,38 +150,65 @@ const steps = [
     </ol>
   </Band>
 
-  <NextCards
-    id="next"
-    heading="While you're here"
-    items={[
-      {
-        title: 'Our programs',
-        text: "What we've run, what's running now, and what's coming soon.",
-        label: 'See our programs',
-        href: '/programs',
-        color: 'yellow',
-        image: photos.badmintonWarmup,
-      },
-      {
-        title: 'About R Journey',
-        text: 'Who we are, what we believe, and the people behind it.',
-        label: 'About us',
-        href: '/about',
-        color: 'white',
-      },
-      {
-        title: 'Help us grow',
-        text: 'Every gift goes toward programs for children and teens with ASD.',
-        label: 'Donate',
-        href: '/donate',
-        color: 'pink',
-        image: photos.bouquetJar,
-      },
-    ]}
-  />
 </BaseLayout>
 
 <style>
+  /* ---------- The note in the header ---------- */
+  .note {
+    position: relative;
+    display: grid;
+    gap: var(--space-2);
+    width: min(100%, 26rem);
+    margin-inline: auto;
+    padding: var(--space-7) var(--space-6);
+    background: var(--white);
+    color: var(--ink);
+    border: 3px solid var(--ink);
+    box-shadow: calc(-1 * var(--shadow-offset) * 1.5) calc(var(--shadow-offset) * 1.5) 0 var(--black);
+  }
+
+  .note__label {
+    font-size: var(--fs-small);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .note__label--second {
+    margin-top: var(--space-5);
+    padding-top: var(--space-5);
+    border-top: 2px dashed var(--ink);
+  }
+
+  .note__number {
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
+    font-size: clamp(2.25rem, 4.5vw, 3.25rem);
+    line-height: 1;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .note__number:hover,
+  .note__number:focus-visible {
+    text-decoration: underline;
+  }
+
+  .note__sms,
+  .note__email {
+    font-weight: 700;
+  }
+
+  .note__email {
+    font-size: 1.2em;
+    overflow-wrap: anywhere;
+  }
+
+  :global(html[data-mode='calm']) .note {
+    box-shadow: none;
+    margin-inline: 0;
+  }
+
   /* ---------- Contact tiles ---------- */
   .details {
     display: grid;
@@ -192,11 +224,7 @@ const steps = [
     }
   }
 
-  @media (min-width: 64rem) {
-    :global(html:not([data-mode='calm'])) .details {
-      grid-template-columns: repeat(var(--detail-count, 4), minmax(0, 1fr));
-    }
-  }
+
 
   .detail {
     color: var(--ink);
@@ -364,7 +392,7 @@ const steps = [
     height: 3rem;
     background: var(--black);
     color: var(--on-black);
-    font-family: var(--font-display);
+    font-family: var(--heading-font);
     font-size: 1.75rem;
     line-height: 1;
   }

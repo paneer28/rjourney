@@ -7,6 +7,7 @@ import StoryBlock from '../../components/StoryBlock.astro';
 import Flower from '../../components/Flower.astro';
 import NextCards from '../../components/NextCards.astro';
 import { photos } from '../../data/images';
+import { site } from '../../data/site';
 
 // TODO: real stories from participants and families can be added to this page
 // later, with written permission from each person (and a parent for children).
@@ -45,7 +46,7 @@ const wins = ['A first rally over the net.', 'A bouquet a stranger paid for.', '
   title="People"
   description="Every child with Autism Spectrum Disorder (ASD) is different. R Journey starts with the person: what they enjoy, what they find hard, and what they would like to be able to do."
 >
-  <PageHero heading="People" kicker="Why we exist" images={[photos.badmintonCourt, photos.bouquets]}>
+  <PageHero heading="People" kicker="Why we exist" color="pink" images={[photos.badmintonCourt, photos.bouquets]}>
     <p>Numbers count children. They can't tell you about any one of them.</p>
     <p>This page is about the one in front of us: a particular child, with their own interests and their own family.</p>
   </PageHero>
@@ -155,11 +156,17 @@ const wins = ['A first rally over the net.', 'A bouquet a stranger paid for.', '
       <span class="tblock tblock--black"></span>
     </div>
     <div class="container teens__inner">
-      <h2 id="teens-heading" class="teens__label">If you're a teen reading this</h2>
-      <p class="teens__big">Come as you are.</p>
+      <h2 id="teens-heading" class="teens__heading">
+        <span class="teens__label">If you're a teen reading this</span>
+        <span class="teens__big">Come as you are.</span>
+      </h2>
       <p class="teens__text">
-        This page is about you. You don't have to be good at something to try it here, and you don't have to act like
-        anyone else.
+        Most of this page is written for parents. This part is for you. You don't have to be good at something to try
+        it here, and you don't have to act like anyone else.
+      </p>
+      <p class="teens__try">
+        Want to try a program? Ask a parent to sign you up, or text us yourself at{' '}
+        <a href={site.phone.sms}>{site.phone.display}</a>.
       </p>
       <Flower petals="pink" center="yellow" size="5rem" rotate={-10} style="top: 0; right: 10%" />
       <Flower petals="yellow" center="pink" size="3rem" rotate={22} style="top: 6rem; right: 3%" />
@@ -177,7 +184,7 @@ const wins = ['A first rally over the net.', 'A bouquet a stranger paid for.', '
         label: 'Our programs',
         href: '/programs',
         color: 'yellow',
-        image: photos.badmintonCourt,
+        image: photos.badmintonWarmup,
       },
       {
         title: 'The bigger picture',
@@ -192,7 +199,6 @@ const wins = ['A first rally over the net.', 'A bouquet a stranger paid for.', '
         label: 'Sign up for a program',
         form: 'signup',
         color: 'orange',
-        image: photos.bouquets,
       },
     ]}
   />
@@ -285,16 +291,8 @@ const wins = ['A first rally over the net.', 'A bouquet a stranger paid for.', '
       align-items: start;
     }
 
-    :global(html:not([data-mode='calm'])) .kid:nth-child(1) {
-      transform: rotate(-1.5deg);
-    }
-
     :global(html:not([data-mode='calm'])) .kid:nth-child(2) {
       margin-top: var(--stagger);
-    }
-
-    :global(html:not([data-mode='calm'])) .kid:nth-child(3) {
-      transform: rotate(1.5deg);
     }
   }
 
@@ -327,7 +325,8 @@ const wins = ['A first rally over the net.', 'A bouquet a stranger paid for.', '
     height: 3.5rem;
     background: var(--yellow);
     border: 2px solid var(--ink);
-    font-family: var(--font-display);
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
     font-size: 2rem;
     line-height: 1;
   }
@@ -370,6 +369,11 @@ const wins = ['A first rally over the net.', 'A bouquet a stranger paid for.', '
     color: var(--yellow);
   }
 
+  :global(html[data-mode='calm']) .wins__quote {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+
   .tickets {
     display: grid;
     gap: var(--space-5);
@@ -405,17 +409,14 @@ const wins = ['A first rally over the net.', 'A bouquet a stranger paid for.', '
     }
 
     :global(html:not([data-mode='calm'])) .ticket--1 {
-      transform: rotate(-2deg);
       margin-right: var(--space-8);
     }
 
     :global(html:not([data-mode='calm'])) .ticket--2 {
-      transform: rotate(1.5deg);
       margin-left: var(--space-8);
     }
 
     :global(html:not([data-mode='calm'])) .ticket--3 {
-      transform: rotate(-1deg);
       margin-right: var(--space-6);
       margin-left: var(--space-4);
     }
@@ -454,7 +455,7 @@ const wins = ['A first rally over the net.', 'A bouquet a stranger paid for.', '
     bottom: 0;
     width: 18%;
     height: 42%;
-    background: var(--pink);
+    background: var(--yellow);
   }
 
   .tblock--black {
@@ -469,6 +470,12 @@ const wins = ['A first rally over the net.', 'A bouquet a stranger paid for.', '
     position: relative;
   }
 
+  .teens__heading {
+    display: grid;
+    justify-items: start;
+    font-size: inherit;
+  }
+
   .teens__label {
     display: inline-block;
     padding: var(--space-1) var(--space-3);
@@ -481,7 +488,18 @@ const wins = ['A first rally over the net.', 'A bouquet a stranger paid for.', '
     text-transform: uppercase;
   }
 
+  .teens__try {
+    margin-top: var(--space-5);
+    font-size: 1.1em;
+  }
+
+  .teens__try a {
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
   .teens__big {
+    display: block;
     margin-top: var(--space-5);
     font-family: var(--heading-font);
     font-weight: var(--heading-weight);

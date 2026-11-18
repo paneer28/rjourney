@@ -48,6 +48,16 @@ const partners = [
 ];
 
 const personColors = ['yellow', 'orange', 'pink'] as const;
+
+// One card per person. Someone on both the leadership team and the board
+// (matched by name, ignoring a credential like ", MD") gets one card with both roles.
+const baseName = (name: string) => name.split(',')[0].trim();
+const roster = leadership.map((person) => ({ person, roles: ['Leadership team'] }));
+for (const member of board) {
+  const match = roster.find((entry) => baseName(entry.person.name) === baseName(member.name));
+  if (match) match.roles.push('Board of directors');
+  else roster.push({ person: member, roles: ['Board of directors'] });
+}
 ---
 
 <BaseLayout
@@ -101,8 +111,8 @@ const personColors = ['yellow', 'orange', 'pink'] as const;
     <div class="container vision__inner">
       <h2 id="vision-heading" class="vision__label">What we're working toward</h2>
       <p class="vision__statement">
-        A Triangle where young people with ASD are welcomed and given real chances to grow, and where their families
-        have people to lean on.
+        We want the Triangle to be a place where young people with ASD are welcomed and given real chances to grow, and
+        where their families have people to lean on.
       </p>
       <Flower petals="yellow" center="orange" size="4.5rem" rotate={-12} style="top: -1rem; right: 4%" />
       <Flower petals="white" center="pink" size="2.75rem" rotate={16} style="bottom: -0.5rem; right: 24%" />
@@ -138,7 +148,7 @@ const personColors = ['yellow', 'orange', 'pink'] as const;
           We'd rather run one program that families can count on than five that come and go. When a program is working,
           we keep it. When we've learned enough, we start the next one.
         </p>
-        <p class="small">{site.statusLine}</p>
+        <p class="small">{site.statusLine} EIN {site.ein}.</p>
       </div>
 
       <div class="now__lists">
@@ -177,23 +187,11 @@ const personColors = ['yellow', 'orange', 'pink'] as const;
       <h2 id="people-heading" class="heading-center">The people behind R Journey</h2>
     </div>
 
-    <h3 class="group-heading">Leadership team</h3>
-    <ul class="leadership" role="list">
+    <ul class="roster" role="list" style={`--roster-count: ${Math.min(roster.length, 4)}`}>
       {
-        leadership.map((person, i) => (
+        roster.map((entry, i) => (
           <li>
-            <PersonCard person={person} color={personColors[i % personColors.length]} />
-          </li>
-        ))
-      }
-    </ul>
-
-    <h3 class="group-heading">Board of directors</h3>
-    <ul class="board" role="list">
-      {
-        board.map((person, i) => (
-          <li>
-            <PersonCard person={person} size="small" color={personColors[(i + 2) % personColors.length]} />
+            <PersonCard person={entry.person} role={entry.roles.join(' · ')} color={personColors[i % personColors.length]} />
           </li>
         ))
       }
@@ -210,7 +208,7 @@ const personColors = ['yellow', 'orange', 'pink'] as const;
         label: 'See our programs',
         href: '/programs',
         color: 'yellow',
-        image: photos.bouquets,
+        image: photos.coding,
       },
       {
         title: 'Sign up',
@@ -218,7 +216,6 @@ const personColors = ['yellow', 'orange', 'pink'] as const;
         label: 'Sign up for a program',
         form: 'signup',
         color: 'orange',
-        image: photos.badmintonCourt,
       },
       {
         title: 'Help us grow',
@@ -226,7 +223,6 @@ const personColors = ['yellow', 'orange', 'pink'] as const;
         label: 'Donate',
         href: '/donate',
         color: 'pink',
-        image: photos.coding,
       },
     ]}
   />
@@ -238,6 +234,12 @@ const personColors = ['yellow', 'orange', 'pink'] as const;
     position: relative;
     z-index: 2;
     margin-top: calc(-1 * var(--space-8));
+  }
+
+  @media (max-width: 55.99rem) {
+    .facts {
+      margin-top: var(--space-6);
+    }
   }
 
   .facts__list {
@@ -377,7 +379,7 @@ const personColors = ['yellow', 'orange', 'pink'] as const;
     text-transform: var(--heading-transform);
     font-size: clamp(2.25rem, 5.5vw, 4.75rem);
     line-height: 1.02;
-    color: var(--on-pink-heading);
+    color: var(--ink);
   }
 
   /* ---------- What we believe ---------- */
@@ -410,7 +412,7 @@ const personColors = ['yellow', 'orange', 'pink'] as const;
     height: 3.5rem;
     background: var(--black);
     color: var(--on-black);
-    font-family: var(--font-display);
+    font-family: var(--heading-font);
     font-size: 2rem;
     line-height: 1;
     box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--pink);
@@ -516,54 +518,37 @@ const personColors = ['yellow', 'orange', 'pink'] as const;
     }
   }
 
-  /* ---------- People ---------- */
-  .group-heading {
-    margin-top: var(--space-8);
-    font-size: calc(var(--fs-card) * 0.85);
-    text-align: center;
-  }
-
-  .leadership,
-  .board {
+  /* ---------- People: one row of cards ---------- */
+  .roster {
     display: grid;
-    gap: var(--space-6);
-    margin: var(--space-5) auto 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5);
+    margin-top: var(--space-7);
     padding: 0;
     list-style: none;
   }
 
-  .leadership {
-    max-width: 44rem;
+  .roster :global(.person__mono) {
+    aspect-ratio: 4 / 3;
   }
 
-  .board {
-    max-width: 52rem;
+  .roster :global(.person__initials) {
+    font-size: clamp(3rem, 6vw, 5rem);
   }
 
-  .board {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-5);
+  .roster :global(.person__name) {
+    font-size: calc(var(--fs-card) * 0.8);
   }
 
-  @media (min-width: 40rem) {
-    .leadership {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .board {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+  @media (min-width: 56rem) {
+    .roster {
+      grid-template-columns: repeat(var(--roster-count, 4), minmax(0, 1fr));
     }
   }
 
-  :global(html[data-mode='calm']) .leadership,
-  :global(html[data-mode='calm']) .board {
+  :global(html[data-mode='calm']) .roster {
     max-width: 32rem;
     grid-template-columns: 1fr;
-    margin-inline: 0;
-  }
-
-  :global(html[data-mode='calm']) .group-heading {
-    text-align: left;
   }
 
   :global(html[data-mode='calm']) .belief,

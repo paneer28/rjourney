@@ -19,13 +19,14 @@ interface Props {
   heading: string;
   kicker?: string; // a small label above the heading, e.g. the menu section
   images?: ImageSlot[]; // zero, one, or two photos
+  color?: 'yellow' | 'pink' | 'orange' | 'white'; // the band; each page picks its own
 }
 
-const { heading, kicker, images = [] } = Astro.props;
+const { heading, kicker, images = [], color = 'yellow' } = Astro.props;
 const photos = images.slice(0, 2);
 ---
 
-<section class:list={['phero', { 'phero--photos': photos.length > 0 }]} aria-labelledby="page-heading">
+<section class:list={['phero', `phero--${color}`, { 'phero--photos': photos.length > 0 }]} aria-labelledby="page-heading">
   <div class="phero__blocks" aria-hidden="true">
     <span class="pblock pblock--orange"></span>
     <span class="pblock pblock--black"></span>
@@ -73,10 +74,16 @@ const photos = images.slice(0, 2);
     isolation: isolate;
     overflow: hidden;
     padding-block: var(--space-8) var(--space-9);
-    background: var(--yellow);
+    background: var(--hero-bg);
     color: var(--ink);
     --focus-color: var(--ink);
   }
+
+  /* Each color pairs with a different block color behind the photos. */
+  .phero--yellow { --hero-bg: var(--yellow); --hero-block: var(--orange); }
+  .phero--pink { --hero-bg: var(--pink); --hero-block: var(--yellow); }
+  .phero--orange { --hero-bg: var(--orange); --hero-block: var(--pink); }
+  .phero--white { --hero-bg: var(--white); --hero-block: var(--yellow); }
 
   /* ---------- Flat blocks behind everything ---------- */
   .phero__blocks {
@@ -95,7 +102,7 @@ const photos = images.slice(0, 2);
     bottom: 0;
     width: 34%;
     height: 58%;
-    background: var(--orange);
+    background: var(--hero-block);
   }
 
   .pblock--black {
@@ -247,9 +254,12 @@ const photos = images.slice(0, 2);
     }
 
     .pblock--black {
-      right: 6%;
-      width: 14%;
-      height: 9%;
+      display: none;
+    }
+
+    .phero__aside,
+    .phero__photos {
+      padding-inline: var(--space-4);
     }
   }
 

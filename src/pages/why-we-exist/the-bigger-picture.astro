@@ -20,7 +20,7 @@ const highlighted = 17;
   title="The bigger picture"
   description="Autism Spectrum Disorder (ASD) is far more common than most people think: about 1 in 31 children aged 8 in the United States has been identified with ASD."
 >
-  <PageHero heading="The bigger picture" kicker="Why we exist">
+  <PageHero heading="The bigger picture" kicker="Why we exist" color="white">
     <p>Autism Spectrum Disorder (ASD) is far more common than most people think.</p>
     <p>Here's what the research says, and what it means for the children in our own neighborhoods.</p>
     <div slot="aside" class="hero-figure" aria-hidden="true">
@@ -110,7 +110,7 @@ const highlighted = 17;
   <Band labelledby="matters-heading">
     <div class="matters">
       <div class="matters__text flow">
-        <h2 id="matters-heading">Why working with them matters</h2>
+        <h2 id="matters-heading">Why this work matters</h2>
         <p>
           The numbers tell us how many children with ASD there are. They don't tell us what those children can do. That
           depends a great deal on what they are offered.
@@ -122,7 +122,7 @@ const highlighted = 17;
       <aside class="callout" aria-label="From the Global Burden of Disease Study">
         <span class="callout__big">Top 10</span>
         <p class="callout__text">
-          The worldwide study ranks autism among the ten leading causes of non-fatal health burden for people under 20.
+          Worldwide, autism is among the ten conditions with the biggest effect on the health of people under 20.
         </p>
         <a class="callout__source" href={statistics[1].url}>Global Burden of Disease Study 2021</a>
       </aside>
@@ -158,7 +158,7 @@ const highlighted = 17;
 
   <NextCards
     id="next"
-    heading="Help us reach more of them"
+    heading="Help us reach more children"
     items={[
       {
         title: 'Give',
@@ -166,7 +166,7 @@ const highlighted = 17;
         label: 'Donate',
         href: '/donate',
         color: 'pink',
-        image: photos.badmintonCoach,
+        image: photos.coding,
       },
       {
         title: 'See what we run',
@@ -174,13 +174,12 @@ const highlighted = 17;
         label: 'Our programs',
         href: '/programs',
         color: 'yellow',
-        image: photos.bouquets,
       },
       {
-        title: 'Behind the numbers',
-        text: 'Numbers count children. They can’t tell you about any one of them.',
-        label: 'Read People',
-        href: '/why-we-exist/people',
+        title: 'Is a program right for your child?',
+        text: "Tell us a little about your child. We'll tell you what's running and help you choose.",
+        label: 'Sign up for a program',
+        form: 'signup',
         color: 'white',
       },
     ]}
@@ -202,7 +201,7 @@ const highlighted = 17;
     gap: var(--space-3);
     width: fit-content;
     margin-inline: auto;
-    padding: var(--space-7) var(--space-7) var(--space-6);
+    padding: var(--space-8) var(--space-7) var(--space-7);
     background: var(--pink);
     color: var(--ink);
     border: 3px solid var(--ink);
@@ -214,7 +213,7 @@ const highlighted = 17;
     font-family: var(--heading-font);
     font-weight: var(--heading-weight);
     text-transform: var(--heading-transform);
-    font-size: clamp(4rem, 9vw, 8rem);
+    font-size: clamp(4.5rem, 11vw, 10rem);
     line-height: 0.9;
     color: var(--on-pink-heading);
     white-space: nowrap;
@@ -477,9 +476,6 @@ const highlighted = 17;
       gap: var(--space-8);
     }
 
-    :global(html:not([data-mode='calm'])) .callout {
-      transform: rotate(1.5deg);
-    }
   }
 
   /* ---------- What encouragement does ---------- */
