@@ -119,7 +119,8 @@ export const programs: Program[] = [
 
 // The three cards on the home page, in display order (colors alternate
 // yellow, orange, yellow). Each needs `cardColor` and `cardSummary`.
-export const homeCards: Program[] = ['stem-builders-camp', 'nurture-with-love', 'badminton-camp'].map((id) => {
+// Running programs come first; a planned one shows a "Coming soon" tag.
+export const homeCards: Program[] = ['badminton-camp', 'nurture-with-love', 'stem-builders-camp'].map((id) => {
   const program = programs.find((p) => p.id === id);
   if (!program) throw new Error(`homeCards: no program with id "${id}"`);
   return program;

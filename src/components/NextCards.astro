@@ -28,15 +28,16 @@ interface Props {
   id: string;
   heading: string;
   items: NextItem[];
+  color?: 'pink' | 'yellow'; // yellow where the band above is pink
 }
 
-const { id, heading, items } = Astro.props;
+const { id, heading, items, color: band = 'pink' } = Astro.props;
 // Photos only when every card has one, so the cards stay the same shape.
 const showImages = items.every((item) => item.image);
 const headingId = `${id}-heading`;
 ---
 
-<section id={id} class="next-cards" aria-labelledby={headingId}>
+<section id={id} class:list={['next-cards', `next-cards--${band}`]} aria-labelledby={headingId}>
   <div class="container">
     <div class="next-cards__head">
       <h2 id={headingId}>{heading}</h2>
@@ -47,7 +48,7 @@ const headingId = `${id}-heading`;
         items.map((item) => {
           const href = item.form ? formUrl(item.form) : item.href;
           // The band is pink, so a pink card would vanish: it becomes white.
-          const color = item.color === 'pink' ? 'white' : item.color;
+          const color = item.color === band ? 'white' : item.color;
           return (
             <li class:list={['ncard', `ncard--${color}`]}>
               {showImages && item.image && <Placeholder image={item.image} ratio="16 / 10" class="ncard__photo" />}
@@ -80,8 +81,12 @@ const headingId = `${id}-heading`;
     color: var(--ink);
   }
 
-  .next-cards h2 {
+  .next-cards--pink h2 {
     color: var(--on-pink-heading);
+  }
+
+  .next-cards--yellow {
+    background: var(--yellow);
   }
 
   .next-cards__head {

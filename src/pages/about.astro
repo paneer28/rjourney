@@ -19,7 +19,7 @@ const planned = programs.filter((program) => program.status === 'planned');
 const facts = [
   { figure: String(site.founded), text: 'Founded in Apex, North Carolina', color: 'white' },
   { figure: site.impact.sessions, text: 'Sessions held across our programs', color: 'orange' },
-  { figure: site.impact.participants, text: 'Kids and teens taking part, counted once per program', color: 'yellow' },
+  { figure: site.impact.participants, text: 'Times kids and teens have joined a program', color: 'yellow' },
   { figure: '501(c)(3)', text: 'Tax-exempt nonprofit', color: 'pink' },
 ] as const;
 
@@ -149,7 +149,7 @@ for (const member of board) {
           We'd rather run one program that families can count on than five that come and go. When a program is working,
           we keep it. When we've learned enough, we start the next one.
         </p>
-        <p class="small">{site.statusLine} EIN {site.ein}.</p>
+        <p class="small">{site.statusLine}</p>
       </div>
 
       <div class="now__lists">

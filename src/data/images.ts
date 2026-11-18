@@ -106,7 +106,7 @@ export const photos = {
     src: '/images/badminton-coach-balloon.jpg',
     alt: 'A coach in a yellow shirt watches a young player reach up to hit a green balloon with a racket.',
     label: 'Photo: Badminton Camp',
-    position: 'center 45%',
+    position: '50% 70%',
   },
   group: {
     src: '/images/badminton-group.jpg',

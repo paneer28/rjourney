@@ -13,13 +13,13 @@ import Placeholder from '../components/Placeholder.astro';
 import Flower from '../components/Flower.astro';
 import { images, photos } from '../data/images';
 import { programs } from '../data/programs';
-import { site } from '../data/site';
+import { site, formUrl } from '../data/site';
 
 const running = programs.filter((program) => program.status === 'now');
 
 const stats = [
   { figure: site.impact.sessions, text: 'Sessions held', color: 'white' },
-  { figure: site.impact.participants, text: 'Kids and teens taking part, counted once per program', color: 'orange' },
+  { figure: site.impact.participants, text: 'Times kids and teens have joined a program', color: 'orange' },
   { figure: String(running.length), text: running.length === 1 ? 'Program running now' : 'Programs running now', color: 'pink' },
   { figure: String(site.founded), text: 'Founded in Apex, North Carolina', color: 'yellow' },
 ] as const;
@@ -29,14 +29,14 @@ const gallery = [
   { image: photos.courtWide, caption: 'Badminton Camp at Peak Sports, Morrisville', size: 'big' },
   { image: photos.saleTable, caption: 'Nurture with Love bouquets, lined up and ready', size: 'tall' },
   { image: photos.ladder, caption: 'Warm-ups on the agility ladder', size: 'small' },
-  { image: photos.celosia, caption: 'A Nurture with Love arrangement', size: 'small' },
+  { image: photos.celosia, caption: 'Celosia, arranged by hand', size: 'small' },
   { image: photos.coachBalloon, caption: 'Balloon drills with a volunteer coach', size: 'wide' },
 ] as const;
 
 const partners = [
   { name: 'Rookie Rackets', role: 'Coaches Badminton Camp with us' },
   { name: 'Peak Sports', role: 'Donates our court time in Morrisville' },
-  { name: 'STEM Leaders', role: 'Will teach STEM Builders Camp' },
+  { name: 'STEM Leaders', role: 'Will teach STEM Builders Camp, coming soon' },
 ];
 ---
 
@@ -48,9 +48,10 @@ const partners = [
   <Hero image={images.homeHero} heading="A place to learn, play, and belong" below="yellow">
     <p>Hands-on programs for children and teens with Autism Spectrum Disorder (ASD) in the Triangle.</p>
     <Fragment slot="actions">
+      <FormButton form="signup" variant="yellow">Sign up for a program</FormButton>
       <Button href="/programs" variant="yellow">See our programs</Button>
-      <DonateButton variant="yellow" />
     </Fragment>
+    <p class="hero-call">Questions? Call or text <a href={site.phone.tel}>{site.phone.display}</a>.</p>
   </Hero>
 
   <!-- Who we are, with real numbers -->
@@ -92,7 +93,7 @@ const partners = [
   <Band color="white" labelledby="inside-heading">
     <div class="inside-head">
       <h2 id="inside-heading">Inside our programs</h2>
-      <p>Every photo here is from an R Journey session.</p>
+      <p>Every photo here is from an R Journey program.</p>
       <Flower petals="pink" center="yellow" size="3.5rem" rotate={-10} style="top: -1rem; right: -4rem" />
     </div>
     <ul class="gallery" role="list">
@@ -126,7 +127,10 @@ const partners = [
     <div class="container partners__inner">
       <div class="partners__text flow">
         <h2 id="partners-heading">We don't do it alone</h2>
-        <p>Local organizations bring the coaches, the courts, and the know-how.</p>
+        <p>
+          Rookie Rackets coaches Badminton Camp alongside our volunteers, and Peak Sports donates the courts. We bring the
+          families and keep each session running.
+        </p>
         <Button href="/get-involved/partner-on-a-program">Partner with us</Button>
       </div>
       <ul class="partners__list" role="list">
@@ -146,7 +150,6 @@ const partners = [
   <section id="donate" class="give" aria-labelledby="give-heading">
     <div class="give__blocks" aria-hidden="true">
       <span class="gblock gblock--yellow"></span>
-      <span class="gblock gblock--black"></span>
       <span class="gblock gblock--orange"></span>
     </div>
     <div class="container">
@@ -163,7 +166,8 @@ const partners = [
         </p>
         <div class="give__actions">
           <DonateButton variant="yellow" />
-          <a class="give__other" href="/get-involved/corporate-partnerships">Or support us as a business</a>
+          <a class="give__other" href={formUrl('volunteer')} data-tally-form={site.forms.volunteer}>Volunteer with us</a>
+          <a class="give__other" href="/get-involved/corporate-partnerships">Help as a business</a>
         </div>
         <p class="small give__status">{site.statusLine} EIN {site.ein}.</p>
       </div>
@@ -172,6 +176,16 @@ const partners = [
 </BaseLayout>
 
 <style>
+  /* The call-or-text line under the hero buttons, inside the pink panel. */
+  :global(.hero-call) {
+    font-size: var(--fs-small);
+    font-weight: 700;
+  }
+
+  :global(.hero-call a) {
+    white-space: nowrap;
+  }
+
   /* ---------- Intro with numbers ---------- */
   .intro {
     padding-top: var(--band-space-top, var(--section-space));
@@ -299,6 +313,15 @@ const partners = [
     border: 2px solid var(--ink);
   }
 
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .shot figcaption {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 0.8125rem;
+    }
+  }
+
   .shot--tall figcaption {
     background: var(--white);
   }
@@ -310,7 +333,7 @@ const partners = [
   @media (min-width: 56rem) {
     :global(html:not([data-mode='calm'])) .gallery {
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      grid-auto-rows: 13rem;
+      grid-auto-rows: 15rem;
       grid-template-areas:
         'big big big tall'
         'big big big tall'
@@ -507,8 +530,11 @@ const partners = [
     .give__panel {
       padding: var(--space-7) var(--space-5);
     }
+  }
 
-    .gblock--black {
+  @media (max-width: 39.99rem) {
+    .give__blocks,
+    .give__panel :global(.flower) {
       display: none;
     }
   }
