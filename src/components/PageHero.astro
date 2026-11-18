@@ -1,0 +1,283 @@
+---
+// The top of an inner page: a yellow band with the page's <h1>, a short line
+// beneath it, and up to two photos overlapping like prints laid on a table,
+// with flat color blocks and a couple of flowers around them.
+// (PageHeading is the plainer version, still used on Our programs and Menu.)
+//
+// Calm and narrow screens drop the overlap: the photos sit in a row under the text.
+//
+// Usage:
+//   <PageHero heading="About R Journey" kicker="Who we are" images={[a, b]}>
+//     <p>One or two sentences.</p>
+//   </PageHero>
+// Instead of photos, a page can put its own block on the right with slot="aside".
+import Placeholder from './Placeholder.astro';
+import Flower from './Flower.astro';
+import type { ImageSlot } from '../data/images';
+
+interface Props {
+  heading: string;
+  kicker?: string; // a small label above the heading, e.g. the menu section
+  images?: ImageSlot[]; // zero, one, or two photos
+  color?: 'yellow' | 'pink' | 'orange' | 'white'; // the band; each page picks its own
+}
+
+const { heading, kicker, images = [], color = 'yellow' } = Astro.props;
+const photos = images.slice(0, 2);
+---
+
+<section class:list={['phero', `phero--${color}`, { 'phero--photos': photos.length > 0 }]} aria-labelledby="page-heading">
+  <div class="phero__blocks" aria-hidden="true">
+    <span class="pblock pblock--orange"></span>
+    <span class="pblock pblock--black"></span>
+  </div>
+
+  <div class="container phero__inner">
+    <div class="phero__text flow">
+      {kicker && <p class="phero__kicker">{kicker}</p>}
+      <h1 id="page-heading">{heading}</h1>
+      <div class="phero__lede flow">
+        <slot />
+      </div>
+      <slot name="actions" />
+    </div>
+
+    {
+      Astro.slots.has('aside') ? (
+        <div class="phero__aside">
+          <slot name="aside" />
+        </div>
+      ) : photos.length > 0 ? (
+        <div class:list={['phero__photos', `phero__photos--${photos.length}`]}>
+          {photos.map((image, i) => (
+            <div class={`phero__photo phero__photo--${i + 1}`}>
+              <Placeholder image={image} ratio={i === 0 ? '4 / 5' : '1'} eager={i === 0} />
+            </div>
+          ))}
+          <Flower petals="pink" center="yellow" size="4rem" rotate={-10} style="top: -1.5rem; left: -1.5rem" />
+          <Flower petals="white" center="orange" size="2.5rem" rotate={24} style="bottom: 18%; right: -1rem" />
+        </div>
+      ) : (
+        <div class="phero__flowers" aria-hidden="true">
+          <Flower petals="pink" center="yellow" size="5rem" rotate={-8} style="top: 10%; right: 18%" />
+          <Flower petals="white" center="orange" size="3rem" rotate={20} style="top: 48%; right: 4%" />
+          <Flower petals="orange" center="yellow" size="2.5rem" rotate={-30} style="top: 62%; right: 34%" />
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .phero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding-block: var(--space-8) var(--space-9);
+    background: var(--hero-bg);
+    color: var(--ink);
+    --focus-color: var(--ink);
+  }
+
+  /* Each color pairs with a different block color behind the photos. */
+  .phero--yellow { --hero-bg: var(--yellow); --hero-block: var(--orange); }
+  .phero--pink { --hero-bg: var(--pink); --hero-block: var(--yellow); }
+  .phero--orange { --hero-bg: var(--orange); --hero-block: var(--pink); }
+  .phero--white { --hero-bg: var(--white); --hero-block: var(--yellow); }
+
+  /* ---------- Flat blocks behind everything ---------- */
+  .phero__blocks {
+    display: var(--decoration);
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  .pblock {
+    position: absolute;
+  }
+
+  .pblock--orange {
+    right: 0;
+    bottom: 0;
+    width: 34%;
+    height: 58%;
+    background: var(--hero-block);
+  }
+
+  .pblock--black {
+    top: 0;
+    right: 30%;
+    width: 7%;
+    height: 22%;
+    background: var(--black);
+  }
+
+  /* ---------- Text ---------- */
+  .phero__inner {
+    position: relative;
+    display: grid;
+    gap: var(--space-8);
+    align-items: center;
+  }
+
+  .phero__text {
+    position: relative;
+    z-index: 1;
+  }
+
+  .phero__kicker {
+    display: inline-block;
+    padding: var(--space-1) var(--space-3);
+    background: var(--black);
+    color: var(--on-black);
+    font-size: var(--fs-small);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    box-shadow: calc(-1 * var(--shadow-offset) / 2) calc(var(--shadow-offset) / 2) 0 var(--pink);
+  }
+
+  .phero h1 {
+    font-size: clamp(3rem, 7.5vw, 6.5rem);
+    line-height: 0.98;
+  }
+
+  .phero__lede :global(p) {
+    font-size: 1.25em;
+    line-height: 1.5;
+    max-width: 34ch;
+  }
+
+  .phero__lede :global(p:first-child) {
+    font-weight: 700;
+  }
+
+  .phero__text :global(.button) {
+    margin-top: var(--space-6);
+  }
+
+  /* ---------- Photos ---------- */
+  .phero__photos {
+    position: relative;
+  }
+
+  .phero__photo {
+    position: relative;
+    border: 3px solid var(--ink);
+    box-shadow: calc(-1 * var(--shadow-offset) * 1.5) calc(var(--shadow-offset) * 1.5) 0 var(--black);
+    background: var(--white);
+  }
+
+  /* Without photos: a few flowers fill the right side on wide screens. */
+  .phero__flowers {
+    display: none;
+    position: relative;
+    min-height: 16rem;
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .phero {
+      padding-block: var(--space-9) calc(var(--space-9) + var(--space-5));
+    }
+
+    :global(html:not([data-mode='calm'])) .phero__inner {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    }
+
+    :global(html:not([data-mode='calm'])) .phero__flowers {
+      display: block;
+    }
+
+    /* Two photos: a tall one tilted left, a square one overlapping its lower right. */
+    :global(html:not([data-mode='calm'])) .phero__photos--2 {
+      min-height: 30rem;
+    }
+
+    :global(html:not([data-mode='calm'])) .phero__photos--2 .phero__photo--1 {
+      width: 72%;
+      transform: rotate(-3deg);
+    }
+
+    :global(html:not([data-mode='calm'])) .phero__photos--2 .phero__photo--2 {
+      position: absolute;
+      right: 0;
+      bottom: -2.5rem;
+      width: 52%;
+      transform: rotate(4deg);
+    }
+
+    :global(html:not([data-mode='calm'])) .phero__photos--1 .phero__photo--1 {
+      width: 86%;
+      margin-left: auto;
+      transform: rotate(-2.5deg);
+    }
+  }
+
+  /* Narrow screens: a short row of photos under the text, no overlap. */
+  @media (max-width: 55.99rem) {
+    .phero {
+      padding-block: var(--space-7) var(--space-8);
+    }
+
+    .phero__inner {
+      gap: var(--space-7);
+    }
+
+    .phero__photos {
+      display: grid;
+      grid-template-columns: repeat(var(--count, 2), minmax(0, 1fr));
+      gap: var(--space-5);
+      padding-left: var(--space-3);
+    }
+
+    .phero__photos--1 {
+      --count: 1;
+      max-width: 22rem;
+    }
+
+    .phero__photo :global(.slot) {
+      aspect-ratio: 1;
+    }
+
+    .phero__photo--1 {
+      transform: rotate(-2deg);
+    }
+
+    .phero__photo--2 {
+      transform: rotate(3deg);
+    }
+
+    .pblock--orange {
+      width: 60%;
+      height: 30%;
+    }
+
+    .pblock--black {
+      display: none;
+    }
+
+    .phero__aside,
+    .phero__photos {
+      padding-inline: var(--space-4);
+    }
+  }
+
+  /* Calm: no tilt, no shadows, photos in a plain row. */
+  :global(html[data-mode='calm']) .phero__photos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+    max-width: 32rem;
+  }
+
+  :global(html[data-mode='calm']) .phero__photo {
+    transform: none;
+    box-shadow: none;
+    border-width: 2px;
+  }
+
+  :global(html[data-mode='calm']) .phero__photo :global(.slot) {
+    aspect-ratio: 1;
+  }
+</style>

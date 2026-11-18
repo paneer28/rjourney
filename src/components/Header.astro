@@ -64,6 +64,18 @@ const { overlay = false } = Astro.props;
       position: absolute;
       inset: 0 0 auto 0;
     }
+
+    /* Over the photo, the first-visit hint is a small white tag under the logo
+       instead of a page-colored strip across the photo. */
+    :global(html:not([data-mode='calm'])) .site-header.site-header--overlay :global(.display-hint) {
+      background: transparent;
+    }
+
+    :global(html:not([data-mode='calm'])) .site-header.site-header--overlay :global(.display-hint .display-hint__link) {
+      padding: var(--space-1) var(--space-3);
+      background: var(--white);
+      color: var(--ink);
+    }
   }
 
   .site-header__bar {

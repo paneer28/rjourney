@@ -1,0 +1,252 @@
+---
+// A small "would you like to help?" card that slides up in the bottom corner
+// after a visitor has spent a while on the site. Not a pop-up over the page:
+// it doesn't block anything, take keyboard focus, or dim the screen.
+//
+// When it shows (all must be true):
+//   - about 90 seconds of time on the site this visit (counted across pages,
+//     only while the tab is visible)
+//   - not already shown this visit
+//   - not closed in the last 14 days, and no Donate click in the last 60 days
+//   - not on /donate or /thank-you
+//   - not in Calm mode
+//   - the menu, display panel, and sign-up forms are all closed (it waits)
+//
+// Close: the X, "Maybe later", or Escape. Change the timings below.
+import { site, donateLink } from '../data/site';
+
+const href = site.donateUrl || donateLink.href;
+const external = Boolean(site.donateUrl);
+---
+
+<aside id="donate-nudge" class="nudge needs-js" aria-labelledby="nudge-heading" hidden>
+  <button type="button" class="nudge__close" data-nudge-close aria-label="Close">
+    <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true" focusable="false">
+      <path d="M4 4l12 12M16 4L4 16" stroke="currentColor" stroke-width="2.5" fill="none" />
+    </svg>
+  </button>
+  <p id="nudge-heading" class="nudge__heading">Enjoying R Journey?</p>
+  <p class="nudge__text">
+    We're a young nonprofit. If our programs matter to you, a gift of any size helps keep them running.
+  </p>
+  <div class="nudge__actions">
+    <a
+      class="nudge__donate"
+      href={href}
+      data-nudge-donate
+      target={external ? '_blank' : undefined}
+      rel={external ? 'noopener' : undefined}
+    >
+      Donate{external && <span class="visually-hidden"> (opens in a new tab)</span>}
+    </a>
+    <button type="button" class="nudge__later" data-nudge-close>Maybe later</button>
+  </div>
+</aside>
+
+<script>
+  const DELAY_MS = 90_000; // time on the site before the card appears
+  const CLOSED_DAYS = 14; // after closing it
+  const DONATED_DAYS = 60; // after clicking Donate
+  const TIME_KEY = 'rj-nudge-time'; // per visit (sessionStorage)
+  const SHOWN_KEY = 'rj-nudge-shown'; // per visit (sessionStorage)
+  const SNOOZE_KEY = 'rj-nudge-until'; // across visits (localStorage), a timestamp
+
+  const nudge = document.getElementById('donate-nudge');
+  const html = document.documentElement;
+
+  const get = (store: Storage, key: string) => {
+    try {
+      return store.getItem(key);
+    } catch {
+      return null;
+    }
+  };
+  const set = (store: Storage, key: string, value: string) => {
+    try {
+      store.setItem(key, value);
+    } catch {
+      /* storage blocked: the card simply behaves per page */
+    }
+  };
+
+  const path = location.pathname.replace(/\/$/, '');
+  const excludedPage = path === '/donate' || path === '/thank-you';
+  const snoozed = Number(get(localStorage, SNOOZE_KEY) || 0) > Date.now();
+  const alreadyShown = get(sessionStorage, SHOWN_KEY) === '1';
+
+  if (nudge && !excludedPage && !snoozed && !alreadyShown) {
+    let spent = Number(get(sessionStorage, TIME_KEY) || 0);
+    let last = Date.now();
+
+    const somethingOpen = () =>
+      html.classList.contains('menu-open') ||
+      document.querySelector('dialog[open]') !== null ||
+      document.querySelector('#display-panel:popover-open') !== null ||
+      document.querySelector('iframe[src*="tally.so"]') !== null;
+
+    const snooze = (days: number) => set(localStorage, SNOOZE_KEY, String(Date.now() + days * 86_400_000));
+
+    const hide = () => {
+      nudge.classList.remove('is-visible');
+      setTimeout(() => (nudge.hidden = true), 400);
+      document.removeEventListener('keydown', onKey);
+    };
+
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && !somethingOpen()) {
+        snooze(CLOSED_DAYS);
+        hide();
+      }
+    };
+
+    const show = () => {
+      set(sessionStorage, SHOWN_KEY, '1');
+      nudge.hidden = false;
+      requestAnimationFrame(() => nudge.classList.add('is-visible'));
+      document.addEventListener('keydown', onKey);
+    };
+
+    nudge.querySelectorAll('[data-nudge-close]').forEach((button) =>
+      button.addEventListener('click', () => {
+        snooze(CLOSED_DAYS);
+        hide();
+      }),
+    );
+    nudge.querySelector('[data-nudge-donate]')?.addEventListener('click', () => {
+      snooze(DONATED_DAYS);
+      hide();
+    });
+
+    // Count time only while the tab is visible; check every second.
+    const timer = setInterval(() => {
+      const now = Date.now();
+      if (document.visibilityState === 'visible') spent += now - last;
+      last = now;
+      set(sessionStorage, TIME_KEY, String(spent));
+      if (spent < DELAY_MS) return;
+      // Calm mode can be switched on at any time, so check at the moment of showing.
+      if (html.dataset.mode === 'calm') return clearInterval(timer);
+      if (somethingOpen()) return; // wait until the visitor is done
+      clearInterval(timer);
+      show();
+    }, 1000);
+  }
+</script>
+
+<style>
+  .nudge {
+    position: fixed;
+    right: var(--space-5);
+    bottom: var(--space-5);
+    z-index: 50;
+    display: grid;
+    gap: var(--space-3);
+    width: min(22rem, calc(100vw - 2 * var(--space-4)));
+    padding: var(--space-5) var(--space-5) var(--space-5);
+    background: var(--pink);
+    color: var(--ink);
+    --focus-color: var(--ink);
+    border: 2px solid var(--ink);
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--black);
+    opacity: 0;
+    transform: translateY(1.5rem);
+    transition:
+      opacity var(--dur-slow) var(--ease),
+      transform var(--dur-slow) var(--ease);
+  }
+
+  .nudge[hidden] {
+    display: none;
+  }
+
+  .nudge.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  .nudge__heading {
+    padding-right: var(--space-6);
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
+    text-transform: var(--heading-transform);
+    font-size: 1.6rem;
+    line-height: 1.05;
+    color: var(--on-pink-heading);
+  }
+
+  .nudge__text {
+    font-size: var(--fs-small);
+    line-height: 1.5;
+  }
+
+  .nudge__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-5);
+    padding-top: var(--space-2);
+  }
+
+  .nudge__donate {
+    padding: var(--space-2) var(--space-5);
+    background: var(--yellow);
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: -3px 3px 0 var(--orange);
+  }
+
+  .nudge__donate:hover,
+  .nudge__donate:focus-visible {
+    text-decoration: underline;
+  }
+
+  .nudge__later {
+    padding: 0;
+    background: none;
+    border: 0;
+    font-size: var(--fs-small);
+    font-weight: 700;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .nudge__close {
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-2);
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    padding: 0;
+    background: none;
+    border: 0;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  /* Phones: a strip along the bottom edge, a little inset. */
+  @media (max-width: 39.99rem) {
+    .nudge {
+      right: var(--space-3);
+      left: var(--space-3);
+      bottom: var(--space-3);
+      width: auto;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nudge {
+      transition: none;
+      transform: none;
+    }
+  }
+
+  @media print {
+    .nudge {
+      display: none !important;
+    }
+  }
+</style>

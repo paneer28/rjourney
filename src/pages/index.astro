@@ -1,16 +1,43 @@
 ---
+// Home: the photo hero, who we are with real numbers, the program cards,
+// photos from real sessions, how to join, our partners, and a way to give.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
-import IntroBand from '../components/IntroBand.astro';
 import Band from '../components/Band.astro';
 import ClearingCards from '../components/ClearingCards.astro';
 import DiamondBand from '../components/DiamondBand.astro';
-import CtaStrip from '../components/CtaStrip.astro';
 import Button from '../components/Button.astro';
 import DonateButton from '../components/DonateButton.astro';
 import FormButton from '../components/FormButton.astro';
-import { images } from '../data/images';
-import { site } from '../data/site';
+import Placeholder from '../components/Placeholder.astro';
+import Flower from '../components/Flower.astro';
+import { images, photos } from '../data/images';
+import { programs } from '../data/programs';
+import { site, formUrl } from '../data/site';
+
+const running = programs.filter((program) => program.status === 'now');
+
+const stats = [
+  { figure: site.impact.sessions, text: 'Sessions held', color: 'white' },
+  { figure: site.impact.participants, text: 'Times kids and teens have joined a program', color: 'orange' },
+  { figure: String(running.length), text: running.length === 1 ? 'Program running now' : 'Programs running now', color: 'pink' },
+  { figure: String(site.founded), text: 'Founded in Apex, North Carolina', color: 'yellow' },
+] as const;
+
+// "Inside our programs": every photo is from a real R Journey session.
+const gallery = [
+  { image: photos.courtWide, caption: 'Badminton Camp at Peak Sports, Morrisville', size: 'big' },
+  { image: photos.saleTable, caption: 'Nurture with Love bouquets, lined up and ready', size: 'tall' },
+  { image: photos.ladder, caption: 'Warm-ups on the agility ladder', size: 'small' },
+  { image: photos.celosia, caption: 'Celosia, arranged by hand', size: 'small' },
+  { image: photos.coachBalloon, caption: 'Balloon drills with a volunteer coach', size: 'wide' },
+] as const;
+
+const partners = [
+  { name: 'Rookie Rackets', role: 'Coaches Badminton Camp with us' },
+  { name: 'Peak Sports', role: 'Donates our court time in Morrisville' },
+  { name: 'STEM Leaders', role: 'Will teach STEM Builders Camp, coming soon' },
+];
 ---
 
 <BaseLayout
@@ -21,25 +48,69 @@ import { site } from '../data/site';
   <Hero image={images.homeHero} heading="A place to learn, play, and belong" below="yellow">
     <p>Hands-on programs for children and teens with Autism Spectrum Disorder (ASD) in the Triangle.</p>
     <Fragment slot="actions">
+      <FormButton form="signup" variant="yellow">Sign up for a program</FormButton>
       <Button href="/programs" variant="yellow">See our programs</Button>
-      <DonateButton variant="yellow" />
     </Fragment>
+    <p class="hero-call">Questions? Call or text <a href={site.phone.tel}>{site.phone.display}</a>.</p>
   </Hero>
 
-  <IntroBand id="intro" heading="New, local, and here for your family" color="yellow" class="after-hero">
-    <p>
-      R Journey is a nonprofit in Apex, North Carolina, started in 2025. We run programs where children and teens with
-      ASD can learn to play badminton or arrange a bouquet, and soon write their first lines of code.
-    </p>
-    <p>
-      Each one gives neurodivergent young people a chance to build a skill, meet people, and have a good time doing it.
-      We're a young organization, and we're growing one program at a time.
-    </p>
-    <Button href="/about">About R Journey</Button>
-  </IntroBand>
+  <!-- Who we are, with real numbers -->
+  <section id="intro" class="intro after-hero" aria-labelledby="intro-heading">
+    <div class="container">
+      <div class="intro__grid">
+        <h2 id="intro-heading">New, local, and here for your family</h2>
+        <div class="intro__body flow">
+          <p>
+            R Journey is a nonprofit in Apex, North Carolina, started in {site.founded}. We run programs where children
+            and teens with ASD can learn to play badminton or arrange a bouquet, and soon write their first lines of code.
+          </p>
+          <p>
+            Each one gives neurodivergent young people a chance to build a skill, meet people, and have a good time doing
+            it. We're a young organization, and we're growing one program at a time.
+          </p>
+          <Button href="/about">About R Journey</Button>
+        </div>
+      </div>
+
+      <ul class="stats" role="list" aria-label="R Journey so far">
+        {
+          stats.map((stat) => (
+            <li class={`stat stat--${stat.color}`}>
+              <span class="stat__figure">{stat.figure}</span>
+              <span class="stat__text">{stat.text}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
 
   <Band labelledby="what-we-do-heading">
     <ClearingCards headingId="what-we-do-heading" heading="What we do" />
+  </Band>
+
+  <!-- Inside our programs -->
+  <Band color="white" labelledby="inside-heading">
+    <div class="inside-head">
+      <h2 id="inside-heading">Inside our programs</h2>
+      <p>Every photo here is from an R Journey program.</p>
+      <Flower petals="pink" center="yellow" size="3.5rem" rotate={-10} style="top: -1rem; right: -4rem" />
+    </div>
+    <ul class="gallery" role="list">
+      {
+        gallery.map((item) => (
+          <li class={`shot shot--${item.size}`}>
+            <figure>
+              <Placeholder image={item.image} ratio="4 / 3" />
+              <figcaption>{item.caption}</figcaption>
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="inside-action">
+      <Button href="/programs">See all our programs</Button>
+    </div>
   </Band>
 
   <DiamondBand id="join" heading="Want to join in?" images={images.joinDiamonds}>
@@ -51,15 +122,425 @@ import { site } from '../data/site';
     <FormButton form="signup" variant="yellow">Sign up for a program</FormButton>
   </DiamondBand>
 
-  <Band color="black" tight>
-    <CtaStrip id="donate" heading="Help us keep the programs running">
-      <p>
-        Every gift goes toward programs for children and teens with ASD. You don't need a personal connection to
-        autism to be part of this. You only need to think neurodivergent young people deserve the same chances as
-        everyone else.
-      </p>
-      <p class="small">{site.statusLine}</p>
-      <DonateButton slot="action" variant="yellow" />
-    </CtaStrip>
-  </Band>
+  <!-- Partners -->
+  <section class="partners" aria-labelledby="partners-heading">
+    <div class="container partners__inner">
+      <div class="partners__text flow">
+        <h2 id="partners-heading">We don't do it alone</h2>
+        <p>
+          Rookie Rackets coaches Badminton Camp alongside our volunteers, and Peak Sports donates the courts. We bring the
+          families and keep each session running.
+        </p>
+        <Button href="/get-involved/partner-on-a-program">Partner with us</Button>
+      </div>
+      <ul class="partners__list" role="list">
+        {
+          partners.map((partner) => (
+            <li class="partner">
+              <span class="partner__name">{partner.name}</span>
+              <span class="partner__role">{partner.role}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Give -->
+  <section id="donate" class="give" aria-labelledby="give-heading">
+    <div class="give__blocks" aria-hidden="true">
+      <span class="gblock gblock--yellow"></span>
+      <span class="gblock gblock--orange"></span>
+    </div>
+    <div class="container">
+      <div class="give__panel flow">
+        <Flower petals="yellow" center="orange" size="4rem" rotate={-14} style="top: -2rem; left: -1.5rem" />
+        <Flower petals="white" center="pink" size="2.5rem" rotate={20} style="top: -0.75rem; left: 2.5rem" />
+        <h2 id="give-heading">Help us keep the programs running</h2>
+        <p class="give__lede">
+          Every gift goes toward programs for children and teens with ASD.
+        </p>
+        <p>
+          You don't need a personal connection to autism to be part of this. You only need to think neurodivergent young
+          people deserve the same chances as everyone else.
+        </p>
+        <div class="give__actions">
+          <DonateButton variant="yellow" />
+          <a class="give__other" href={formUrl('volunteer')} data-tally-form={site.forms.volunteer}>Volunteer with us</a>
+          <a class="give__other" href="/get-involved/corporate-partnerships">Help as a business</a>
+        </div>
+        <p class="small give__status">{site.statusLine} EIN {site.ein}.</p>
+      </div>
+    </div>
+  </section>
 </BaseLayout>
+
+<style>
+  /* The call-or-text line under the hero buttons, inside the pink panel. */
+  :global(.hero-call) {
+    font-size: var(--fs-small);
+    font-weight: 700;
+  }
+
+  :global(.hero-call a) {
+    white-space: nowrap;
+  }
+
+  /* ---------- Intro with numbers ---------- */
+  .intro {
+    padding-top: var(--band-space-top, var(--section-space));
+    padding-bottom: var(--section-space);
+    background: var(--yellow);
+    color: var(--ink);
+    --focus-color: var(--ink);
+  }
+
+  .intro__grid {
+    display: grid;
+    gap: var(--space-6);
+  }
+
+  .intro__body :global(.button) {
+    margin-top: var(--space-6);
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .intro__grid {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      gap: var(--space-8);
+      align-items: start;
+    }
+  }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+    margin-top: var(--space-8);
+    padding: 0;
+    list-style: none;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    color: var(--ink);
+    border: 2px solid var(--ink);
+  }
+
+  .stat--white { background: var(--white); }
+  .stat--orange { background: var(--orange); }
+  .stat--pink { background: var(--pink); }
+  .stat--yellow { background: var(--paper); }
+
+  .stat__figure {
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .stat__text {
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .stats {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0;
+      box-shadow: calc(-1 * var(--shadow-offset) * 1.5) calc(var(--shadow-offset) * 1.5) 0 var(--black);
+    }
+
+    :global(html:not([data-mode='calm'])) .stat + .stat {
+      border-left: 0;
+    }
+
+    :global(html:not([data-mode='calm'])) .stat {
+      padding: var(--space-6);
+    }
+  }
+
+  @media (max-width: 39.99rem) {
+    .stat {
+      padding: var(--space-4);
+    }
+  }
+
+  /* ---------- Inside our programs: a photo mosaic ---------- */
+  .inside-head {
+    position: relative;
+    width: fit-content;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .inside-head p {
+    margin: var(--space-3) auto 0;
+    font-size: 1.15em;
+  }
+
+  .gallery {
+    display: grid;
+    gap: var(--space-5);
+    margin-top: var(--space-7);
+    padding: 0;
+    list-style: none;
+  }
+
+  .shot figure {
+    position: relative;
+    height: 100%;
+    margin: 0;
+    border: 2px solid var(--ink);
+    background: var(--ink);
+  }
+
+  .shot figcaption {
+    position: absolute;
+    left: var(--space-3);
+    bottom: var(--space-3);
+    max-width: calc(100% - 2 * var(--space-3));
+    padding: var(--space-1) var(--space-3);
+    background: var(--yellow);
+    color: var(--ink);
+    font-size: var(--fs-small);
+    font-weight: 700;
+    line-height: 1.35;
+    border: 2px solid var(--ink);
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .shot figcaption {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 0.8125rem;
+    }
+  }
+
+  .shot--tall figcaption {
+    background: var(--white);
+  }
+
+  .shot--small:nth-child(4) figcaption {
+    background: var(--orange);
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .gallery {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-auto-rows: 15rem;
+      grid-template-areas:
+        'big big big tall'
+        'big big big tall'
+        'small1 small2 wide wide';
+    }
+
+    :global(html:not([data-mode='calm'])) .shot :global(.slot) {
+      aspect-ratio: auto;
+      height: 100%;
+    }
+
+    :global(html:not([data-mode='calm'])) .shot--big { grid-area: big; }
+    :global(html:not([data-mode='calm'])) .shot--tall { grid-area: tall; }
+    :global(html:not([data-mode='calm'])) .shot--small:nth-child(3) { grid-area: small1; }
+    :global(html:not([data-mode='calm'])) .shot--small:nth-child(4) { grid-area: small2; }
+    :global(html:not([data-mode='calm'])) .shot--wide { grid-area: wide; }
+
+    :global(html:not([data-mode='calm'])) .shot--big figure {
+      box-shadow: calc(-1 * var(--shadow-offset) * 1.5) calc(var(--shadow-offset) * 1.5) 0 var(--pink);
+    }
+  }
+
+  @media (min-width: 40rem) and (max-width: 55.99rem) {
+    .gallery {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .shot--big {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .inside-action {
+    display: flex;
+    justify-content: center;
+    margin-top: var(--space-7);
+  }
+
+  @media (max-width: 55.99rem) {
+    .inside-head :global(.flower) {
+      display: none;
+    }
+  }
+
+  /* ---------- Partners ---------- */
+  .partners {
+    padding-block: var(--section-space);
+    background: var(--orange);
+    color: var(--ink);
+    --focus-color: var(--ink);
+  }
+
+  .partners__inner {
+    display: grid;
+    gap: var(--space-7);
+    align-items: center;
+  }
+
+  .partners__text p {
+    font-size: 1.15em;
+  }
+
+  .partners__text :global(.button) {
+    margin-top: var(--space-6);
+  }
+
+  .partners__list {
+    display: grid;
+    gap: var(--space-4);
+    padding: 0;
+    list-style: none;
+  }
+
+  .partner {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-5) var(--space-6);
+    background: var(--white);
+    border: 2px solid var(--ink);
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--black);
+  }
+
+  .partner:nth-child(2) {
+    background: var(--yellow);
+  }
+
+  .partner__name {
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
+    text-transform: var(--heading-transform);
+    font-size: var(--fs-card);
+    line-height: 1.05;
+  }
+
+  .partner__role {
+    font-weight: 700;
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .partners__inner {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      gap: var(--space-8);
+    }
+
+    :global(html:not([data-mode='calm'])) .partner:nth-child(2) {
+      margin-left: var(--space-7);
+    }
+  }
+
+  /* ---------- Give: a pink panel with flat blocks around it ---------- */
+  .give {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding-block: var(--section-space);
+  }
+
+  .give__blocks {
+    display: var(--decoration);
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  .gblock {
+    position: absolute;
+  }
+
+  .gblock--yellow {
+    left: 0;
+    bottom: 0;
+    width: 38%;
+    height: 60%;
+    background: var(--yellow);
+  }
+
+  .gblock--black {
+    top: 0;
+    right: 8%;
+    width: 12%;
+    height: 34%;
+    background: var(--black);
+  }
+
+  .gblock--orange {
+    right: 0;
+    bottom: 0;
+    width: 26%;
+    height: 40%;
+    background: var(--orange);
+  }
+
+  .give__panel {
+    position: relative;
+    width: min(100%, 46rem);
+    margin-inline: auto;
+    padding: var(--space-8) var(--space-7);
+    background: var(--pink);
+    color: var(--ink);
+    --focus-color: var(--ink);
+    border: 2px solid var(--ink);
+    box-shadow: calc(-1 * var(--shadow-offset) * 1.5) calc(var(--shadow-offset) * 1.5) 0 var(--black);
+  }
+
+  .give__panel h2 {
+    font-size: clamp(2.5rem, 6vw, 4.75rem);
+    color: var(--on-pink-heading);
+  }
+
+  .give__lede {
+    font-size: 1.3em;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .give__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4) var(--space-6);
+    padding-top: var(--space-3);
+  }
+
+  .give__other {
+    font-weight: 700;
+  }
+
+  .give__status {
+    padding-top: var(--space-4);
+    border-top: 2px solid var(--ink);
+  }
+
+  @media (max-width: 55.99rem) {
+    .give__panel {
+      padding: var(--space-7) var(--space-5);
+    }
+  }
+
+  @media (max-width: 39.99rem) {
+    .give__blocks,
+    .give__panel :global(.flower) {
+      display: none;
+    }
+  }
+
+  :global(html[data-mode='calm']) .give__panel,
+  :global(html[data-mode='calm']) .partner {
+    box-shadow: none;
+  }
+</style>

@@ -43,17 +43,129 @@ export const images = {
       position: '81% center', // shifts the picture left about a quarter of the diamond
     },
     {
-      src: '/images/flower-pic-2.jpg',
-      alt: 'A bouquet of pink and coral dahlias in a glass mason jar tied with twine.',
+      src: '/images/dahlia-close.jpg',
+      alt: "A close view of a magenta dahlia among baby's breath.",
       label: 'Photo: Nurture with Love',
-      position: 'center 40%', // keeps the bouquet and jar in view vertically
-      focus: '40% 50%', // the bouquet sits left of center in the photo; this centers it in the diamond
+      position: 'center 75%', // the open dahlia in the lower part of the photo
     },
     {
-      src: '/images/badminton-pic-2.jpg',
-      alt: 'Players weave through a line of orange cones on an indoor badminton court during a warm-up.',
+      src: '/images/badminton-balloon-drill.jpg',
+      alt: 'Children practice hitting balloons with badminton rackets on an indoor court.',
       label: 'Photo: Badminton Camp',
-      position: 'center 55%', // centers the players in the diamond
+      position: '40% center', // keeps the players in the diamond
     },
   ],
 } satisfies Record<string, ImageSlot | ImageSlot[]>;
+
+// Every real photo on the site, by subject, for the inner pages' headers and
+// cards. The same files as above and in programs.ts, with crops for these slots.
+export const photos = {
+  badmintonCourt: {
+    src: '/images/badminton-camp.jpg',
+    alt: 'Three players on an indoor badminton court look up at the shuttlecock after a hit.',
+    label: 'Photo: Badminton Camp',
+    position: 'center 25%',
+  },
+  badmintonCoach: {
+    src: '/images/badminton-camp-3.jpg',
+    alt: 'A coach and a young player in a red shirt on a badminton court, with shuttlecocks scattered around them.',
+    label: 'Photo: Badminton Camp',
+    position: 'center 55%',
+  },
+  badmintonWarmup: {
+    src: '/images/badminton-pic-2.jpg',
+    alt: 'Players weave through a line of orange cones on an indoor badminton court during a warm-up.',
+    label: 'Photo: Badminton Camp',
+    position: 'center 55%',
+  },
+  bouquetJar: {
+    src: '/images/flower-pic-2.jpg',
+    alt: 'A bouquet of pink and coral dahlias in a glass mason jar tied with twine.',
+    label: 'Photo: Nurture with Love',
+    position: 'center 40%',
+  },
+  bouquets: {
+    src: '/images/flower-sale-bouquets.jpg',
+    alt: "Three bouquets of dahlias and baby's breath in glass jars tied with twine.",
+    label: 'Photo: Nurture with Love',
+    position: 'center 70%',
+  },
+  coding: {
+    src: '/images/stem-builders.jpg',
+    alt: 'Two young people at a laptop, one pointing to blocks of code on the screen.',
+    label: 'Photo: STEM Builders Camp',
+    position: '70% center',
+  },
+  balloonDrill: {
+    src: '/images/badminton-balloon-drill.jpg',
+    alt: 'Children practice hitting balloons with badminton rackets on an indoor court, with cones and a coach nearby.',
+    label: 'Photo: Badminton Camp',
+    position: 'center 40%',
+  },
+  coachBalloon: {
+    src: '/images/badminton-coach-balloon.jpg',
+    alt: 'A coach in a yellow shirt watches a young player reach up to hit a green balloon with a racket.',
+    label: 'Photo: Badminton Camp',
+    position: '50% 70%',
+  },
+  group: {
+    src: '/images/badminton-group.jpg',
+    alt: 'Children and volunteer coaches with rackets spread across an indoor badminton court.',
+    label: 'Photo: Badminton Camp',
+    position: 'center 55%',
+  },
+  ladder: {
+    src: '/images/badminton-ladder.jpg',
+    alt: 'A young player steps through an agility ladder on a badminton court while others wait their turn.',
+    label: 'Photo: Badminton Camp',
+    position: 'center 55%',
+  },
+  rally: {
+    src: '/images/badminton-rally.jpg',
+    alt: 'Players tap balloons back and forth with rackets while a parent watches from the side of the court.',
+    label: 'Photo: Badminton Camp',
+    position: 'center 55%',
+  },
+  shuttles: {
+    src: '/images/badminton-shuttles.jpg',
+    alt: 'A young player in a red shirt stands among scattered shuttlecocks as a volunteer coach looks on.',
+    label: 'Photo: Badminton Camp',
+    position: 'center 60%',
+  },
+  courtWide: {
+    src: '/images/badminton-wide.jpg',
+    alt: 'A wide view of a badminton session: players, coaches, a net, and balloons on a green court.',
+    label: 'Photo: Badminton Camp',
+    position: 'center 60%',
+  },
+  celosia: {
+    src: '/images/bouquet-celosia.jpg',
+    alt: 'A full bouquet of magenta and coral celosia in a green ceramic bowl.',
+    label: 'Photo: Nurture with Love',
+    position: 'center 45%',
+  },
+  inHand: {
+    src: '/images/bouquet-in-hand.jpg',
+    alt: "A hand steadies a mason jar holding deep red dahlias and baby's breath.",
+    label: 'Photo: Nurture with Love',
+    position: 'center 60%',
+  },
+  saleTable: {
+    src: '/images/bouquet-sale-table.jpg',
+    alt: 'A long table lined with small bouquets of dahlias in glass jars.',
+    label: 'Photo: Nurture with Love',
+    position: 'center 70%',
+  },
+  threeJars: {
+    src: '/images/bouquets-three-jars.jpg',
+    alt: "Three mason jars of dahlias and baby's breath on a table by a window.",
+    label: 'Photo: Nurture with Love',
+    position: 'center 55%',
+  },
+  dahlia: {
+    src: '/images/dahlia-close.jpg',
+    alt: "A close view of a magenta dahlia among baby's breath.",
+    label: 'Photo: Nurture with Love',
+    position: 'center 70%',
+  },
+} satisfies Record<string, ImageSlot>;

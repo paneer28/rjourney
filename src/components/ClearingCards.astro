@@ -40,7 +40,7 @@ const fragmentsFor = (cardIndex: number) =>
 
 <div class="ccards-section">
   <h2 id={headingId} class="ccards__heading">{heading}</h2>
-  <p class="ccards__caption ccards__caption--standard">Hover over a card, or tap it, to clear away the assumptions.</p>
+  <p class="ccards__caption ccards__caption--standard">Tap or hover over a card to clear away what people assume.</p>
   <p class="ccards__caption ccards__caption--calm">Three programs, each built around something children enjoy.</p>
 
   <ul class="ccards" role="list">
@@ -58,6 +58,7 @@ const fragmentsFor = (cardIndex: number) =>
             ))}
           </div>
           <div class="ccard__content">
+            {program.status === 'planned' && <span class="ccard__soon">Coming soon</span>}
             <h3 class="ccard__title">{program.name}</h3>
             <p class="ccard__summary">{program.cardSummary}</p>
             <Button href={`/programs#${program.id}`} class="ccard__button">
@@ -105,6 +106,15 @@ const fragmentsFor = (cardIndex: number) =>
   .ccards__caption {
     text-align: center;
     margin-inline: auto;
+  }
+
+  .ccard__soon {
+    align-self: flex-start;
+    padding: var(--space-1) var(--space-3);
+    background: var(--white);
+    border: 2px solid var(--ink);
+    font-size: var(--fs-small);
+    font-weight: 700;
   }
 
   .ccards__caption {

@@ -1,72 +1,206 @@
 ---
+// People: every child with ASD is different, so R Journey starts with the person.
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PageHeading from '../../components/PageHeading.astro';
-import IntroBand from '../../components/IntroBand.astro';
+import PageHero from '../../components/PageHero.astro';
 import Band from '../../components/Band.astro';
-import CtaStrip from '../../components/CtaStrip.astro';
-import Button from '../../components/Button.astro';
+import StoryBlock from '../../components/StoryBlock.astro';
+import Flower from '../../components/Flower.astro';
+import NextCards from '../../components/NextCards.astro';
+import { photos } from '../../data/images';
+import { site } from '../../data/site';
 
 // TODO: real stories from participants and families can be added to this page
 // later, with written permission from each person (and a parent for children).
+
+// Three children, three different needs. Not real children: examples of how
+// different two children with ASD can be. Drawn icons, not photos, so no real
+// child is read as the one being described.
+const children = [
+  {
+    icon: 'flower',
+    text: 'might talk for an hour about how a flower is put together, and find it hard to say hello to a stranger.',
+    color: 'pink',
+  },
+  {
+    icon: 'shuttle',
+    text: 'might take a few weeks to warm up to a new group, then never want to miss a session.',
+    color: 'yellow',
+  },
+  {
+    icon: 'code',
+    text: 'might find a crowded room too loud, yet sit with a line of code until it works.',
+    color: 'orange',
+  },
+] as const;
+
+const startWith = [
+  { heading: 'What they enjoy', text: "That's where a program begins. It's the reason a child shows up the second time." },
+  { heading: 'What they find hard', text: 'Noise, crowds, new faces, waiting a turn. We plan around it instead of pretending it isn\'t there.' },
+  { heading: "What they'd like to be able to do", text: 'Serve over the net. Sell a bouquet. Make the code run. A goal that belongs to them.' },
+];
+
+const wins = ['A first rally over the net.', 'A bouquet a stranger paid for.', 'A few lines of code that finally run.'];
 ---
 
 <BaseLayout
   title="People"
   description="Every child with Autism Spectrum Disorder (ASD) is different. R Journey starts with the person: what they enjoy, what they find hard, and what they would like to be able to do."
 >
-  <PageHeading heading="People">
+  <PageHero heading="People" kicker="Why we exist" color="pink" images={[photos.rally, photos.inHand]}>
     <p>Numbers count children. They can't tell you about any one of them.</p>
-  </PageHeading>
+    <p>This page is about the one in front of us: a particular child, with their own interests and their own family.</p>
+  </PageHero>
 
-  <IntroBand id="no-two-alike" heading="No two alike">
-    <p>
-      One child with Autism Spectrum Disorder (ASD) might talk for an hour about how a flower is put together and find it
-      hard to say hello to a stranger. Another might say very little and never miss a shuttlecock. A third might find a
-      noisy gym overwhelming, yet sit with a line of code until it works.
-    </p>
-    <p>
-      No two neurodivergent children need the same thing. So we start with the person: what they enjoy, what they find
-      hard, and what they would like to be able to do.
-    </p>
-  </IntroBand>
-
-  <IntroBand id="small-wins" heading="Small wins, kept" color="yellow">
-    <p>
-      What a child with ASD takes home from a program is often small and specific. A first rally over the net. A bouquet
-      a stranger paid for. A few lines of code that finally run.
-    </p>
-    <p>
-      Those moments add up. Each one is proof, to a neurodivergent child and to everyone watching, that 'I can do this'
-      is true.
-    </p>
-  </IntroBand>
-
-  <IntroBand id="family" heading="The family behind each child" color="white">
-    <p>
-      Behind every child with ASD is a family. Many parents have spent years looking for a place where their child is
-      welcome as they are. Brothers and sisters have grown up helping.
-    </p>
-    <p>
-      When a neurodivergent child has somewhere to go and something to look forward to, the whole family gets some of
-      that back.
-    </p>
-  </IntroBand>
-
-  <Band color="orange" labelledby="teens-heading">
-    <div class="flow">
-      <h2 id="teens-heading">If you're a teen reading this</h2>
+  <!-- No two alike -->
+  <Band labelledby="alike-heading">
+    <div class="alike-head flow">
+      <h2 id="alike-heading">No two alike</h2>
       <p class="lead">
-        This page is about you. You don't have to be good at something to try it here, and you don't have to act like
-        anyone else. Come as you are.
+        Children with Autism Spectrum Disorder (ASD) are as different from each other as any other children are.
       </p>
+    </div>
+
+    <ul class="kids" role="list">
+      {
+        children.map((child, i) => (
+          <li class={`kid kid--${child.color}`}>
+            <div class="kid__art" aria-hidden="true">
+              {child.icon === 'flower' && <Flower petals="yellow" center="orange" size="7rem" rotate={-8} class="kid__flower" />}
+              {child.icon === 'shuttle' && (
+                <svg class="kid__icon" viewBox="0 0 64 64" focusable="false">
+                  <g fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round">
+                    <path d="M22 8 L42 8 L36 40 L28 40 Z" fill="var(--white)" />
+                    <path d="M26 8 L30 40 M38 8 L34 40 M22 20 L42 20 M24 30 L40 30" />
+                    <path d="M26 40 h12 v4 a6 6 0 0 1 -12 0 Z" fill="var(--pink)" />
+                  </g>
+                </svg>
+              )}
+              {child.icon === 'code' && <span class="kid__code">&lt;/&gt;</span>}
+            </div>
+            <p class="kid__text">
+              <span class="kid__lead">{['One child', 'Another', 'A third'][i]}</span> {child.text}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </Band>
+
+  <!-- We start with the person -->
+  <Band color="white" labelledby="start-heading">
+    <div class="start">
+      <div class="start__head flow">
+        <h2 id="start-heading">So we start with the person</h2>
+        <p>
+          No two neurodivergent children need the same thing. Before we ask what a child should learn, we ask three
+          questions.
+        </p>
+      </div>
+      <ol class="start__list" role="list">
+        {
+          startWith.map((item, i) => (
+            <li class="start__item">
+              <span class="start__number" aria-hidden="true">{i + 1}</span>
+              <div>
+                <h3 class="start__heading">{item.heading}</h3>
+                <p>{item.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
     </div>
   </Band>
 
-  <Band tight class="page-cta">
-    <CtaStrip id="see-programs" heading="See what we run">
-      <Button slot="action" href="/programs" variant="yellow">Our programs</Button>
-    </CtaStrip>
+  <!-- Small wins, kept -->
+  <section class="wins on-dark" aria-labelledby="wins-heading">
+    <div class="container">
+      <div class="wins__inner">
+        <div class="wins__text flow">
+          <h2 id="wins-heading">Small wins, kept</h2>
+          <p>What a child with ASD takes home from a program is often small and specific.</p>
+          <p>
+            Those moments add up. Each one is proof, to a neurodivergent child and to everyone watching, that{' '}
+            <strong class="wins__quote">“I can do this”</strong> is true.
+          </p>
+        </div>
+        <ul class="tickets" role="list">
+          {
+            wins.map((win, i) => (
+              <li class={`ticket ticket--${i + 1}`}>{win}</li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- The family behind each child -->
+  <Band labelledby="family-heading">
+    <StoryBlock id="family" heading="The family behind each child" image={photos.shuttles} color="yellow" reverse>
+      <p>
+        Behind every child with ASD is a family. Many parents have spent years looking for a place where their child is
+        welcome as they are. Brothers and sisters have grown up helping.
+      </p>
+      <p>
+        When a neurodivergent child has somewhere to go and something to look forward to, the whole family gets some of
+        that back.
+      </p>
+    </StoryBlock>
   </Band>
+
+  <!-- If you're a teen reading this -->
+  <section class="teens" aria-labelledby="teens-heading">
+    <div class="teens__blocks" aria-hidden="true">
+      <span class="tblock tblock--pink"></span>
+    </div>
+    <div class="container teens__inner">
+      <h2 id="teens-heading" class="teens__heading">
+        <span class="teens__label">If you're a teen reading this</span>
+        <span class="teens__big">Come as you are.</span>
+      </h2>
+      <p class="teens__text">
+        Most of this page is written for parents. This part is for you. You don't have to be good at something to try
+        it here, and you don't have to act like anyone else.
+      </p>
+      <p class="teens__try">
+        Want to try a program? Ask a parent to sign you up, or text us yourself at{' '}
+        <a href={site.phone.sms}>{site.phone.display}</a>.
+      </p>
+      <Flower petals="pink" center="yellow" size="5rem" rotate={-10} style="top: 0; right: 10%" />
+      <Flower petals="yellow" center="pink" size="3rem" rotate={22} style="top: 6rem; right: 3%" />
+      <Flower petals="white" center="orange" size="2.25rem" rotate={-4} style="bottom: 0; right: 24%" />
+    </div>
+  </section>
+
+  <NextCards
+    id="next"
+    heading="Where to next"
+    items={[
+      {
+        title: 'See what we run',
+        text: 'Badminton, flowers, and soon coding, violin, and a Buddy Program.',
+        label: 'Our programs',
+        href: '/programs',
+        color: 'yellow',
+        image: photos.badmintonWarmup,
+      },
+      {
+        title: 'The bigger picture',
+        text: 'About 1 in 31 children in the United States has been identified with ASD.',
+        label: 'See the numbers',
+        href: '/why-we-exist/the-bigger-picture',
+        color: 'white',
+      },
+      {
+        title: 'Sign up',
+        text: "Tell us about your child. We'll help you choose a program that fits.",
+        label: 'Sign up for a program',
+        form: 'signup',
+        color: 'orange',
+      },
+    ]}
+  />
 </BaseLayout>
 
 <style>
@@ -74,8 +208,314 @@ import Button from '../../components/Button.astro';
     font-size: 1.2em;
   }
 
-  :global(.page-cta) {
-    --band-space-top: var(--section-space);
-    --band-space-bottom: var(--section-space);
+  /* ---------- No two alike ---------- */
+  .alike-head {
+    max-width: 44rem;
+  }
+
+  .alike-head h2 {
+    font-size: clamp(2.75rem, 6vw, 5rem);
+  }
+
+  .kids {
+    display: grid;
+    gap: var(--space-6);
+    margin-top: var(--space-7);
+    padding: 0;
+    list-style: none;
+  }
+
+  .kid {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid var(--ink);
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--black);
+    color: var(--ink);
+  }
+
+  .kid--pink { background: var(--pink); }
+  .kid--yellow { background: var(--yellow); }
+  .kid--orange { background: var(--orange); }
+
+  .kid__art {
+    position: relative;
+    display: grid;
+    place-items: center;
+    height: 11rem;
+    background: var(--white);
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .kid__art :global(.kid__flower) {
+    position: relative;
+    display: block;
+  }
+
+  .kid__icon {
+    width: 8.5rem;
+    height: 8.5rem;
+    transform: rotate(18deg);
+  }
+
+  .kid__code {
+    font-family: var(--font-display);
+    font-size: 5.5rem;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .kid__text {
+    padding: var(--space-6);
+    font-size: 1.15em;
+    line-height: 1.45;
+  }
+
+  .kid__lead {
+    display: block;
+    margin-bottom: var(--space-2);
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
+    text-transform: var(--heading-transform);
+    font-size: var(--fs-card);
+    line-height: 1;
+  }
+
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .kids {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+    }
+
+    :global(html:not([data-mode='calm'])) .kid:nth-child(2) {
+      margin-top: var(--stagger);
+    }
+  }
+
+  /* ---------- So we start with the person ---------- */
+  .start {
+    display: grid;
+    gap: var(--space-7);
+  }
+
+  .start__list {
+    display: grid;
+    gap: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 2px solid var(--ink);
+  }
+
+  .start__item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: var(--space-5);
+    padding-block: var(--space-6);
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .start__number {
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    background: var(--yellow);
+    border: 2px solid var(--ink);
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
+    font-size: 2rem;
+    line-height: 1;
+  }
+
+  .start__heading {
+    font-size: var(--fs-card);
+    margin-bottom: var(--space-2);
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .start {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+      gap: var(--space-8);
+      align-items: start;
+    }
+  }
+
+  /* ---------- Small wins, kept: black band with tilted tickets ---------- */
+  .wins {
+    padding-block: var(--section-space);
+    background: var(--dark-band-bg);
+    color: var(--dark-band-fg);
+  }
+
+  .wins__inner {
+    display: grid;
+    gap: var(--space-8);
+    align-items: center;
+  }
+
+  .wins__text h2 {
+    font-size: clamp(2.75rem, 6vw, 5rem);
+  }
+
+  .wins__text p {
+    font-size: 1.15em;
+  }
+
+  .wins__quote {
+    color: var(--yellow);
+  }
+
+  :global(html[data-mode='calm']) .wins__quote {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+
+  .tickets {
+    display: grid;
+    gap: var(--space-5);
+    padding: 0;
+    list-style: none;
+  }
+
+  .ticket {
+    padding: var(--space-5) var(--space-6);
+    background: var(--yellow);
+    color: var(--ink);
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
+    text-transform: var(--heading-transform);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    line-height: 1.05;
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--pink);
+  }
+
+  .ticket--2 {
+    background: var(--orange);
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--white);
+  }
+
+  .ticket--3 {
+    background: var(--white);
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--yellow);
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .wins__inner {
+      grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    }
+
+    :global(html:not([data-mode='calm'])) .ticket--1 {
+      margin-right: var(--space-8);
+    }
+
+    :global(html:not([data-mode='calm'])) .ticket--2 {
+      margin-left: var(--space-8);
+    }
+
+    :global(html:not([data-mode='calm'])) .ticket--3 {
+      margin-right: var(--space-6);
+      margin-left: var(--space-4);
+    }
+  }
+
+  /* Calm: the band turns paper, so the tickets get an outline. */
+  :global(html[data-mode='calm']) .ticket,
+  :global(html[data-mode='calm']) .kid {
+    border: 2px solid var(--ink);
+    box-shadow: none;
+  }
+
+  /* ---------- If you're a teen reading this ---------- */
+  .teens {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding-block: var(--section-space);
+    background: var(--orange);
+    color: var(--ink);
+  }
+
+  .teens__blocks {
+    display: var(--decoration);
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+
+  .tblock {
+    position: absolute;
+  }
+
+  .tblock--pink {
+    right: 0;
+    bottom: 0;
+    width: 18%;
+    height: 42%;
+    background: var(--yellow);
+  }
+
+  .tblock--black {
+    top: 0;
+    left: 0;
+    width: 6%;
+    height: 30%;
+    background: var(--black);
+  }
+
+  .teens__inner {
+    position: relative;
+  }
+
+  .teens__heading {
+    display: grid;
+    justify-items: start;
+    font-size: inherit;
+  }
+
+  .teens__label {
+    display: inline-block;
+    padding: var(--space-1) var(--space-3);
+    background: var(--black);
+    color: var(--on-black);
+    font-family: var(--font-body);
+    font-size: var(--fs-small);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .teens__try {
+    margin-top: var(--space-5);
+    font-size: 1.1em;
+  }
+
+  .teens__try a {
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .teens__big {
+    display: block;
+    margin-top: var(--space-5);
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
+    text-transform: var(--heading-transform);
+    font-size: clamp(3.5rem, 11vw, 9rem);
+    line-height: 0.95;
+  }
+
+  .teens__text {
+    margin-top: var(--space-6);
+    max-width: 38ch;
+    font-size: 1.3em;
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  @media (max-width: 55.99rem) {
+    .teens__blocks,
+    .teens__inner :global(.flower) {
+      display: none;
+    }
   }
 </style>
