@@ -192,7 +192,7 @@ for (const member of board) {
       {
         roster.map((entry, i) => (
           <li>
-            <PersonCard person={entry.person} role={entry.roles.join(' · ')} color={personColors[i % personColors.length]} />
+            <PersonCard person={entry.person} role={entry.roles} color={personColors[i % personColors.length]} />
           </li>
         ))
       }

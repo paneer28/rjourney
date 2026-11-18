@@ -52,7 +52,7 @@ export const site = {
   // Donate page (/donate); this decides what that page's main button does:
   // while empty, visitors are asked to call or text; once set, a Donate button
   // opens this URL in a new tab.
-  donateUrl: '',
+  donateUrl: 'https://www.zeffy.com/en-US/donation-form/donate-to-change-lives-29703',
 
   // What R Journey has done so far, shown on Home and About. Update as it grows.
   // `participants` counts a child once per program (a child in two programs counts twice).

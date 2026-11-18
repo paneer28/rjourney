@@ -12,7 +12,7 @@ interface Props {
   person: Person;
   size?: 'large' | 'small';
   color?: 'yellow' | 'orange' | 'pink';
-  role?: string; // a small label under the name, e.g. "Board of directors"
+  role?: string | string[]; // label(s) under the name, e.g. "Board of directors"; each on its own line
 }
 
 const { person, size = 'large', color = 'yellow', role } = Astro.props;
@@ -45,7 +45,7 @@ const description = person.description && !/to come\.?$/i.test(person.descriptio
   }
   <div class="person__text">
     <h3 class="person__name">{person.name}</h3>
-    {role && <p class="person__role">{role}</p>}
+    {role && <p class="person__role">{[role].flat().map((line) => <span class="person__role-line">{line}</span>)}</p>}
     {size === 'large' && description && <p class="person__description">{description}</p>}
   </div>
 </article>
@@ -122,6 +122,10 @@ const description = person.description && !/to come\.?$/i.test(person.descriptio
 
   .person--small .person__name {
     font-size: calc(var(--fs-card) * 0.75);
+  }
+
+  .person__role-line {
+    display: block;
   }
 
   .person__role {
