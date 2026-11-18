@@ -1,31 +1,109 @@
 ---
 // A person on the About page. `size="large"` (leadership) shows photo, name,
 // and description; `size="small"` (board) shows photo and name only.
+//
+// Until a real photo is added (photo.src in team.ts), the card shows the
+// person's initials on a block of `color` instead of an empty gray box.
+// A description that still reads "... to come" is left off.
 import Placeholder from './Placeholder.astro';
 import type { Person } from '../data/team';
 
 interface Props {
   person: Person;
   size?: 'large' | 'small';
+  color?: 'yellow' | 'orange' | 'pink';
+  role?: string; // a small label under the name, e.g. "Board of directors"
 }
 
-const { person, size = 'large' } = Astro.props;
+const { person, size = 'large', color = 'yellow', role } = Astro.props;
 // A real photo's alt text falls back to the person's name.
 const photo = { ...person.photo, alt: person.photo.alt || (person.photo.src ? person.name : '') };
+
+// Initials from the name, ignoring a trailing credential such as ", MD".
+const initials = person.name
+  .split(',')[0]
+  .split(/\s+/)
+  .filter(Boolean)
+  .map((part) => part[0])
+  .filter((letter) => /[A-Za-z]/.test(letter))
+  .slice(0, 2)
+  .join('')
+  .toUpperCase();
+
+const description = person.description && !/to come\.?$/i.test(person.description) ? person.description : '';
 ---
 
-<article class:list={['person', `person--${size}`]}>
-  <Placeholder image={photo} ratio="1" />
+<article class:list={['person', `person--${size}`, `person--${color}`]}>
+  {
+    person.photo.src ? (
+      <Placeholder image={photo} ratio="1" />
+    ) : (
+      <div class="person__mono" aria-hidden="true">
+        <span class="person__initials">{initials}</span>
+      </div>
+    )
+  }
   <div class="person__text">
     <h3 class="person__name">{person.name}</h3>
-    {size === 'large' && person.description && <p class="person__description">{person.description}</p>}
+    {role && <p class="person__role">{role}</p>}
+    {size === 'large' && description && <p class="person__description">{description}</p>}
   </div>
 </article>
 
 <style>
   .person {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     background: var(--white);
     color: var(--ink);
+    border: 2px solid var(--ink);
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--black);
+  }
+
+  /* The initials block: a square of color with big letters and a flat corner block. */
+  .person__mono {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    overflow: hidden;
+    background: var(--mono-bg);
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .person--yellow { --mono-bg: var(--yellow); --mono-block: var(--orange); }
+  .person--orange { --mono-bg: var(--orange); --mono-block: var(--yellow); }
+  .person--pink { --mono-bg: var(--pink); --mono-block: var(--yellow); }
+
+  .person__mono::before {
+    content: '';
+    display: var(--decoration);
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 38%;
+    height: 30%;
+    background: var(--mono-block);
+  }
+
+  /* Phones: a wide initials block instead of a full-width square. */
+  @media (max-width: 39.99rem) {
+    .person--large .person__mono {
+      aspect-ratio: 16 / 9;
+    }
+  }
+
+  .person__initials {
+    position: relative;
+    font-family: var(--font-display);
+    font-size: clamp(4rem, 9vw, 7rem);
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .person--small .person__initials {
+    font-size: clamp(3rem, 6vw, 4.5rem);
   }
 
   .person__text {
@@ -44,5 +122,14 @@ const photo = { ...person.photo, alt: person.photo.alt || (person.photo.src ? pe
 
   .person--small .person__name {
     font-size: calc(var(--fs-card) * 0.75);
+  }
+
+  .person__role {
+    font-size: var(--fs-small);
+    font-weight: 700;
+  }
+
+  :global(html[data-mode='calm']) .person {
+    box-shadow: none;
   }
 </style>

@@ -1,11 +1,60 @@
 ---
+// Partner on a program: for nonprofits, clubs, schools, and studios that could
+// run a program with R Journey.
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PageHeading from '../../components/PageHeading.astro';
-import IntroBand from '../../components/IntroBand.astro';
+import PageHero from '../../components/PageHero.astro';
 import Band from '../../components/Band.astro';
-import CtaStrip from '../../components/CtaStrip.astro';
+import Placeholder from '../../components/Placeholder.astro';
 import FormButton from '../../components/FormButton.astro';
+import Flower from '../../components/Flower.astro';
+import NextCards from '../../components/NextCards.astro';
+import { photos } from '../../data/images';
 import { site } from '../../data/site';
+
+// The partners R Journey works with today, and what each one does.
+const partners = [
+  {
+    name: 'Rookie Rackets',
+    kind: 'A fellow nonprofit',
+    text: 'Their volunteers coach Badminton Camp alongside ours.',
+    program: 'Badminton Camp',
+    href: '/programs#badminton-camp',
+    image: photos.badmintonWarmup,
+    color: 'yellow',
+  },
+  {
+    name: 'Peak Sports',
+    kind: 'Morrisville',
+    text: 'Donates the court time for Badminton Camp, and will host our Violin Program.',
+    program: 'Badminton Camp and Violin Program',
+    href: '/programs#badminton-camp',
+    image: photos.badmintonCourt,
+    color: 'orange',
+  },
+  {
+    name: 'STEM Leaders',
+    kind: 'Coding coaches',
+    text: 'Their coaches will teach STEM Builders Camp.',
+    program: 'STEM Builders Camp',
+    href: '/programs#stem-builders-camp',
+    image: photos.coding,
+    color: 'pink',
+  },
+] as const;
+
+const youBring = [
+  { heading: 'What you teach', text: 'A sport, an instrument, a craft, a skill. Something children enjoy.' },
+  { heading: 'Someone to teach it', text: 'Your coaches or instructors lead the sessions. You know your subject best.' },
+];
+
+const weBring = [
+  { heading: 'Volunteers', text: 'Extra hands in the room, working alongside your instructors.' },
+  {
+    heading: 'What we’ve learned',
+    text: 'How to make a session work for neurodivergent children: what to plan for, and what to leave room for.',
+  },
+  { heading: 'The families', text: 'We find the children, handle sign-ups and waivers, and stay in touch with parents.' },
+];
 
 // TODO: confirm steps with owner.
 const steps = [
@@ -17,38 +66,83 @@ const steps = [
     color: 'white',
   },
 ];
+
+const ideas = ['Sport', 'Music', 'Art', 'Cooking', 'Gardening', 'Coding', 'Dance', 'Chess'];
 ---
 
 <BaseLayout
   title="Partner on a program"
   description="If your nonprofit, club, school, or studio teaches something children enjoy, R Journey would like to build a program with you for children and teens with Autism Spectrum Disorder (ASD)."
 >
-  <PageHeading heading="Partner on a program">
+  <PageHero heading="Partner on a program" kicker="Get involved" images={[photos.badmintonCoach, photos.coding]}>
     <p>Teach what you know to children who will love it.</p>
-  </PageHeading>
-
-  <IntroBand id="how-it-works" heading="How our partnerships work">
     <p>
-      Some of our best programs are ones we run with someone else. STEM Leaders will bring the coaches for STEM Builders Camp.
-      Rookie Rackets coach badminton alongside our volunteers.
+      If your nonprofit, club, school, or studio teaches something children enjoy, we'd like to build a program with you
+      for children and teens with Autism Spectrum Disorder (ASD).
     </p>
-    <p>
-      If your nonprofit, club, school, or studio teaches something children enjoy, we would like to build a program with
-      you for children and teens with Autism Spectrum Disorder (ASD). You bring what you know. We bring volunteers and
-      what we have learned about making a session work for neurodivergent children.
-    </p>
-  </IntroBand>
+    <FormButton slot="actions" form="partner">Share your idea</FormButton>
+  </PageHero>
 
-  <!-- TODO: confirm steps with owner. -->
-  <Band color="white" labelledby="getting-started-heading">
+  <!-- Who we partner with -->
+  <Band labelledby="partners-heading">
+    <div class="partners-head flow">
+      <h2 id="partners-heading">Who we work with now</h2>
+      <p>Some of our best programs are ones we run with someone else.</p>
+    </div>
+    <ul class="partners" role="list">
+      {
+        partners.map((partner) => (
+          <li class={`partner partner--${partner.color}`}>
+            <Placeholder image={partner.image} ratio="16 / 10" />
+            <div class="partner__body">
+              <p class="partner__kind">{partner.kind}</p>
+              <h3 class="partner__name">{partner.name}</h3>
+              <p>{partner.text}</p>
+              <a class="partner__program" href={partner.href}>{partner.program}</a>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </Band>
+
+  <!-- You bring / we bring -->
+  <Band color="white" labelledby="bring-heading">
+    <h2 id="bring-heading" class="heading-center">How a partnership works</h2>
+    <div class="bring">
+      <div class="bring__col bring__col--you">
+        <h3 class="bring__heading">You bring</h3>
+        <ul class="bring__list" role="list">
+          {youBring.map((item) => (
+            <li>
+              <strong>{item.heading}.</strong> {item.text}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <span class="bring__plus" aria-hidden="true">+</span>
+      <div class="bring__col bring__col--we">
+        <h3 class="bring__heading">We bring</h3>
+        <ul class="bring__list" role="list">
+          {weBring.map((item) => (
+            <li>
+              <strong>{item.heading}.</strong> {item.text}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </Band>
+
+  <!-- Getting started -->
+  <Band labelledby="getting-started-heading">
     <h2 id="getting-started-heading" class="heading-center">Getting started</h2>
-    <ol class="steps card-row">
+    <p class="steps-intro">Three steps, and no commitment until you've seen a session.</p>
+    <ol class="steps" role="list">
       {
         steps.map((step, i) => (
           <li class={`step step--${step.color}`}>
-            <span class="step__number" aria-hidden="true">
-              {i + 1}
-            </span>
+            <span class="step__number" aria-hidden="true">{i + 1}</span>
             <h3 class="step__heading">{step.heading}</h3>
             <p>{step.text}</p>
           </li>
@@ -57,18 +151,209 @@ const steps = [
     </ol>
   </Band>
 
-  <Band tight class="page-cta">
-    <CtaStrip id="have-an-idea" heading="Have an idea for a program?">
-      <div slot="action" class="actions">
-        <FormButton form="partner" variant="yellow">Share your idea</FormButton>
-        <a class="email-link" href={`mailto:${site.email}`}>Or email {site.email}</a>
+  <!-- Ideas -->
+  <section class="ideas" aria-labelledby="ideas-heading">
+    <div class="container ideas__inner">
+      <div class="ideas__text flow">
+        <h2 id="ideas-heading">If children enjoy it, it could be a program</h2>
+        <p>
+          We started with badminton and flowers. Coding and violin are on the way. What would you teach?
+        </p>
+        <div class="ideas__actions">
+          <FormButton form="partner" variant="yellow">Share your idea</FormButton>
+          <a class="ideas__email" href={`mailto:${site.email}`}>Or email {site.email}</a>
+        </div>
       </div>
-    </CtaStrip>
-  </Band>
+      <ul class="ideas__tags" role="list" aria-label="Some ideas">
+        {ideas.map((idea, i) => <li class={`tag tag--${i % 4}`}>{idea}</li>)}
+        <li class="tag tag--q">Yours?</li>
+      </ul>
+      <Flower petals="yellow" center="orange" size="3.5rem" rotate={-14} style="top: -1rem; right: 2%" />
+    </div>
+  </section>
+
+  <NextCards
+    id="next"
+    heading="Other ways to get involved"
+    items={[
+      {
+        title: 'Corporate partnerships',
+        text: 'Sponsor a program, share your space, or volunteer as a team.',
+        label: 'For businesses',
+        href: '/get-involved/corporate-partnerships',
+        color: 'yellow',
+        image: photos.bouquets,
+      },
+      {
+        title: 'Volunteer',
+        text: 'Give some time to a program. Tell us a little about yourself.',
+        label: 'Volunteer with us',
+        form: 'volunteer',
+        color: 'white',
+      },
+      {
+        title: 'Our programs',
+        text: "What we've run, what's running now, and what's coming soon.",
+        label: 'See our programs',
+        href: '/programs',
+        color: 'orange',
+        image: photos.badmintonCoach,
+      },
+    ]}
+  />
 </BaseLayout>
 
 <style>
+  /* ---------- Partners ---------- */
+  .partners-head {
+    max-width: 40rem;
+  }
+
+  .partners-head h2 {
+    font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+  }
+
+  .partners-head p {
+    font-size: 1.2em;
+  }
+
+  .partners {
+    display: grid;
+    gap: var(--space-6);
+    margin-top: var(--space-7);
+    padding: 0;
+    list-style: none;
+  }
+
+  .partner {
+    display: flex;
+    flex-direction: column;
+    color: var(--ink);
+    --focus-color: var(--ink);
+    border: 2px solid var(--ink);
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--black);
+  }
+
+  .partner--yellow { background: var(--yellow); }
+  .partner--orange { background: var(--orange); }
+  .partner--pink { background: var(--pink); }
+
+  .partner :global(.slot) {
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .partner__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-6);
+  }
+
+  .partner__kind {
+    font-size: var(--fs-small);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .partner__name {
+    font-size: var(--fs-card);
+  }
+
+  .partner--pink .partner__name {
+    color: var(--on-pink-heading);
+  }
+
+  .partner__program {
+    margin-top: auto;
+    padding-top: var(--space-3);
+    font-weight: 700;
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .partners {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+    }
+
+    :global(html:not([data-mode='calm'])) .partner:nth-child(2) {
+      margin-top: var(--stagger);
+    }
+  }
+
+  /* ---------- You bring / we bring ---------- */
+  .bring {
+    display: grid;
+    gap: var(--space-5);
+    margin-top: var(--space-7);
+    align-items: center;
+  }
+
+  .bring__col {
+    padding: var(--space-7) var(--space-6);
+    border: 2px solid var(--ink);
+    color: var(--ink);
+  }
+
+  .bring__col--you {
+    background: var(--yellow);
+  }
+
+  .bring__col--we {
+    background: var(--orange);
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--black);
+  }
+
+  .bring__heading {
+    font-size: var(--fs-panel);
+    margin-bottom: var(--space-5);
+  }
+
+  .bring__list {
+    display: grid;
+    gap: var(--space-4);
+    padding: 0;
+    list-style: none;
+  }
+
+  .bring__list li {
+    padding-top: var(--space-4);
+    border-top: 2px solid var(--ink);
+    line-height: 1.5;
+  }
+
+  .bring__plus {
+    justify-self: center;
+    display: grid;
+    place-items: center;
+    width: 4rem;
+    height: 4rem;
+    background: var(--black);
+    color: var(--on-black);
+    font-family: var(--font-display);
+    font-size: 3rem;
+    line-height: 1;
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .bring {
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      gap: var(--space-5);
+    }
+  }
+
+  /* ---------- Getting started ---------- */
+  .steps-intro {
+    margin: var(--space-4) auto 0;
+    text-align: center;
+    font-size: 1.15em;
+  }
+
   .steps {
+    display: grid;
+    gap: var(--space-6);
+    margin-top: var(--space-7);
     padding: 0;
     list-style: none;
   }
@@ -77,39 +362,127 @@ const steps = [
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
-    padding: var(--space-7) var(--space-6);
+    padding: var(--space-7) var(--space-6) var(--space-6);
     color: var(--ink);
+    border: 2px solid var(--ink);
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--black);
   }
 
   .step--yellow { background: var(--yellow); }
   .step--orange { background: var(--orange); }
-  .step--white {
-    background: var(--paper);
-  }
+  .step--white { background: var(--white); }
 
   .step__number {
-    font-family: var(--heading-font);
-    font-weight: var(--heading-weight);
-    font-size: var(--fs-hero);
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    background: var(--black);
+    color: var(--on-black);
+    font-family: var(--font-display);
+    font-size: 2rem;
     line-height: 1;
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--pink);
   }
 
   .step__heading {
     font-size: var(--fs-card);
   }
 
-  .actions {
-    display: grid;
-    gap: var(--space-4);
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .steps {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      align-items: start;
+    }
+
+    :global(html:not([data-mode='calm'])) .step:nth-child(2) {
+      margin-top: calc(var(--stagger) / 2);
+    }
+
+    :global(html:not([data-mode='calm'])) .step:nth-child(3) {
+      margin-top: var(--stagger);
+    }
   }
 
-  .email-link {
+  /* ---------- Ideas ---------- */
+  .ideas {
+    padding-block: var(--section-space);
+    background: var(--pink);
+    color: var(--ink);
+    --focus-color: var(--ink);
+  }
+
+  .ideas__inner {
+    position: relative;
+    display: grid;
+    gap: var(--space-7);
+    align-items: center;
+  }
+
+  .ideas__text h2 {
+    color: var(--on-pink-heading);
+  }
+
+  .ideas__text p {
+    font-size: 1.2em;
+  }
+
+  .ideas__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4) var(--space-6);
+    padding-top: var(--space-3);
+  }
+
+  .ideas__email {
     font-weight: 700;
     font-size: var(--fs-small);
   }
 
-  :global(.page-cta) {
-    --band-space-top: var(--section-space);
-    --band-space-bottom: var(--section-space);
+  .ideas__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    padding: 0;
+    list-style: none;
+  }
+
+  .tag {
+    padding: var(--space-3) var(--space-5);
+    border: 2px solid var(--ink);
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
+    text-transform: var(--heading-transform);
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
+    line-height: 1;
+  }
+
+  .tag--0 { background: var(--yellow); transform: rotate(-2deg); }
+  .tag--1 { background: var(--white); transform: rotate(1.5deg); }
+  .tag--2 { background: var(--orange); transform: rotate(-1deg); }
+  .tag--3 { background: var(--paper); transform: rotate(2deg); }
+
+  .tag--q {
+    background: var(--black);
+    color: var(--on-black);
+    transform: rotate(-3deg);
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .ideas__inner {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+      gap: var(--space-8);
+    }
+  }
+
+  :global(html[data-mode='calm']) .tag {
+    transform: none;
+  }
+
+  :global(html[data-mode='calm']) .partner,
+  :global(html[data-mode='calm']) .step,
+  :global(html[data-mode='calm']) .bring__col--we {
+    box-shadow: none;
   }
 </style>

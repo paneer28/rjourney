@@ -57,3 +57,44 @@ export const images = {
     },
   ],
 } satisfies Record<string, ImageSlot | ImageSlot[]>;
+
+// Every real photo on the site, by subject, for the inner pages' headers and
+// cards. The same files as above and in programs.ts, with crops for these slots.
+export const photos = {
+  badmintonCourt: {
+    src: '/images/badminton-camp.jpg',
+    alt: 'Three players on an indoor badminton court look up at the shuttlecock after a hit.',
+    label: 'Photo: Badminton Camp',
+    position: 'center 25%',
+  },
+  badmintonCoach: {
+    src: '/images/badminton-camp-3.jpg',
+    alt: 'A coach and a young player in a red shirt on a badminton court, with shuttlecocks scattered around them.',
+    label: 'Photo: Badminton Camp',
+    position: 'center 55%',
+  },
+  badmintonWarmup: {
+    src: '/images/badminton-pic-2.jpg',
+    alt: 'Players weave through a line of orange cones on an indoor badminton court during a warm-up.',
+    label: 'Photo: Badminton Camp',
+    position: 'center 55%',
+  },
+  bouquetJar: {
+    src: '/images/flower-pic-2.jpg',
+    alt: 'A bouquet of pink and coral dahlias in a glass mason jar tied with twine.',
+    label: 'Photo: Nurture with Love',
+    position: 'center 40%',
+  },
+  bouquets: {
+    src: '/images/flower-sale-bouquets.jpg',
+    alt: "Three bouquets of dahlias and baby's breath in glass jars tied with twine.",
+    label: 'Photo: Nurture with Love',
+    position: 'center 70%',
+  },
+  coding: {
+    src: '/images/stem-builders.jpg',
+    alt: 'Two young people at a laptop, one pointing to blocks of code on the screen.',
+    label: 'Photo: STEM Builders Camp',
+    position: '70% center',
+  },
+} satisfies Record<string, ImageSlot>;

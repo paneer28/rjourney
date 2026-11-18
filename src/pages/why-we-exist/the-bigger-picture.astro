@@ -1,32 +1,46 @@
 ---
+// The bigger picture: how common ASD is, what that means, and why
+// encouragement matters. Figures come from statistics.ts; only use published ones.
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import PageHeading from '../../components/PageHeading.astro';
-import IntroBand from '../../components/IntroBand.astro';
+import PageHero from '../../components/PageHero.astro';
 import Band from '../../components/Band.astro';
-import CtaStrip from '../../components/CtaStrip.astro';
-import Button from '../../components/Button.astro';
-import DonateButton from '../../components/DonateButton.astro';
+import Flower from '../../components/Flower.astro';
+import NextCards from '../../components/NextCards.astro';
 import { statistics } from '../../data/statistics';
+import { photos } from '../../data/images';
 
-const colors = ['orange', 'yellow', 'orange'];
+const colors = ['orange', 'yellow', 'white'];
+
+// The classroom picture: 31 desks, one of them a child with ASD (1 in 31).
+const desks = Array.from({ length: 31 }, (_, i) => i);
+const highlighted = 17;
 ---
 
 <BaseLayout
   title="The bigger picture"
   description="Autism Spectrum Disorder (ASD) is far more common than most people think: about 1 in 31 children aged 8 in the United States has been identified with ASD."
 >
-  <PageHeading heading="The bigger picture">
+  <PageHero heading="The bigger picture" kicker="Why we exist">
     <p>Autism Spectrum Disorder (ASD) is far more common than most people think.</p>
-  </PageHeading>
+    <p>Here's what the research says, and what it means for the children in our own neighborhoods.</p>
+    <div slot="aside" class="hero-figure" aria-hidden="true">
+      <span class="hero-figure__number">1 in 31</span>
+      <span class="hero-figure__text">children aged 8 in the United States</span>
+      <Flower petals="pink" center="yellow" size="4rem" rotate={-12} style="top: -2rem; right: -1.5rem" />
+      <Flower petals="white" center="orange" size="2.5rem" rotate={20} style="bottom: -1.25rem; left: 10%" />
+    </div>
+  </PageHero>
 
+  <!-- The figures -->
   <Band labelledby="figures-heading">
-    <h2 id="figures-heading" class="visually-hidden">The numbers</h2>
+    <h2 id="figures-heading" class="heading-center">The numbers</h2>
     <ul class="figures" role="list">
       {
         statistics.map((stat, i) => (
-          <li class="figure" style={`--figure-color: var(--${colors[i % colors.length]})`}>
+          <li class={`figure figure--${colors[i % colors.length]}`}>
             <p class="figure__number">{stat.figure}</p>
             <p class="figure__text">{stat.text}</p>
+            <a class="figure__source" href={stat.url}>Source {i + 1}</a>
           </li>
         ))
       }
@@ -43,78 +57,227 @@ const colors = ['orange', 'yellow', 'orange'];
     </ol>
   </Band>
 
-  <IntroBand id="what-the-numbers-mean" heading="What the numbers mean" color="white">
-    <p>
-      One in 31 is roughly one child in every classroom. More children with ASD are being identified now than at any
-      time since the count began.
-    </p>
-    <p>
-      ASD is found in every racial, ethnic, and economic group. These neurodivergent children are in every school, every
-      team, and every neighborhood, including ours.
-    </p>
-  </IntroBand>
-
-  <IntroBand id="why-it-matters" heading="Why working with them matters">
-    <p>
-      The numbers tell us how many children with ASD there are. They don't tell us what those children can do. That
-      depends a great deal on what they are offered.
-    </p>
-    <p>
-      The worldwide study ranks autism among the ten leading causes of non-fatal health burden for people under 20, and
-      its authors call for early support for neurodivergent young people and the people who care for them.
-    </p>
-  </IntroBand>
-
-  <IntroBand id="encouragement" heading="What encouragement does" color="yellow">
-    <p>
-      A child with ASD who is given a place to practice, a patient coach, and people who expect them to show up gets
-      more confident each time. A child who is left out learns to stop trying.
-    </p>
-    <p>
-      What separates those two neurodivergent children is rarely ability. It is opportunity and encouragement, and both
-      can be supplied by ordinary people. That is the work R Journey does.
-    </p>
-  </IntroBand>
-
-  <Band tight class="page-cta">
-    <CtaStrip id="reach-more" heading="Help us reach more of them">
-      <div slot="action" class="actions">
-        <DonateButton variant="yellow" />
-        <Button href="/programs" variant="yellow">Our programs</Button>
+  <!-- What the numbers mean -->
+  <Band color="white" labelledby="mean-heading">
+    <div class="mean">
+      <div class="mean__text flow">
+        <h2 id="mean-heading">What the numbers mean</h2>
+        <p class="lead">One in 31 is roughly one child in every classroom.</p>
+        <p>
+          ASD is found in every racial, ethnic, and economic group. These neurodivergent children are in every school,
+          every team, and every neighborhood, including ours.
+        </p>
       </div>
-    </CtaStrip>
+
+      <figure class="classroom">
+        <div class="classroom__room" role="img" aria-label="A classroom of 31 desks. One of them is highlighted: one child in 31.">
+          <span class="classroom__board" aria-hidden="true"></span>
+          <ul class="classroom__desks" role="list" aria-hidden="true">
+            {desks.map((i) => <li class:list={['desk', { 'desk--on': i === highlighted }]} />)}
+          </ul>
+        </div>
+        <figcaption>One classroom, 31 children. On average, one has been identified with ASD.</figcaption>
+      </figure>
+    </div>
+
+    <!-- Then and now -->
+    <div class="change">
+      <div class="change__text flow">
+        <h3 class="change__heading">More children are being identified</h3>
+        <p>
+          When the CDC began counting in 2000, the figure was 1 in 150. In its latest count, from 2022, it was 1 in 31. More children with ASD are
+          being identified now than at any time since the count began.
+        </p>
+      </div>
+      <figure class="bars">
+        <figcaption class="bars__caption">Children aged 8 identified with ASD, per 1,000</figcaption>
+        <div class="bar">
+          <span class="bar__label">2000</span>
+          <span class="bar__track"><span class="bar__fill" style="--value: 6.7"></span></span>
+          <span class="bar__value">about 7</span>
+        </div>
+        <div class="bar bar--now">
+          <span class="bar__label">2022</span>
+          <span class="bar__track"><span class="bar__fill" style="--value: 32.3"></span></span>
+          <span class="bar__value">about 32</span>
+        </div>
+        <p class="bars__note small">From 1 in 150 and 1 in 31 (sources 1 and 3).</p>
+      </figure>
+    </div>
   </Band>
+
+  <!-- Why working with them matters -->
+  <Band labelledby="matters-heading">
+    <div class="matters">
+      <div class="matters__text flow">
+        <h2 id="matters-heading">Why working with them matters</h2>
+        <p>
+          The numbers tell us how many children with ASD there are. They don't tell us what those children can do. That
+          depends a great deal on what they are offered.
+        </p>
+        <p>
+          The authors of the Global Burden of Disease Study call for early support for neurodivergent young people and the people who care for them.
+        </p>
+      </div>
+      <aside class="callout" aria-label="From the Global Burden of Disease Study">
+        <span class="callout__big">Top 10</span>
+        <p class="callout__text">
+          The worldwide study ranks autism among the ten leading causes of non-fatal health burden for people under 20.
+        </p>
+        <a class="callout__source" href={statistics[1].url}>Global Burden of Disease Study 2021</a>
+      </aside>
+    </div>
+  </Band>
+
+  <!-- What encouragement does -->
+  <section class="paths" aria-labelledby="paths-heading">
+    <div class="container">
+      <h2 id="paths-heading" class="heading-center">What encouragement does</h2>
+      <p class="paths__intro">Picture two children with ASD, the same age, with the same abilities.</p>
+      <div class="paths__pair">
+        <div class="path path--yes">
+          <span class="path__tag">The first</span>
+          <p class="path__given">is given a place to practice, a patient coach, and people who expect them to show up.</p>
+          <p class="path__result">They get more confident each time.</p>
+        </div>
+        <div class="path path--no">
+          <span class="path__tag">The second</span>
+          <p class="path__given">is left out.</p>
+          <p class="path__result">They learn to stop trying.</p>
+        </div>
+      </div>
+      <div class="paths__close">
+        <p class="paths__big">What separates them is rarely ability.</p>
+        <p>
+          It is opportunity and encouragement, and both can be supplied by ordinary people. That is the work R Journey
+          does.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <NextCards
+    id="next"
+    heading="Help us reach more of them"
+    items={[
+      {
+        title: 'Give',
+        text: 'Every gift goes toward programs for children and teens with ASD.',
+        label: 'Donate',
+        href: '/donate',
+        color: 'pink',
+        image: photos.badmintonCoach,
+      },
+      {
+        title: 'See what we run',
+        text: "What we've run, what's running now, and what's coming soon.",
+        label: 'Our programs',
+        href: '/programs',
+        color: 'yellow',
+        image: photos.bouquets,
+      },
+      {
+        title: 'Behind the numbers',
+        text: 'Numbers count children. They can’t tell you about any one of them.',
+        label: 'Read People',
+        href: '/why-we-exist/people',
+        color: 'white',
+      },
+    ]}
+  />
 </BaseLayout>
 
 <style>
-  /* Three large number blocks. The final numbers show at once; nothing counts up. */
-  .figures {
-    display: grid;
-    gap: var(--space-5);
-    padding: 0;
-    list-style: none;
+  .lead {
+    font-size: 1.3em;
+    font-weight: 700;
+    line-height: 1.4;
   }
 
-  @media (min-width: 56rem) {
-    :global(html:not([data-mode='calm'])) .figures {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
+  /* ---------- The big figure in the header ---------- */
+  .hero-figure {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    width: fit-content;
+    margin-inline: auto;
+    padding: var(--space-7) var(--space-7) var(--space-6);
+    background: var(--pink);
+    color: var(--ink);
+    border: 3px solid var(--ink);
+    box-shadow: calc(-1 * var(--shadow-offset) * 1.5) calc(var(--shadow-offset) * 1.5) 0 var(--black);
+    transform: rotate(-2deg);
+  }
+
+  .hero-figure__number {
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
+    text-transform: var(--heading-transform);
+    font-size: clamp(4rem, 9vw, 8rem);
+    line-height: 0.9;
+    color: var(--on-pink-heading);
+    white-space: nowrap;
+  }
+
+  .hero-figure__text {
+    max-width: 16ch;
+    font-weight: 700;
+    font-size: 1.15em;
+    line-height: 1.3;
+  }
+
+  :global(html[data-mode='calm']) .hero-figure {
+    transform: none;
+    box-shadow: none;
+    margin-inline: 0;
+  }
+
+  /* ---------- The figures ---------- */
+  .figures {
+    display: grid;
+    gap: var(--space-6);
+    margin-top: var(--space-7);
+    padding: 0;
+    list-style: none;
   }
 
   .figure {
     display: flex;
     flex-direction: column;
     gap: var(--space-4);
-    padding: var(--space-7) var(--space-6);
-    background: var(--figure-color);
+    padding: var(--space-7) var(--space-6) var(--space-6);
     color: var(--ink);
+    border: 2px solid var(--ink);
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--black);
   }
+
+  .figure--orange { background: var(--orange); }
+  .figure--yellow { background: var(--yellow); }
+  .figure--white { background: var(--white); }
 
   .figure__number {
     font-family: var(--heading-font);
     font-weight: var(--heading-weight);
-    font-size: var(--fs-hero);
+    font-size: clamp(3rem, 5.5vw, 4.75rem);
     line-height: 1;
+  }
+
+  .figure__text {
+    font-size: 1.1em;
+  }
+
+  .figure__source {
+    margin-top: auto;
+    padding-top: var(--space-3);
+    font-size: var(--fs-small);
+    font-weight: 700;
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .figures {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
 
   .sources__heading {
@@ -133,14 +296,283 @@ const colors = ['orange', 'yellow', 'orange'];
     font-size: var(--fs-small);
   }
 
-  .actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-5);
+  /* ---------- What the numbers mean: the classroom ---------- */
+  .mean {
+    display: grid;
+    gap: var(--space-7);
+    align-items: center;
   }
 
-  :global(.page-cta) {
-    --band-space-top: var(--section-space);
-    --band-space-bottom: var(--section-space);
+  .classroom {
+    margin: 0;
+  }
+
+  .classroom__room {
+    padding: var(--space-5);
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--black);
+  }
+
+  .classroom__board {
+    display: block;
+    width: 50%;
+    height: 0.75rem;
+    margin: 0 auto var(--space-5);
+    background: var(--black);
+  }
+
+  .classroom__desks {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: var(--space-2);
+    padding: 0;
+    list-style: none;
+  }
+
+  .desk {
+    aspect-ratio: 1;
+    background: var(--white);
+    border: 2px solid var(--ink);
+  }
+
+  .desk--on {
+    background: var(--pink);
+    box-shadow: 0 0 0 3px var(--yellow);
+  }
+
+  .classroom figcaption {
+    margin-top: var(--space-4);
+    font-weight: 700;
+    font-size: var(--fs-small);
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .mean {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--space-8);
+    }
+  }
+
+  /* ---------- Then and now ---------- */
+  .change {
+    display: grid;
+    gap: var(--space-6);
+    margin-top: var(--space-9);
+    padding-top: var(--space-7);
+    border-top: 2px solid var(--ink);
+  }
+
+  .change__heading {
+    font-size: var(--fs-card);
+  }
+
+  .bars {
+    display: grid;
+    gap: var(--space-4);
+    margin: 0;
+  }
+
+  .bars__caption {
+    font-weight: 700;
+    font-size: var(--fs-small);
+  }
+
+  .bar {
+    display: grid;
+    grid-template-columns: 3.5rem minmax(0, 1fr) 5.5rem;
+    gap: var(--space-4);
+    align-items: center;
+  }
+
+  .bar__label {
+    font-weight: 700;
+  }
+
+  .bar__track {
+    height: 2.5rem;
+    background: var(--paper);
+    border: 2px solid var(--ink);
+  }
+
+  .bar__fill {
+    display: block;
+    height: 100%;
+    width: calc(var(--value) / 34 * 100%);
+    background: var(--yellow);
+    border-right: 2px solid var(--ink);
+  }
+
+  .bar--now .bar__fill {
+    background: var(--pink);
+  }
+
+  .bar__value {
+    font-weight: 700;
+  }
+
+  .bars__note {
+    max-width: none;
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .change {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: var(--space-8);
+      align-items: center;
+    }
+  }
+
+  /* ---------- Why working with them matters ---------- */
+  .matters {
+    display: grid;
+    gap: var(--space-7);
+    align-items: center;
+  }
+
+  .callout {
+    position: relative;
+    display: grid;
+    gap: var(--space-4);
+    padding: var(--space-7) var(--space-6);
+    background: var(--black);
+    color: var(--on-black);
+    box-shadow: calc(-1 * var(--shadow-offset) * 1.5) calc(var(--shadow-offset) * 1.5) 0 var(--orange);
+  }
+
+  .callout__big {
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
+    text-transform: var(--heading-transform);
+    font-size: clamp(3.5rem, 7vw, 6rem);
+    line-height: 0.9;
+    color: var(--yellow);
+  }
+
+  .callout__text {
+    font-size: 1.2em;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .callout__source {
+    font-size: var(--fs-small);
+    --focus-color: var(--on-black);
+  }
+
+  :global(html[data-mode='calm']) .callout {
+    background: var(--white);
+    color: var(--ink);
+    border: 2px solid var(--ink);
+    box-shadow: none;
+  }
+
+  :global(html[data-mode='calm']) .callout__big {
+    color: var(--ink);
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .matters {
+      grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+      gap: var(--space-8);
+    }
+
+    :global(html:not([data-mode='calm'])) .callout {
+      transform: rotate(1.5deg);
+    }
+  }
+
+  /* ---------- What encouragement does ---------- */
+  .paths {
+    padding-block: var(--section-space);
+    background: var(--yellow);
+    color: var(--ink);
+  }
+
+  .paths__intro {
+    margin: var(--space-4) auto 0;
+    text-align: center;
+    font-size: 1.2em;
+  }
+
+  .paths__pair {
+    display: grid;
+    gap: var(--space-6);
+    margin-top: var(--space-7);
+  }
+
+  .path {
+    display: grid;
+    gap: var(--space-4);
+    align-content: start;
+    padding: var(--space-7) var(--space-6);
+    border: 2px solid var(--ink);
+  }
+
+  .path--yes {
+    background: var(--white);
+    box-shadow: calc(-1 * var(--shadow-offset)) var(--shadow-offset) 0 var(--pink);
+  }
+
+  .path--no {
+    background: var(--paper);
+    border-style: dashed;
+  }
+
+  .path__tag {
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
+    text-transform: var(--heading-transform);
+    font-size: var(--fs-card);
+    line-height: 1;
+  }
+
+  .path__given {
+    font-size: 1.15em;
+  }
+
+  .path__result {
+    padding-top: var(--space-4);
+    border-top: 2px solid var(--ink);
+    font-weight: 700;
+    font-size: 1.25em;
+  }
+
+  .path--no .path__result {
+    border-top-style: dashed;
+  }
+
+  .paths__close {
+    max-width: 44rem;
+    margin: var(--space-8) auto 0;
+    text-align: center;
+  }
+
+  .paths__close p {
+    margin-inline: auto;
+    font-size: 1.15em;
+  }
+
+  .paths__big {
+    font-family: var(--heading-font);
+    font-weight: var(--heading-weight);
+    text-transform: var(--heading-transform);
+    font-size: clamp(2.25rem, 5vw, 3.75rem) !important;
+    line-height: 1.02;
+    margin-bottom: var(--space-4);
+  }
+
+  @media (min-width: 56rem) {
+    :global(html:not([data-mode='calm'])) .paths__pair {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      max-width: 56rem;
+      margin-inline: auto;
+    }
+  }
+
+  :global(html[data-mode='calm']) .figure,
+  :global(html[data-mode='calm']) .classroom__room,
+  :global(html[data-mode='calm']) .path--yes {
+    box-shadow: none;
   }
 </style>
