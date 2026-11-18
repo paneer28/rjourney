@@ -54,6 +54,13 @@ export const site = {
   // opens this URL in a new tab.
   donateUrl: '',
 
+  // What R Journey has done so far, shown on Home and About. Update as it grows.
+  // `participants` counts a child once per program (a child in two programs counts twice).
+  impact: {
+    sessions: '20+', // sessions held across all programs
+    participants: '100+',
+  },
+
   // IRS employer identification number, shown on the Donate page.
   ein: '41-2977531',
 

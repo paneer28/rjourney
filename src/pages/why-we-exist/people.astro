@@ -23,12 +23,12 @@ const children = [
   },
   {
     icon: 'shuttle',
-    text: 'might say very little, and never miss a shuttlecock.',
+    text: 'might take a few weeks to warm up to a new group, then never want to miss a session.',
     color: 'yellow',
   },
   {
     icon: 'code',
-    text: 'might find a noisy gym overwhelming, yet sit with a line of code until it works.',
+    text: 'might find a crowded room too loud, yet sit with a line of code until it works.',
     color: 'orange',
   },
 ] as const;
@@ -46,7 +46,7 @@ const wins = ['A first rally over the net.', 'A bouquet a stranger paid for.', '
   title="People"
   description="Every child with Autism Spectrum Disorder (ASD) is different. R Journey starts with the person: what they enjoy, what they find hard, and what they would like to be able to do."
 >
-  <PageHero heading="People" kicker="Why we exist" color="pink" images={[photos.badmintonCourt, photos.bouquets]}>
+  <PageHero heading="People" kicker="Why we exist" color="pink" images={[photos.rally, photos.inHand]}>
     <p>Numbers count children. They can't tell you about any one of them.</p>
     <p>This page is about the one in front of us: a particular child, with their own interests and their own family.</p>
   </PageHero>
@@ -137,7 +137,7 @@ const wins = ['A first rally over the net.', 'A bouquet a stranger paid for.', '
 
   <!-- The family behind each child -->
   <Band labelledby="family-heading">
-    <StoryBlock id="family" heading="The family behind each child" image={photos.badmintonCoach} color="yellow" reverse>
+    <StoryBlock id="family" heading="The family behind each child" image={photos.shuttles} color="yellow" reverse>
       <p>
         Behind every child with ASD is a family. Many parents have spent years looking for a place where their child is
         welcome as they are. Brothers and sisters have grown up helping.
@@ -281,9 +281,6 @@ const wins = ['A first rally over the net.', 'A bouquet a stranger paid for.', '
     line-height: 1;
   }
 
-  .kid--pink .kid__lead {
-    color: var(--on-pink-heading);
-  }
 
   @media (min-width: 56rem) {
     :global(html:not([data-mode='calm'])) .kids {

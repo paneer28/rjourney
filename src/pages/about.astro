@@ -18,8 +18,8 @@ const planned = programs.filter((program) => program.status === 'planned');
 
 const facts = [
   { figure: String(site.founded), text: 'Founded in Apex, North Carolina', color: 'white' },
-  { figure: String(running.length), text: running.length === 1 ? 'Program running now' : 'Programs running now', color: 'orange' },
-  { figure: String(planned.length), text: 'More on the way', color: 'yellow' },
+  { figure: site.impact.sessions, text: 'Sessions held across our programs', color: 'orange' },
+  { figure: site.impact.participants, text: 'Kids and teens taking part, counted once per program', color: 'yellow' },
   { figure: '501(c)(3)', text: 'Tax-exempt nonprofit', color: 'pink' },
 ] as const;
 
@@ -64,7 +64,7 @@ for (const member of board) {
   title="About"
   description="R Journey is a nonprofit in Apex, North Carolina, started in 2025. We run programs that build independence and inclusion for children, teens, and young adults with Autism Spectrum Disorder (ASD)."
 >
-  <PageHero heading="About R Journey" kicker="Who we are" images={[photos.badmintonWarmup, photos.bouquetJar]}>
+  <PageHero heading="About R Journey" kicker="Who we are" images={[photos.group, photos.celosia]}>
     <p>A young nonprofit in Apex, North Carolina, started in {site.founded}.</p>
     <p>
       We run hands-on programs where children and teens with Autism Spectrum Disorder (ASD) build a skill, meet people,
@@ -90,7 +90,7 @@ for (const member of board) {
 
   <!-- Why we exist -->
   <Band labelledby="mission-heading" class="mission-band">
-    <StoryBlock id="mission" heading="Why we exist" image={photos.badmintonCoach} color="orange">
+    <StoryBlock id="mission" heading="Why we exist" image={photos.coachBalloon} color="orange">
       <p>
         R Journey exists to improve the lives of children, teens, and young adults with Autism Spectrum Disorder (ASD),
         and the lives of their families.
@@ -141,8 +141,9 @@ for (const member of board) {
       <div class="now__text flow">
         <h2 id="now-heading">Where we are now</h2>
         <p>
-          R Journey began in Apex in {site.founded}. We're new, and we're building carefully: a few programs, run well,
-          with partners who share our goals.
+          R Journey began in Apex in {site.founded}. Since then we've held {site.impact.sessions} sessions, and kids and
+          teens have joined our programs more than {site.impact.participants.replace('+', '')} times. We're still new, and
+          we're building carefully: a few programs, run well, with partners who share our goals.
         </p>
         <p>
           We'd rather run one program that families can count on than five that come and go. When a program is working,
